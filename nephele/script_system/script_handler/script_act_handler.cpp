@@ -1,4 +1,4 @@
-#include "script_act_handler.h"
+#include "script_act_handler.hpp"
 
 namespace talorion {
 

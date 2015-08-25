@@ -1,4 +1,6 @@
-#include "qvmbackend.h"
+#include "qvmbackend.hpp"
+
+#include "core/event_manager.hpp"
 
 namespace talorion {
 
@@ -6,6 +8,10 @@ namespace talorion {
         QObject(par),
         analog()
     {
+        connect(this,SIGNAL(avSetChangeCommand(QByteArray)),event_manager::get_instance(),SIGNAL(avSetChangeCommand(QByteArray)));
+        connect(this,SIGNAL(newAnalogValue(analogValue*)),event_manager::get_instance(),SIGNAL(newAnalogValue(analogValue*)));
+        connect(event_manager::get_instance(),SIGNAL(receivedData(QVariantMap,tcpDriverDataTypes::dataType)), this, SLOT(processData(QVariantMap,tcpDriverDataTypes::dataType)));
+        connect(event_manager::get_instance(),SIGNAL(error(QString)), this, SLOT(logError(QString)));
     }
 
     qvmbackend::~qvmbackend()

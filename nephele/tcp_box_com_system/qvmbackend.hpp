@@ -3,9 +3,11 @@
 
 #include <QObject>
 #include <QVariant>
-#include "analogvalue.h"
 #include <QDebug>
-#include "tcpdriver.h"
+
+
+#include "core/analogvalue.hpp"
+#include "tcpdriver.hpp"
 
 namespace talorion {
 

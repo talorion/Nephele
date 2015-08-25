@@ -1,4 +1,4 @@
-#include "script_util_handler.h"
+#include "script_util_handler.hpp"
 
 #include <QEventLoop>
 #include <QTimer>

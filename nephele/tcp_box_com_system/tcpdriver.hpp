@@ -10,7 +10,7 @@
 #include <QThread>
 #include <QCoreApplication>
 
-#include "tcpcommandqueue.h"
+#include "tcpcommandqueue.hpp"
 
 
 namespace talorion {

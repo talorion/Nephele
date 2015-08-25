@@ -2,7 +2,7 @@
 #define FLOWCONTROLLERVIEW_H
 
 #include <QWidget>
-#include "analogview.h"
+#include "analogview.hpp"
 
 #include <QGridLayout>
 #include <QLabel>

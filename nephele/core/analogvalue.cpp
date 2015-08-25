@@ -1,4 +1,4 @@
-#include "analogvalue.h"
+#include "analogvalue.hpp"
 
 namespace talorion {
 

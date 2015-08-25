@@ -1,7 +1,7 @@
-#include "scripting_thread.h"
+#include "scripting_thread.hpp"
 
 #include <QDebug>
-#include "scripting_worker.h"
+#include "scripting_worker.hpp"
 #include "core/event_manager.hpp"
 
 namespace talorion {
@@ -20,8 +20,6 @@ namespace talorion {
 
     void scripting_thread::run()
     {
-        qDebug()<<"scripting_thread::run "<<QThread::currentThreadId();
-
         scripting_worker worker;
         worker.initialize();
         //    connect(this,SIGNAL(start_script(QString)),&worker,SLOT(start_script(QString)));

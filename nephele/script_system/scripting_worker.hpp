@@ -4,10 +4,10 @@
 #include <QObject>
 #include <QScriptEngine>
 
-#include "script_handler/script_set_handler.h"
-#include "script_handler/script_dialoges_handler.h"
-#include "script_handler/script_act_handler.h"
-#include "script_handler/script_util_handler.h"
+#include "script_handler/script_set_handler.hpp"
+#include "script_handler/script_dialoges_handler.hpp"
+#include "script_handler/script_act_handler.hpp"
+#include "script_handler/script_util_handler.hpp"
 
 namespace talorion {
 

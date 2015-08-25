@@ -1,4 +1,4 @@
-#include "script_dialoges_handler.h"
+#include "script_dialoges_handler.hpp"
 
 #include <QWidget>
 #include <QtWidgets>
@@ -23,7 +23,6 @@ namespace talorion {
 
     double script_dialoges_handler::setDouble()
     {
-        qDebug()<<"script_dialoges_handler::setDouble "<<QThread::currentThreadId();
 
         m_tmp=NAN;
 

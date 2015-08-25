@@ -2,8 +2,8 @@
 #define ANALOGVIEW_H
 
 #include <QWidget>
-#include "analogvalue.h"
 
+#include "core/analogvalue.hpp"
 
 namespace talorion {
 

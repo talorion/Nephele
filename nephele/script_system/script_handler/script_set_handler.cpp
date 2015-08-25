@@ -1,4 +1,4 @@
-#include "script_set_handler.h"
+#include "script_set_handler.hpp"
 
 #include <QCoreApplication>
 #include <QThread>

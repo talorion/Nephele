@@ -1,4 +1,4 @@
-#include "scripting_worker.h"
+#include "scripting_worker.hpp"
 
 #include <QDebug>
 #include <QThread>

@@ -8,9 +8,9 @@
 #include <QLineEdit>
 #include <QLabel>
 
-#include "tcpdriver.h"
-#include "qvmbackend.h"
-#include "flowcontrollerview.h"
+//#include "tcpdriver.h"
+//#include "qvmbackend.h"
+#include "flowcontrollerview.hpp"
 
 namespace talorion {
     class nephele_main_window : public QMainWindow
@@ -23,8 +23,8 @@ namespace talorion {
         Q_DISABLE_COPY(nephele_main_window)
 
     private:
-        tcpDriver* dev1;
-        qvmbackend* dcs;
+        //tcpDriver* dev1;
+        //qvmbackend* dcs;
         QLineEdit* cmd;
         QLabel* response;
         QGridLayout* mainLayout;

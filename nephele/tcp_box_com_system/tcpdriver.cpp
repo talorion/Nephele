@@ -1,4 +1,8 @@
-#include "tcpdriver.h"
+#include "tcpdriver.hpp"
+
+#include "core/event_manager.hpp"
+
+#include <QDebug>
 
 #define POLLINTERVAL_MS 10
 
@@ -23,6 +27,11 @@ namespace talorion {
         responseCounter(0),
         queue(NULL)
     {
+
+        connect(event_manager::get_instance(),SIGNAL(avSetChangeCommand(QByteArray)),this,SLOT(setDataCommand(QByteArray)));
+        connect(this, SIGNAL(receivedData(QVariantMap,tcpDriverDataTypes::dataType)),event_manager::get_instance(),SIGNAL(receivedData(QVariantMap,tcpDriverDataTypes::dataType)));
+        connect(this,SIGNAL(error(QString)),event_manager::get_instance(),SIGNAL(error(QString)));
+
         getInfoCommand_val = getInfoCommand;
         getMinimalSetActCommand_val = getMinimalSetActCommand;
         tcpSocket = new QTcpSocket();
@@ -124,7 +133,7 @@ namespace talorion {
     void tcpDriver::parsePackage()
     {
         QByteArray tmp = tcpSocket->readAll();
-        //    qDebug() << tmp ;
+            qDebug() << tmp ;
         if (transmissionContext == tcpDriverDataTypes::ALLDATA || transmissionContext == tcpDriverDataTypes::ACTSETDATA)
         {
             curlyOpen += tmp.count('{');

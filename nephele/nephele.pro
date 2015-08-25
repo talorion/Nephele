@@ -8,6 +8,9 @@ QT       += core gui script printsupport network
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
+greaterThan(QT_MAJOR_VERSION, 4): RC_ICONS += nephele.ico
+lessThan(QT_MAJOR_VERSION, 5): RC_FILE = nephele.rc
+
 TARGET = nephele
 TEMPLATE = app
 
@@ -43,7 +46,6 @@ CONFIG += c++11
 
 
 SOURCES += main.cpp\
-    gui_system/nephele_main_window.cpp \
     core/event_manager.cpp \
     script_system/scripting_thread.cpp \
     script_system/scripting_worker.cpp \
@@ -51,32 +53,35 @@ SOURCES += main.cpp\
     script_system/script_handler/script_dialoges_handler.cpp \
     script_system/script_handler/script_set_handler.cpp \
     script_system/script_handler/script_util_handler.cpp \
-    gui_system/analogvalue.cpp \
     gui_system/analogview.cpp \
-    gui_system/flowcontrollerbackend.cpp \
     gui_system/flowcontrollerview.cpp \
-    gui_system/qvmbackend.cpp \
-    gui_system/tcpcommandqueue.cpp \
-    gui_system/tcpdriver.cpp
+    gui_system/nephele_main_window.cpp \
+    tcp_box_com_system/tcp_box_com_thread.cpp \
+    tcp_box_com_system/qvmbackend.cpp \
+    tcp_box_com_system/tcpdriver.cpp \
+    tcp_box_com_system/tcpcommand.cpp \
+    tcp_box_com_system/tcpcommandqueue.cpp \
+    core/analogvalue.cpp
 
-HEADERS  += gui_system/nephele_main_window.hpp \
+HEADERS  += version.hpp \
+    nephele.rc \
     core/event_manager.hpp \
-    script_system/scripting_thread.h \
-    script_system/scripting_worker.h \
-    script_system/script_handler/script_act_handler.h \
-    script_system/script_handler/script_dialoges_handler.h \
-    script_system/script_handler/script_set_handler.h \
-    script_system/script_handler/script_util_handler.h \
-    gui_system/analogvalue.h \
-    gui_system/analogview.h \
-    gui_system/flowcontrollerbackend.h \
-    gui_system/flowcontrollerview.h \
-    gui_system/qvmbackend.h \
-    gui_system/tcpcommandqueue.h \
-    gui_system/tcpdriver.h
-
-SUBDIRS += \
-    gui_system/DeviceTester.pro
+    tcp_box_com_system/tcp_box_com_thread.hpp \
+    tcp_box_com_system/tcpcommand.hpp \
+    tcp_box_com_system/qvmbackend.hpp \
+    tcp_box_com_system/tcpcommandqueue.hpp \
+    tcp_box_com_system/tcpdriver.hpp \
+    gui_system/analogview.hpp \
+    gui_system/flowcontrollerview.hpp \
+    gui_system/nephele_main_window.hpp \
+    script_system/script_handler/script_act_handler.hpp \
+    script_system/script_handler/script_dialoges_handler.hpp \
+    script_system/script_handler/script_set_handler.hpp \
+    script_system/script_handler/script_util_handler.hpp \
+    script_system/scripting_thread.hpp \
+    script_system/scripting_worker.hpp \
+    core/analogvalue.hpp \
+    core/tcpdriverdatatypes.hpp
 
 
 win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../qcustomplot/release/ -lqcustomplot
@@ -91,3 +96,6 @@ else:win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../qcus
 else:win32:!win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../qcustomplot/release/qcustomplot.lib
 else:win32:!win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../qcustomplot/debug/qcustomplot.lib
 else:unix: PRE_TARGETDEPS += $$OUT_PWD/../qcustomplot/libqcustomplot.a
+
+DISTFILES += \
+    nephele.ico

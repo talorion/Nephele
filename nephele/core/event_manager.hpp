@@ -3,8 +3,16 @@
 
 #include <QObject>
 #include <QMutex>
+#include <QVariantMap>
+
+#include "tcpdriverdatatypes.hpp"
+#include "analogvalue.hpp"
+
+
 
 namespace talorion {
+
+    class analogValue;
 
     class event_manager : public QObject
     {
@@ -29,6 +37,14 @@ namespace talorion {
 
         void start_script(const QString &);
         void script_finished();
+
+        //qvmbackend
+        void avSetChangeCommand(QByteArray);
+        void newAnalogValue(analogValue*);
+
+        //tcpDriver
+        void receivedData(QVariantMap, tcpDriverDataTypes::dataType);
+        void error(QString);
 
     private:
         static QAtomicPointer<event_manager> _instance;

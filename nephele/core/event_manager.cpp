@@ -11,7 +11,7 @@ namespace talorion {
     event_manager::event_manager(QObject *par):
         QObject(par)
     {
-
+        qRegisterMetaType<tcpDriverDataTypes::dataType>("tcpDriverDataTypes::dataType");
     }
 
     event_manager::~event_manager(){}

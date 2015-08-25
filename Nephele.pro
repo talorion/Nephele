@@ -5,6 +5,8 @@ SUBDIRS += \
     nephele \
     qcustomplot
 
+nephele.depends           += qcustomplot
+
 
 # build must be last:
 CONFIG += ordered
