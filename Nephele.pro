@@ -2,7 +2,8 @@ TEMPLATE = subdirs
 
 SUBDIRS += \
     tcp_box_simulator \
-    nephele
+    nephele \
+    qcustomplot
 
 
 # build must be last:

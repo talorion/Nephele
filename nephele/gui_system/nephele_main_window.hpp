@@ -2,16 +2,38 @@
 #define NEPHELE_MAIN_WINDOW_HPP
 
 #include <QMainWindow>
+#include <QJsonDocument>
+#include <QPushButton>
+#include <QGridLayout>
+#include <QLineEdit>
+#include <QLabel>
 
-class nephele_main_window : public QMainWindow
-{
-    Q_OBJECT
+#include "tcpdriver.h"
+#include "qvmbackend.h"
+#include "flowcontrollerview.h"
 
-public:
-    explicit nephele_main_window(QWidget *par = 0);
-    ~nephele_main_window();
+namespace talorion {
+    class nephele_main_window : public QMainWindow
+    {
+        Q_OBJECT
 
-private:
-};
+    public:
+        explicit nephele_main_window(QWidget *par = 0);
+        ~nephele_main_window();
+        Q_DISABLE_COPY(nephele_main_window)
+
+    private:
+        tcpDriver* dev1;
+        qvmbackend* dcs;
+        QLineEdit* cmd;
+        QLabel* response;
+        QGridLayout* mainLayout;
+
+    private slots:
+        void displayCustomResponse(QByteArray res);
+        void dispatchCommand();
+        void addAV(analogValue* av);
+    };
+}
 
 #endif // NEPHELE_MAIN_WINDOW_HPP
