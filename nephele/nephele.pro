@@ -61,7 +61,8 @@ SOURCES += main.cpp\
     tcp_box_com_system/tcpdriver.cpp \
     tcp_box_com_system/tcpcommand.cpp \
     tcp_box_com_system/tcpcommandqueue.cpp \
-    core/analogvalue.cpp
+    core/analogvalue.cpp \
+    tcp_box_com_system/flowcontrollerbackend.cpp
 
 HEADERS  += version.hpp \
     nephele.rc \
@@ -81,7 +82,8 @@ HEADERS  += version.hpp \
     script_system/scripting_thread.hpp \
     script_system/scripting_worker.hpp \
     core/analogvalue.hpp \
-    core/tcpdriverdatatypes.hpp
+    core/tcpdriverdatatypes.hpp \
+    tcp_box_com_system/flowcontrollerbackend.h
 
 
 win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../qcustomplot/release/ -lqcustomplot

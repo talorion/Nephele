@@ -6,8 +6,9 @@
 #include <QMainWindow>
 #include <QDialog>
 #include <QPushButton>
-#include <QTcpServer>
 #include <QNetworkSession>
+
+#include "tcp_box_server.h"
 
 
 class tcp_box_simulator : public QDialog
@@ -17,16 +18,15 @@ class tcp_box_simulator : public QDialog
 public:
     explicit tcp_box_simulator(QWidget *par = 0);
     ~tcp_box_simulator();
+    Q_DISABLE_COPY(tcp_box_simulator)
 
 private slots:
     void sessionOpened();
-    void sendFortune();
 
 private:
     QLabel *statusLabel;
     QPushButton *quitButton;
-    QTcpServer *tcpServer;
-    QStringList fortunes;
+    tcp_box_server *tcpServer;
     QNetworkSession *networkSession;
 };
 

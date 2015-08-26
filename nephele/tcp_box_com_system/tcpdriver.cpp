@@ -133,7 +133,7 @@ namespace talorion {
     void tcpDriver::parsePackage()
     {
         QByteArray tmp = tcpSocket->readAll();
-            qDebug() << tmp ;
+        //qDebug() << tmp ;
         if (transmissionContext == tcpDriverDataTypes::ALLDATA || transmissionContext == tcpDriverDataTypes::ACTSETDATA)
         {
             curlyOpen += tmp.count('{');

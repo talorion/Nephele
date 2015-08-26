@@ -1,9 +1,3 @@
-#-------------------------------------------------
-#
-# Project created by QtCreator 2015-08-25T18:34:12
-#
-#-------------------------------------------------
-
 QT       += core gui network
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
@@ -28,7 +22,14 @@ CONFIG += c++11
 
 
 SOURCES += main.cpp\
-        tcp_box_simulator.cpp
+        tcp_box_simulator.cpp \
+    tcp_box_server.cpp \
+    tcp_box_connection.cpp \
+    simulated_fc.cpp \
+    simulated_fc_box.cpp
 
-HEADERS  += tcp_box_simulator.hpp
-
+HEADERS  += tcp_box_simulator.hpp \
+    tcp_box_server.h \
+    tcp_box_connection.h \
+    simulated_fc.h \
+    simulated_fc_box.h

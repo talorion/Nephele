@@ -4,6 +4,7 @@
 
 #include "tcpdriver.hpp"
 #include "qvmbackend.hpp"
+#include "flowcontrollerbackend.h"
 
 namespace talorion {
 
@@ -16,9 +17,11 @@ namespace talorion {
     void tcp_box_com_thread::run()
     {
         tcpDriver* dev1;
-        qvmbackend* dcs;
+        //qvmbackend* dcs;
+        flowControllerBackend* dcs;
 
-        dcs = new qvmbackend();
+        dcs = new flowControllerBackend();
+
         //dev1 = new tcpDriver("uibkav getAll","uibkav getAll"); // for DC Board
         dev1 = new tcpDriver("uibkafc getAll","uibkafc getActSet"); // for AFC Board
 

@@ -85,6 +85,7 @@ namespace talorion {
 
     void nephele_main_window::addAV(analogValue *av)
     {
+
     //    int row = dcs->count();
     //    mainLayout->addWidget(new flowControllerView(av,this),row, 0,1,2);
         mainLayout->addWidget(new flowControllerView(av,this));
