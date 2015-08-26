@@ -29,6 +29,7 @@ private:
     void processData();
 
     QString fc_buildAll();
+    void simulate_delay(unsigned long low = 100, unsigned long high = 200);
 
 private:
     QByteArray buffer;

@@ -71,15 +71,15 @@ double simulated_fc::get_Set() const
 
 void simulated_fc::set_Set(double value)
 {
-    value = std::max(value, get_Amax());
-    value = std::min(value, get_Amin());
+    value = std::min(value, get_Amax());
+    value = std::max(value, get_Amin());
     set_ = value;
 }
 double simulated_fc::get_Act() const
 {
     double rnd = double(qrand()) / RAND_MAX ;
-    double ten_percent = (get_Set()*0.1);
-    return (((ten_percent*2)-ten_percent)*rnd)+get_Set();
+    double percent = (get_Set()*0.01);
+    return (((percent*2)-percent)*rnd)+get_Set();
 }
 
 QString simulated_fc::get_Name() const

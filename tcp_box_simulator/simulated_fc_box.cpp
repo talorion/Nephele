@@ -39,17 +39,22 @@ void simulated_fc_box::init_all_fcs()
 QString simulated_fc_box::getAll_json()
 {
     QString jsn =  "{\"uibk_v\":1,\"FC\":[";
+    int i=0;
     foreach (simulated_fc fc, all_fcs) {
-            jsn +=QString("{\"id\":%1,\"smin\":%2,\"smax\":%3,\"amin\":%4,\"amax\":%5,\"set\":%6,\"act\":%7,\"name\":\"%8\",\"units\":\"%9\"},")
-                    .arg(QString::number(fc.get_Id()),
-                         QString::number(fc.get_Smin()),
-                         QString::number(fc.get_Smax()),
-                         QString::number(fc.get_Amin()),
-                         QString::number(fc.get_Amax()),
-                         QString::number(fc.get_Set()),
-                         QString::number(fc.get_Act()),
-                         fc.get_Name(),
-                         fc.get_Units());
+        if(i)
+            jsn += ",";
+        jsn +=QString("{\"id\":%1,\"smin\":%2,\"smax\":%3,\"amin\":%4,\"amax\":%5,\"set\":%6,\"act\":%7,\"name\":\"%8\",\"units\":\"%9\"}")
+                .arg(QString::number(fc.get_Id()),
+                     QString::number(fc.get_Smin()),
+                     QString::number(fc.get_Smax()),
+                     QString::number(fc.get_Amin()),
+                     QString::number(fc.get_Amax()),
+                     QString::number(fc.get_Set()),
+                     QString::number(fc.get_Act()),
+                     fc.get_Name(),
+                     fc.get_Units());
+
+        ++i;
     }
     jsn         += "]}";
 

@@ -1,6 +1,7 @@
 #include "tcp_box_connection.h"
 
 #include <QHostAddress>
+#include <QThread>
 
 #include "simulated_fc_box.h"
 
@@ -42,6 +43,8 @@ void tcp_box_connection::processReadyRead()
 void tcp_box_connection::fc_sendAll()
 {
     QString response=fc_buildAll();
+
+    simulate_delay();
 
     write(response.toLocal8Bit());
 }
@@ -126,21 +129,27 @@ QString tcp_box_connection::fc_buildAll()
     simulated_fc_box box;
     box.init_all_fcs();
 
-//    QString response= box.getAll_json();
-    QString response=  QString(   "{\"uibk_v\":1,\"FC\":["
-                                  "{\"id\":0,\"smin\":0,\"smax\":100,\"amin\":0,\"amax\":100,\"set\":0,\"act\":0,\"name\":\"FC_0\",\"units\":\"sccm\"},"
-                                  "{\"id\":1,\"smin\":0,\"smax\":100,\"amin\":0,\"amax\":100,\"set\":0,\"act\":0,\"name\":\"FC_1\",\"units\":\"sccm\"},"
-                                  "{\"id\":2,\"smin\":0,\"smax\":100,\"amin\":0,\"amax\":100,\"set\":0,\"act\":0,\"name\":\"FC_2\",\"units\":\"sccm\"},"
-                                  "{\"id\":3,\"smin\":0,\"smax\":100,\"amin\":0,\"amax\":100,\"set\":0,\"act\":0,\"name\":\"FC_3\",\"units\":\"sccm\"},"
-                                  "{\"id\":4,\"smin\":0,\"smax\":100,\"amin\":0,\"amax\":100,\"set\":0,\"act\":0,\"name\":\"FC_4\",\"units\":\"sccm\"},"
-                                  "{\"id\":5,\"smin\":0,\"smax\":100,\"amin\":0,\"amax\":100,\"set\":0,\"act\":0,\"name\":\"FC_5\",\"units\":\"sccm\"},"
-                                  "{\"id\":6,\"smin\":0,\"smax\":100,\"amin\":0,\"amax\":100,\"set\":0,\"act\":0,\"name\":\"FC_6\",\"units\":\"sccm\"},"
-                                  "{\"id\":7,\"smin\":0,\"smax\":100,\"amin\":0,\"amax\":100,\"set\":0,\"act\":0,\"name\":\"FC_7\",\"units\":\"sccm\"}"
-                                  "]}");
+    QString response= box.getAll_json();
+//    QString response=  QString(   "{\"uibk_v\":1,\"FC\":["
+//                                  "{\"id\":0,\"smin\":0,\"smax\":100,\"amin\":0,\"amax\":100,\"set\":0,\"act\":0,\"name\":\"FC_0\",\"units\":\"sccm\"},"
+//                                  "{\"id\":1,\"smin\":0,\"smax\":100,\"amin\":0,\"amax\":100,\"set\":0,\"act\":0,\"name\":\"FC_1\",\"units\":\"sccm\"},"
+//                                  "{\"id\":2,\"smin\":0,\"smax\":100,\"amin\":0,\"amax\":100,\"set\":0,\"act\":0,\"name\":\"FC_2\",\"units\":\"sccm\"},"
+//                                  "{\"id\":3,\"smin\":0,\"smax\":100,\"amin\":0,\"amax\":100,\"set\":0,\"act\":0,\"name\":\"FC_3\",\"units\":\"sccm\"},"
+//                                  "{\"id\":4,\"smin\":0,\"smax\":100,\"amin\":0,\"amax\":100,\"set\":0,\"act\":0,\"name\":\"FC_4\",\"units\":\"sccm\"},"
+//                                  "{\"id\":5,\"smin\":0,\"smax\":100,\"amin\":0,\"amax\":100,\"set\":0,\"act\":0,\"name\":\"FC_5\",\"units\":\"sccm\"},"
+//                                  "{\"id\":6,\"smin\":0,\"smax\":100,\"amin\":0,\"amax\":100,\"set\":0,\"act\":0,\"name\":\"FC_6\",\"units\":\"sccm\"},"
+//                                  "{\"id\":7,\"smin\":0,\"smax\":100,\"amin\":0,\"amax\":100,\"set\":0,\"act\":0,\"name\":\"FC_7\",\"units\":\"sccm\"}"
+//                                  "]}");
 
 
     response += "\r\n\0";
 
     return response;
+}
+
+void tcp_box_connection::simulate_delay(unsigned long low, unsigned long high)
+{
+    unsigned long tm=qrand() % ((high + 1) - low) + low;
+    QThread::msleep(tm);
 }
 
