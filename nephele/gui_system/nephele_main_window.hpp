@@ -11,6 +11,7 @@
 //#include "tcpdriver.h"
 //#include "qvmbackend.h"
 #include "flowcontrollerview.hpp"
+#include "script_editor/script_editor_window.hpp"
 
 namespace talorion {
     class nephele_main_window : public QMainWindow
@@ -28,11 +29,15 @@ namespace talorion {
         QLineEdit* cmd;
         QLabel* response;
         QGridLayout* mainLayout;
+        QPushButton* scriptButton;
+        script_editor_window* script_wnd;
 
     private slots:
         void displayCustomResponse(QByteArray res);
         void dispatchCommand();
         void addAV(analogValue* av);
+
+        void open_script_window();
     };
 }
 

@@ -1,4 +1,4 @@
-#include "scripting_thread.hpp"
+#include "script_system.hpp"
 
 #include <QDebug>
 #include "scripting_worker.hpp"
@@ -6,19 +6,19 @@
 
 namespace talorion {
 
-    scripting_thread::scripting_thread(QObject *par) :
+    script_system::script_system(QObject *par) :
         QThread(par)
     {
         connect(event_manager::get_instance(),SIGNAL(application_aboutToQuit()),this,SLOT(quit()));
     }
 
-    scripting_thread::~scripting_thread()
+    script_system::~script_system()
     {
 
     }
 
 
-    void scripting_thread::run()
+    void script_system::run()
     {
         scripting_worker worker;
         worker.initialize();
@@ -31,5 +31,21 @@ namespace talorion {
         //    connect(&worker,SIGNAL(open_dialog()),this,SIGNAL(open_dialog()));
 
         exec();
+    }
+
+    void script_system::do_start_system()
+    {
+//        QThread* thread = new QThread;
+//        Worker* worker = new Worker();
+//        worker->moveToThread(thread);
+//        connect(worker, SIGNAL(error(QString)), this, SLOT(errorString(QString)));
+//        connect(thread, SIGNAL(started()), worker, SLOT(process()));
+//        connect(worker, SIGNAL(finished()), thread, SLOT(quit()));
+//        connect(worker, SIGNAL(finished()), worker, SLOT(deleteLater()));
+//        connect(thread, SIGNAL(finished()), thread, SLOT(deleteLater()));
+//        thread->start();
+
+        this->start();
+
     }
 }

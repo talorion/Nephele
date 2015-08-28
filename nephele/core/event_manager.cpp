@@ -1,6 +1,8 @@
 #include "event_manager.hpp"
 
 #include <QAtomicPointer>
+#include <QMutex>
+
 
 
 namespace talorion {

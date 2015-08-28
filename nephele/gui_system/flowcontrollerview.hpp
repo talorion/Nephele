@@ -2,7 +2,7 @@
 #define FLOWCONTROLLERVIEW_H
 
 #include <QWidget>
-#include "analogview.hpp"
+
 
 #include <QGridLayout>
 #include <QLabel>
@@ -13,7 +13,8 @@
 
 #include <qcustomplot.hpp>
 
-#include "math.h"
+#include "analogview.hpp"
+
 
 namespace talorion {
 

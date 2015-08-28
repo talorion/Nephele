@@ -1,14 +1,16 @@
 #ifndef TALORION_EVENT_MANAGER_HPP
 #define TALORION_EVENT_MANAGER_HPP
 
+#include <QFile>
 #include <QObject>
-#include <QMutex>
 #include <QVariantMap>
+
+QT_BEGIN_NAMESPACE
+class QMutex;
+QT_END_NAMESPACE
 
 #include "tcpdriverdatatypes.hpp"
 #include "analogvalue.hpp"
-
-
 
 namespace talorion {
 
@@ -36,7 +38,10 @@ namespace talorion {
         void dialog_finished( double);
 
         void start_script(const QString &);
+        void start_script_file(const QString & );
         void script_finished();
+
+        void script_message(const QString& string, const QString& color);
 
         //qvmbackend
         void avSetChangeCommand(QByteArray);

@@ -10,7 +10,9 @@ namespace talorion {
         //dcs(NULL),
         cmd(NULL),
         response(NULL),
-        mainLayout(NULL)
+        mainLayout(NULL),
+        scriptButton(NULL),
+        script_wnd(NULL)
     {
 
 //        tcpDriver* dev1;
@@ -40,23 +42,32 @@ namespace talorion {
 //        //connect(dev1, SIGNAL(receivedCustomData(QByteArray)),this,SLOT(displayCustomResponse(QByteArray)));
 
 
+        script_wnd = new script_editor_window();
+
         QLabel* lbl = new QLabel("&Custom Command");
         cmd = new QLineEdit();
         lbl->setBuddy(cmd);
 
         response = new QLabel();
 
+        scriptButton = new QPushButton("script");
+        connect(scriptButton,SIGNAL(clicked(bool)),this,SLOT(open_script_window()));
+
         //connect(cmd,SIGNAL(editingFinished()),this,SLOT(dispatchCommand()));
 
         mainLayout = new QGridLayout();
-        mainLayout->addWidget(lbl,0,0,1,1);
-        mainLayout->addWidget(cmd,0,1,1,1);
-        mainLayout->addWidget(response,1,0,1,2);
+        mainLayout->addWidget(scriptButton,0,0,1,1);
+        mainLayout->addWidget(lbl,1,0,1,1);
+        mainLayout->addWidget(cmd,1,1,1,1);
+        mainLayout->addWidget(response,2,0,1,2);
+        //setLayout(mainLayout);
 
         // Set layout in QWidget
         QWidget *central_wdgt = new QWidget();
         central_wdgt->setLayout(mainLayout);
         //setLayout(mainLayout);
+
+        setWindowTitle("Nephele");
 
         setCentralWidget(central_wdgt);
     }
@@ -89,6 +100,13 @@ namespace talorion {
     //    int row = dcs->count();
     //    mainLayout->addWidget(new flowControllerView(av,this),row, 0,1,2);
         mainLayout->addWidget(new flowControllerView(av,this));
+    }
+
+    void nephele_main_window::open_script_window()
+    {
+        if(!script_wnd)
+            return;
+        script_wnd->show();
     }
 
 

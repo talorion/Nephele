@@ -1,31 +1,35 @@
 
 #include <QApplication>
 
+
 #include "core/event_manager.hpp"
 
-#include "gui_system/nephele_main_window.hpp"
-#include "script_system/scripting_thread.hpp"
-#include "tcp_box_com_system/tcp_box_com_thread.hpp"
+#include "gui_system/gui_system.hpp"
+#include "script_system/script_system.hpp"
+#include "tcp_box_system/tcp_box_system.hpp"
+
 
 
 using namespace talorion;
 
 int main(int argc, char *argv[])
 {
+    //Q_INIT_RESOURCE(application);
+
+
     QApplication a(argc, argv);
 
     QObject::connect(&a,SIGNAL(aboutToQuit()), event_manager::get_instance(), SIGNAL(application_aboutToQuit()));
 
-    //start the gui
-    nephele_main_window w;
-    w.show();
 
-    //start the systems;
-    scripting_thread *scrpt_thrd = new scripting_thread(&a);
-    scrpt_thrd->start();
+    gui_system* gui_s = new gui_system();
+    gui_s->start_system();
 
-    tcp_box_com_thread *com_thrd = new tcp_box_com_thread(&a);
-    com_thrd->start();
+    script_system *script_s = new script_system();
+    script_s->start_system();
+
+    tcp_box_system *tcp_box_s = new tcp_box_system();
+    tcp_box_s->start_system();
 
     int ret = a.exec();
 

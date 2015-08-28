@@ -11,6 +11,9 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 greaterThan(QT_MAJOR_VERSION, 4): RC_ICONS += nephele.ico
 lessThan(QT_MAJOR_VERSION, 5): RC_FILE = nephele.rc
 
+RESOURCES += \
+    Resources.qrc
+
 TARGET = nephele
 TEMPLATE = app
 
@@ -47,7 +50,6 @@ CONFIG += c++11
 
 SOURCES += main.cpp\
     core/event_manager.cpp \
-    script_system/scripting_thread.cpp \
     script_system/scripting_worker.cpp \
     script_system/script_handler/script_act_handler.cpp \
     script_system/script_handler/script_dialoges_handler.cpp \
@@ -56,22 +58,27 @@ SOURCES += main.cpp\
     gui_system/analogview.cpp \
     gui_system/flowcontrollerview.cpp \
     gui_system/nephele_main_window.cpp \
-    tcp_box_com_system/tcp_box_com_thread.cpp \
-    tcp_box_com_system/qvmbackend.cpp \
-    tcp_box_com_system/tcpdriver.cpp \
-    tcp_box_com_system/tcpcommand.cpp \
-    tcp_box_com_system/tcpcommandqueue.cpp \
+    tcp_box_system/qvmbackend.cpp \
+    tcp_box_system/tcpdriver.cpp \
+    tcp_box_system/tcpcommand.cpp \
+    tcp_box_system/tcpcommandqueue.cpp \
     core/analogvalue.cpp \
-    tcp_box_com_system/flowcontrollerbackend.cpp
+    tcp_box_system/flowcontrollerbackend.cpp \
+    script_system/script_system.cpp \
+    tcp_box_system/tcp_box_system.cpp \
+    gui_system/gui_system.cpp \
+    gui_system/script_editor/script_editor_window.cpp \
+    gui_system/script_editor/highlighter.cpp \
+    gui_system/script_editor/console.cpp \
+    script_system/script_handler/script_log_handler.cpp
 
 HEADERS  += version.hpp \
     nephele.rc \
     core/event_manager.hpp \
-    tcp_box_com_system/tcp_box_com_thread.hpp \
-    tcp_box_com_system/tcpcommand.hpp \
-    tcp_box_com_system/qvmbackend.hpp \
-    tcp_box_com_system/tcpcommandqueue.hpp \
-    tcp_box_com_system/tcpdriver.hpp \
+    tcp_box_system/tcpcommand.hpp \
+    tcp_box_system/qvmbackend.hpp \
+    tcp_box_system/tcpcommandqueue.hpp \
+    tcp_box_system/tcpdriver.hpp \
     gui_system/analogview.hpp \
     gui_system/flowcontrollerview.hpp \
     gui_system/nephele_main_window.hpp \
@@ -79,11 +86,18 @@ HEADERS  += version.hpp \
     script_system/script_handler/script_dialoges_handler.hpp \
     script_system/script_handler/script_set_handler.hpp \
     script_system/script_handler/script_util_handler.hpp \
-    script_system/scripting_thread.hpp \
     script_system/scripting_worker.hpp \
     core/analogvalue.hpp \
     core/tcpdriverdatatypes.hpp \
-    tcp_box_com_system/flowcontrollerbackend.h
+    tcp_box_system/flowcontrollerbackend.h \
+    script_system/script_system.hpp \
+    tcp_box_system/tcp_box_system.hpp \
+    core/abstract_system.hpp \
+    gui_system/gui_system.hpp \
+    gui_system/script_editor/script_editor_window.hpp \
+    gui_system/script_editor/highlighter.h \
+    gui_system/script_editor/console.h \
+    script_system/script_handler/script_log_handler.hpp
 
 
 win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../qcustomplot/release/ -lqcustomplot

@@ -2,7 +2,11 @@
 #define ANALOGVALUE_H
 
 #include <QObject>
-#include <QVariant>
+
+QT_BEGIN_NAMESPACE
+class QVariant;
+QT_END_NAMESPACE
+
 
 namespace talorion {
 

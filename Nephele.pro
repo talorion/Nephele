@@ -10,3 +10,7 @@ nephele.depends           += qcustomplot
 
 # build must be last:
 CONFIG += ordered
+
+DISTFILES += \
+    doc/ToDo.txt \
+    doc/git.txt

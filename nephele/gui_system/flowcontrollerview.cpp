@@ -1,5 +1,7 @@
 #include "flowcontrollerview.hpp"
 
+#include "math.h"
+
 namespace talorion {
 
     flowControllerView::flowControllerView(analogValue* ref_analogValue, QWidget* par) :

@@ -14,10 +14,12 @@ namespace talorion {
         m_act_hdl(),
         m_diag_hdl(),
         m_util_hdl(),
+        m_log_hdl(),
         m_actHdl(),
         m_setHdl(),
         m_diagHdl(),
-        m_utilhdl()
+        m_utilhdl(),
+        m_loghdl()
     {
     }
 
@@ -30,6 +32,7 @@ namespace talorion {
         qDebug()<<"scripting_worker::initialize "<<QThread::currentThreadId();
 
         connect(event_manager::get_instance(),SIGNAL(start_script(QString)),this,SLOT(slot_start_script(QString)));
+        connect(event_manager::get_instance(),SIGNAL(start_script_file(QString)),this,SLOT(slot_start_script_file(QString)));
         connect(event_manager::get_instance(),SIGNAL(act_value_changed(QString,double)),this,SLOT(slot_act_value_changed(QString,double)));
         connect(event_manager::get_instance(),SIGNAL(set_value_changed(QString,double)),this,SLOT(slot_set_value_changed(QString,double)));
 
@@ -53,6 +56,9 @@ namespace talorion {
 
         m_utilhdl= m_script_engine.newQObject(&m_util_hdl);
         m_script_engine.globalObject().setProperty("util", m_utilhdl);
+
+        m_loghdl = m_script_engine.newQObject(&m_log_hdl);
+        m_script_engine.globalObject().setProperty("console", m_loghdl);
     }
 
     void scripting_worker::slot_act_value_changed(const QString &name, double value)
@@ -67,13 +73,49 @@ namespace talorion {
 
     void scripting_worker::slot_start_script(const QString &script)
     {
-        qDebug()<<"scripting_worker::start_script "<<QThread::currentThreadId();
+        //qDebug()<<"scripting_worker::start_script "<<QThread::currentThreadId();
 
-        if(m_script_engine.isEvaluating())
+        if(m_script_engine.isEvaluating()){
+            m_log_hdl.log_fatal("another script is already running");
             return;
+        }
 
-        qDebug() << "start_script is:" << m_script_engine.evaluate(script).toNumber();
+         if (!m_script_engine.canEvaluate(script)){
+             m_log_hdl.log_fatal("cannot evaluate script");
+             return;
+         }
+
+        m_log_hdl.log_info("Starting script");
+        QScriptValue ret = m_script_engine.evaluate(script).toNumber();
+        m_log_hdl.log_info("script returned " + ret.toString());
+
+        if (m_script_engine.hasUncaughtException())
+            m_log_hdl.log_fatal("Script had Uncaught Exceptions"+ m_script_engine.uncaughtException().toString());
+        else
+            m_log_hdl.log_info("script finished successfully");
 
         emit script_finished();
+    }
+
+    void scripting_worker::slot_start_script_file(const QString &script)
+    {
+        QFile script_file(script);
+
+        if(!script_file.open(QIODevice::ReadOnly)) {
+            //qDebug() << "error:" <<script_file.errorString();
+            m_log_hdl.log_error("error:" + script_file.errorString());
+        }
+        QTextStream in(&script_file);
+        QString sc;
+        while(!in.atEnd()) {
+             sc += in.readLine();
+             sc += "\n";
+        }
+        script_file.close();
+
+        //qDebug() <<sc;
+
+        m_log_hdl.log_info("Starting "+script);
+        slot_start_script(sc);
     }
 }

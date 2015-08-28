@@ -4,16 +4,22 @@
 #include <QObject>
 #include <QThread>
 
+#include <core/abstract_system.hpp>
+
 namespace talorion {
 
-    class tcp_box_com_thread : public QThread
+    class tcp_box_system : public QThread, public abstract_system
     {
     public:
-        tcp_box_com_thread(QObject* par=0);
+        tcp_box_system(QObject* par=0);
 
         // QThread interface
     protected:
         virtual void run() Q_DECL_OVERRIDE;
+
+        // abstract_system interface
+    private:
+        virtual void do_start_system() Q_DECL_OVERRIDE;
     };
 
 } // namespace talorion

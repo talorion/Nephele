@@ -1,4 +1,4 @@
-#include "tcp_box_com_thread.hpp"
+#include "tcp_box_system.hpp"
 
 #include "core/event_manager.hpp"
 
@@ -8,13 +8,13 @@
 
 namespace talorion {
 
-    tcp_box_com_thread::tcp_box_com_thread(QObject *par):
+    tcp_box_system::tcp_box_system(QObject *par):
         QThread(par)
     {
         connect(event_manager::get_instance(),SIGNAL(application_aboutToQuit()),this,SLOT(quit()));
     }
 
-    void tcp_box_com_thread::run()
+    void tcp_box_system::run()
     {
         tcpDriver* dev1;
         //qvmbackend* dcs;
@@ -33,6 +33,11 @@ namespace talorion {
 
         delete dcs;
         delete dev1;
+    }
+
+    void tcp_box_system::do_start_system()
+    {
+        this->start();
     }
 
 } // namespace talorion

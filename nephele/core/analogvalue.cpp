@@ -1,5 +1,7 @@
 #include "analogvalue.hpp"
 
+#include <QVariant>
+
 namespace talorion {
 
     analogValue::analogValue(QString name, QString units, double smin, double smax, double amin, double amax, double set, int id, QObject *par) :
