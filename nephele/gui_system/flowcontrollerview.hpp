@@ -1,19 +1,21 @@
 #ifndef FLOWCONTROLLERVIEW_H
 #define FLOWCONTROLLERVIEW_H
 
-#include <QWidget>
-
-
-#include <QGridLayout>
-#include <QLabel>
-#include <QDoubleSpinBox>
-
-#include <QDateTime>
-#include <QTimer>
-
-#include <qcustomplot.hpp>
-
 #include "analogview.hpp"
+
+QT_BEGIN_NAMESPACE
+class QWidget;
+class QGridLayout;
+class QLabel;
+class QDoubleSpinBox;
+class QDateTime;
+class QTimer;
+class QTimer;
+QT_END_NAMESPACE
+
+class QCustomPlot;
+
+
 
 
 namespace talorion {
@@ -22,13 +24,13 @@ namespace talorion {
     {
         Q_OBJECT
     public:
-        flowControllerView(analogValue* ref_analogValue, int hash, QWidget* par = 0);
+        flowControllerView(int m_entity, QWidget* par = 0);
         ~flowControllerView(void);
         Q_DISABLE_COPY(flowControllerView)
 
     signals:
         void setValueChangedByGui(double setValue);
-
+        void change_set_value(int m_entity, double value);
 
     public slots:
         virtual void changeActValue(double actValue) Q_DECL_OVERRIDE;

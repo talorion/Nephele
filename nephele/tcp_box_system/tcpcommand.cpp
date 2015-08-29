@@ -7,8 +7,6 @@ namespace talorion {
         cmdVal(cmd),
         cmdTypeVal(cmdType)
     {
-        //cmdVal = cmd;
-        //cmdTypeVal = cmdType;
     }
 
     tcpCommand::~tcpCommand()

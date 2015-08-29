@@ -2,7 +2,6 @@
 #define GUI_SYSTEM_HPP
 
 #include <QObject>
-
 #include <core/abstract_system.hpp>
 
 namespace talorion{
@@ -18,10 +17,16 @@ namespace talorion{
         Q_DISABLE_COPY(gui_system)
 
     signals:
+        void dialog_finished();
         void dialog_finished(double val);
+        void dialog_finished(QString val);
 
     private slots:
-        void slot_open_dialog();
+        void slot_open_numeric_dialog();
+        void slot_open_string_dialog();
+        void slot_open_file_dialog();
+        void slot_open_info_dialog(const QString &msg);
+        void slot_open_plot_dialog();
 
     private:
         virtual void do_start_system() Q_DECL_OVERRIDE;

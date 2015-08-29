@@ -4,6 +4,8 @@
 #include <QMutex>
 #include <QDebug>
 #include <QSignalMapper>
+#include <QVariant>
+
 
 #include "core/event_manager.hpp"
 #include "analogvalue.hpp"
@@ -25,6 +27,10 @@ namespace talorion {
         set_value_signalMapper = new QSignalMapper(this);
         connect(act_value_signalMapper, SIGNAL(mapped(int)), event_manager::get_instance(), SIGNAL(act_value_changed(int)));
         connect(set_value_signalMapper, SIGNAL(mapped(int)), event_manager::get_instance(), SIGNAL(set_value_changed(int)));
+
+        connect(event_manager::get_instance(),SIGNAL(change_act_value(int,double)),this,SLOT(slot_change_act_value(int,double)));
+        connect(event_manager::get_instance(),SIGNAL(change_set_value(int,double)),this,SLOT(slot_change_set_value(int,double)));
+
     }
 
     entity_manager::~entity_manager()
@@ -51,10 +57,11 @@ namespace talorion {
         _mutex.unlock();
     }
 
-    analogValue* entity_manager::createNewAnalogValue(QString nameVal, QString unitsVal, double smin, double smax, double amin, double amax, double setVal, int id, int box_id)
+    //analogValue* entity_manager::createNewAnalogValue(QString nameVal, QString unitsVal, double smin, double smax, double amin, double amax, double setVal, int id, int box_id)
+    int entity_manager::createNewAnalogValue(QString nameVal, QString unitsVal, double smin, double smax, double amin, double amax, double setVal, int id, int box_id)
     {
-        int hash = generate_Hash(box_id, id);
-        analogValue* fc =get_analogValue(hash);
+        int entity = generate_Hash(box_id, id);
+        analogValue* fc =get_analogValue(entity);
         if (!fc){
             fc = new analogValue(nameVal,
                                  unitsVal,
@@ -65,167 +72,168 @@ namespace talorion {
                                  setVal,
                                  id,
                                  box_id,
-                                 hash
+                                 entity
                                  );
-            analog_values.insert(hash,fc);
+            analog_values.insert(entity,fc);
             connect(fc, SIGNAL(act_value_changed()), act_value_signalMapper, SLOT(map()));
-            act_value_signalMapper->setMapping(fc, hash);
+            act_value_signalMapper->setMapping(fc, entity);
             connect(fc, SIGNAL(set_value_changed()), set_value_signalMapper, SLOT(map()));
-            set_value_signalMapper->setMapping(fc, hash);
+            set_value_signalMapper->setMapping(fc, entity);
         }
 
-        return fc;
+        //return fc;
+        return entity;
     }
 
-    QString entity_manager::get_name_component(int hash) const
+    QString entity_manager::get_name_component(int entity) const
     {
-        analogValue* fc =get_analogValue(hash);
+        analogValue* fc =get_analogValue(entity);
         if (!fc){
             return "";
         }
         return fc->getName();
     }
 
-    QString entity_manager::get_units_component(int hash) const
+    QString entity_manager::get_units_component(int entity) const
     {
-        analogValue* fc =get_analogValue(hash);
+        analogValue* fc =get_analogValue(entity);
         if (!fc){
             return "";
         }
         return fc->getUnits();
     }
 
-    void entity_manager::set_actValue_component(int hash, double val)
+    void entity_manager::set_actValue_component(int entity, double val)
     {
-        analogValue* fc =get_analogValue(hash);
+        analogValue* fc =get_analogValue(entity);
         if (fc){
             fc->setAct(val);
         }
     }
 
-    void entity_manager::set_setValue_component(int hash, double val)
+    void entity_manager::set_setValue_component(int entity, double val)
     {
-        analogValue* fc =get_analogValue(hash);
+        analogValue* fc =get_analogValue(entity);
         if (fc){
             fc->setSet(val);
         }
     }
 
-    void entity_manager::set_setMin_component(int hash, double val)
+    void entity_manager::set_setMin_component(int entity, double val)
     {
-        analogValue* fc =get_analogValue(hash);
+        analogValue* fc =get_analogValue(entity);
         if (fc){
             Q_UNUSED(val);
         }
     }
 
-    void entity_manager::set_setMax_component(int hash, double val)
+    void entity_manager::set_setMax_component(int entity, double val)
     {
-        analogValue* fc =get_analogValue(hash);
+        analogValue* fc =get_analogValue(entity);
         if (fc){
             Q_UNUSED(val);
         }
     }
 
-    void entity_manager::set_actMin_component(int hash, double val)
+    void entity_manager::set_actMin_component(int entity, double val)
     {
-        analogValue* fc =get_analogValue(hash);
+        analogValue* fc =get_analogValue(entity);
         if (fc){
             Q_UNUSED(val);
         }
     }
 
-    void entity_manager::set_actMax_component(int hash, double val)
+    void entity_manager::set_actMax_component(int entity, double val)
     {
-        analogValue* fc =get_analogValue(hash);
+        analogValue* fc =get_analogValue(entity);
         if (fc){
             Q_UNUSED(val);
         }
     }
 
-    void entity_manager::set_name_component(int hash, QString val)
+    void entity_manager::set_name_component(int entity, QString val)
     {
-        analogValue* fc =get_analogValue(hash);
+        analogValue* fc =get_analogValue(entity);
         if (fc){
             Q_UNUSED(val);
         }
     }
 
-    void entity_manager::set_units_component(int hash, QString val)
+    void entity_manager::set_units_component(int entity, QString val)
     {
-        analogValue* fc =get_analogValue(hash);
+        analogValue* fc =get_analogValue(entity);
         if (fc){
             Q_UNUSED(val);
         }
     }
 
-    double entity_manager::get_actValue_component(int hash) const
+    double entity_manager::get_actValue_component(int entity) const
     {
-        analogValue* fc =get_analogValue(hash);
+        analogValue* fc =get_analogValue(entity);
         if (!fc){
             return -1;
         }
         return fc->getAct();
     }
 
-    double entity_manager::get_setValue_component(int hash) const
+    double entity_manager::get_setValue_component(int entity) const
     {
-        analogValue* fc =get_analogValue(hash);
+        analogValue* fc =get_analogValue(entity);
         if (!fc){
             return -1;
         }
         return fc->getSet();
     }
 
-    double entity_manager::get_setMin_component(int hash) const
+    double entity_manager::get_setMin_component(int entity) const
     {
-        analogValue* fc =get_analogValue(hash);
+        analogValue* fc =get_analogValue(entity);
         if (!fc){
             return -1;
         }
         return fc->getSmin();
     }
 
-    double entity_manager::get_setMax_component(int hash) const
+    double entity_manager::get_setMax_component(int entity) const
     {
-        analogValue* fc =get_analogValue(hash);
+        analogValue* fc =get_analogValue(entity);
         if (!fc){
             return -1;
         }
         return fc->getSmax();
     }
 
-    double entity_manager::get_actMin_component(int hash) const
+    double entity_manager::get_actMin_component(int entity) const
     {
-        analogValue* fc =get_analogValue(hash);
+        analogValue* fc =get_analogValue(entity);
         if (!fc){
             return -1;
         }
         return fc->getAmin();
     }
 
-    double entity_manager::get_actMax_component(int hash) const
+    double entity_manager::get_actMax_component(int entity) const
     {
-        analogValue* fc =get_analogValue(hash);
+        analogValue* fc =get_analogValue(entity);
         if (!fc){
             return -1;
         }
         return fc->getAmax();
     }
 
-    int entity_manager::get_id_component(int hash) const
+    int entity_manager::get_id_component(int entity) const
     {
-        analogValue* fc =get_analogValue(hash);
+        analogValue* fc =get_analogValue(entity);
         if (!fc){
             return -1;
         }
         return fc->getId();
     }
 
-    analogValue *entity_manager::get_analogValue(int hash) const
+    analogValue *entity_manager::get_analogValue(int entity) const
     {
         //qDebug() << hash;
-        QMap<int, analogValue*>::ConstIterator av = analog_values.constFind(hash);
+        QMap<int, analogValue*>::ConstIterator av = analog_values.constFind(entity);
         if (av == analog_values.constEnd()){
             return NULL;
         }
@@ -235,6 +243,16 @@ namespace talorion {
     int entity_manager::generate_Hash(int box_id, int value_id) const
     {
         return (box_id*P1 + value_id)*P2;
+    }
+
+    void entity_manager::slot_change_act_value(int entity, double value)
+    {
+        set_actValue_component(entity, value);
+    }
+
+    void entity_manager::slot_change_set_value(int entity, double value)
+    {
+        set_setValue_component(entity, value);
     }
 
 

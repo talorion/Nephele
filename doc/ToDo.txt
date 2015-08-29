@@ -4,6 +4,7 @@ the number between "+"(eg +100+) represents the proirity 0=lowest
 +100+ logfile(system??)
 +100+ optimize data structure to be used as scripting handlers
 +100+ optimize data structure for qml gui use (very low prio)
++1+ move analogValue to a db like map structure
 
 === GUI system ===
 +50+ script_editor
@@ -19,10 +20,6 @@ the number between "+"(eg +100+) represents the proirity 0=lowest
 +100+ toftps_handler
 +100+ tcpbox_handler
 +100+ gui_handler
-	+100+ file dialog
-	+100+ numeric dialog
-	+100+ string dialog
-	+100+ info dialog
 	+100+ plot dialog
 	+100+ log to console
 +100+ util_handler

@@ -2,7 +2,7 @@
 
 #include <QAtomicPointer>
 #include <QMutex>
-
+#include <QFile>
 
 
 namespace talorion {

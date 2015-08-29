@@ -1,7 +1,6 @@
 #ifndef CONSOLE_H
 #define CONSOLE_H
 
-#include <QWidget>
 #include <QTextEdit>
 
 Q_DECLARE_METATYPE(QTextCursor)

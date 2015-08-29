@@ -2,9 +2,10 @@
 
 #include <QVariant>
 
+
 namespace talorion {
 
-    analogValue::analogValue(QString name, QString units, double smin, double smax, double amin, double amax, double set, int id, int box_id, int hash, QObject *par) :
+    analogValue::analogValue(QString name, QString units, double smin, double smax, double amin, double amax, double set, int id, int box_id, int entity, QObject *par) :
         QObject(par),
         setVal(set),
         actVal(0),
@@ -16,32 +17,10 @@ namespace talorion {
         unitsVal(units),
         idVal(id),
         boxidVal(box_id),
-        hashVal(hash)
+        m_entity(entity)
     {
-//        nameVal = name;
-//        unitsVal = units;
-//        sminVal = smin;
-//        smaxVal = smax;
-//        aminVal = amin;
-//        amaxVal = amax;
-//        setVal = set;
-        //idVal = id;
     }
 
-//    analogValue::analogValue(QVariant descriptor, QObject *par):
-//        QObject(par),
-//        setVal(0),
-//        actVal(0),
-//        sminVal(0),
-//        smaxVal(0),
-//        aminVal(0),
-//        amaxVal(0),
-//        nameVal(),
-//        unitsVal(),
-//        idVal(0)
-//    {
-//        Q_UNUSED(descriptor)
-//    }
 
     analogValue::~analogValue()
     {
@@ -92,40 +71,15 @@ namespace talorion {
         return idVal;
     }
 
-//    void analogValue::changeSetByGui(double val)
-//    {
-//        if (setVal != val)
-//        {
-//            setVal = val;
-//            emit setChangedByGui(val, idVal);
-//        }
-//    }
-    int analogValue::getHashVal() const
+    int analogValue::getEntity() const
     {
-        return hashVal;
+        return m_entity;
     }
 
     int analogValue::getBoxidVal() const
     {
         return boxidVal;
     }
-
-
-//    void analogValue::updateActByConnection(double val)
-//    {
-//        if (actVal != val)
-//        {
-//            actVal = val;
-//            emit actChanged(val);
-//            emit actChanged();
-//        }
-//    }
-
-//    void analogValue::updateSetByConnection(double val)
-//    {
-//        emit setChangedByConnection(val);
-//        //emit set_value_changed();
-//    }
 
     void analogValue::setAct(double val)
     {

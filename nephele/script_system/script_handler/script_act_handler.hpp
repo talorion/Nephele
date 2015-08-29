@@ -12,9 +12,7 @@ namespace talorion {
         ~script_act_handler();
         Q_DISABLE_COPY(script_act_handler)
 
-    signals:
-
-    public slots:
+        //Q_INVOKABLE void sleep(unsigned long millisecs);
     };
 
 }

@@ -9,14 +9,11 @@
 #include <QLabel>
 #include <QMap>
 
-//#include "tcpdriver.h"
-//#include "qvmbackend.h"
-#include "flowcontrollerview.hpp"
-#include "script_editor/script_editor_window.hpp"
 
 namespace talorion {
 
     class flowControllerView;
+    class script_editor_window;
 
     class nephele_main_window : public QMainWindow
     {
@@ -31,8 +28,6 @@ namespace talorion {
         void send_custom_command(const QString& cm);
 
     private:
-        //tcpDriver* dev1;
-        //qvmbackend* dcs;
         QLineEdit* cmd;
         QLabel* response;
         QGridLayout* mainLayout;
@@ -43,9 +38,9 @@ namespace talorion {
     private slots:
         void displayCustomResponse(const QString& cm);
         void dispatchCommand();
-        void addAV(analogValue* av);
-        void slot_act_value_changed(int hash);
-        void slot_set_value_changed(int hash);
+        void addAV(int entity);
+        void slot_act_value_changed(int entity);
+        void slot_set_value_changed(int entity);
 
         void open_script_window();
     };

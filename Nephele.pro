@@ -13,4 +13,6 @@ CONFIG += ordered
 
 DISTFILES += \
     doc/ToDo.txt \
-    doc/git.txt
+    doc/git.txt \
+    doc/testscript.js
+

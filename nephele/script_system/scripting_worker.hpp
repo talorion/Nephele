@@ -28,8 +28,8 @@ namespace talorion {
         void script_finished();
 
     private slots:
-        void slot_act_value_changed(const QString &name, double value);
-        void slot_set_value_changed(const QString &name, double value);
+        void slot_act_value_changed(int entity);
+        void slot_set_value_changed(int entity);
         void slot_start_script(const QString &script);
         void slot_start_script_file(const QString &script);
 

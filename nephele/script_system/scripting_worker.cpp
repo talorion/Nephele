@@ -4,6 +4,7 @@
 #include <QThread>
 
 #include "core/event_manager.hpp"
+#include "core/entity_manager.hpp"
 
 namespace talorion {
 
@@ -33,8 +34,8 @@ namespace talorion {
 
         connect(event_manager::get_instance(),SIGNAL(start_script(QString)),this,SLOT(slot_start_script(QString)));
         connect(event_manager::get_instance(),SIGNAL(start_script_file(QString)),this,SLOT(slot_start_script_file(QString)));
-        //connect(event_manager::get_instance(),SIGNAL(act_value_changed(QString,double)),this,SLOT(slot_act_value_changed(QString,double)));
-        //connect(event_manager::get_instance(),SIGNAL(set_value_changed(QString,double)),this,SLOT(slot_set_value_changed(QString,double)));
+        connect(event_manager::get_instance(),SIGNAL(act_value_changed(int)),this,SLOT(slot_act_value_changed(int)));
+        connect(event_manager::get_instance(),SIGNAL(set_value_changed(int)),this,SLOT(slot_set_value_changed(int)));
 
         //m_script_engine = new QScriptEngine();
 
@@ -61,14 +62,18 @@ namespace talorion {
         m_script_engine.globalObject().setProperty("console", m_loghdl);
     }
 
-    void scripting_worker::slot_act_value_changed(const QString &name, double value)
+    void scripting_worker::slot_act_value_changed(int entity)
     {
-        m_actHdl.setProperty(name, value);
+        QString nme = entity_manager::get_instance()->get_name_component(entity);
+        double val = entity_manager::get_instance()->get_actValue_component(entity);
+        m_actHdl.setProperty(nme, val);
     }
 
-    void scripting_worker::slot_set_value_changed(const QString &name, double value)
+    void scripting_worker::slot_set_value_changed(int entity)
     {
-        m_setHdl.setProperty(name, value);
+        QString nme = entity_manager::get_instance()->get_name_component(entity);
+        double val = entity_manager::get_instance()->get_setValue_component(entity);
+        m_setHdl.setProperty(nme, val);
     }
 
     void scripting_worker::slot_start_script(const QString &script)

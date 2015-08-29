@@ -10,9 +10,15 @@ namespace talorion {
         analog()
     {
         connect(this,SIGNAL(avSetChangeCommand(QByteArray)),event_manager::get_instance(),SIGNAL(avSetChangeCommand(QByteArray)));
-        connect(this,SIGNAL(newAnalogValue(analogValue*)),event_manager::get_instance(),SIGNAL(newAnalogValue(analogValue*)));
+        connect(this,SIGNAL(newAnalogValue(int)),event_manager::get_instance(),SIGNAL(newAnalogValue(int)));
+
         connect(event_manager::get_instance(),SIGNAL(receivedData(QVariantMap,tcpDriverDataTypes::dataType, int)), this, SLOT(processData(QVariantMap,tcpDriverDataTypes::dataType,int)));
         connect(event_manager::get_instance(),SIGNAL(error(QString)), this, SLOT(logError(QString)));
+        connect(event_manager::get_instance(),SIGNAL(set_value_changed(int)), this, SLOT(avSetChangeProxy(int)));
+
+        connect(this,SIGNAL(change_act_value(int,double)),event_manager::get_instance(),SIGNAL(change_act_value(int,double)));
+        connect(this,SIGNAL(change_set_value(int,double)),event_manager::get_instance(),SIGNAL(change_set_value(int,double)));
+
     }
 
     qvmbackend::~qvmbackend()
@@ -31,10 +37,6 @@ namespace talorion {
         {
         case tcpDriverDataTypes::ALLDATA:
         {
-            foreach (analogValue* av, analog)
-            {
-                av->deleteLater();
-            }
 
             analog.clear();
             if((desc.find("AV").value().canConvert<QVariantList>()))
@@ -44,17 +46,7 @@ namespace talorion {
                     QVariantMap tmp = desc.find("AV").value().toList()[i].toMap();
                     if (tmp.contains("name") && tmp.contains("units") && tmp.contains("smin") && tmp.contains("smax") && tmp.contains("amin") && tmp.contains("amax") && tmp.contains("set") && tmp.contains("id"))
                     {
-                        //                        analogValue* av = new analogValue(tmp.find("name").value().toString(),
-                        //                                                          tmp.find("units").value().toString(),
-                        //                                                          tmp.find("smin").value().toDouble(),
-                        //                                                          tmp.find("smax").value().toDouble(),
-                        //                                                          tmp.find("amin").value().toDouble(),
-                        //                                                          tmp.find("amax").value().toDouble(),
-                        //                                                          tmp.find("set").value().toDouble(),
-                        //                                                          tmp.find("id").value().toInt()
-                        //                                                          );
-
-                        analogValue* av = entity_manager::get_instance()->createNewAnalogValue(tmp.find("name").value().toString(),
+                        int av = entity_manager::get_instance()->createNewAnalogValue(tmp.find("name").value().toString(),
                                                                                                tmp.find("units").value().toString(),
                                                                                                tmp.find("smin").value().toDouble(),
                                                                                                tmp.find("smax").value().toDouble(),
@@ -66,7 +58,6 @@ namespace talorion {
                                                                                                );
                         analog.append(av);
                         emit newAnalogValue(av);
-                        connect(av,SIGNAL(setChangedByGui(double,int)), this, SLOT(avSetChangeProxy(double,int)));
                         qDebug() << "Found Analog Value: " << desc.find("AV").value().toList()[i].toMap().find("name").value().toString();
                     }
                 }
@@ -81,24 +72,20 @@ namespace talorion {
                     QVariantMap tmp = desc.find("AV").value().toList()[i].toMap();
                     if (i<analog.length())
                     {
-                        //                        if (tmp.contains("act"))
-                        //                            analog[i]->updateActByConnection(tmp.find("act").value().toDouble());
-                        //                        if (tmp.contains("set"))
-                        //                            analog[i]->updateSetByConnection(tmp.find("set").value().toDouble());
-                        int hash= analog[i]->getHashVal();
+                        int entity= analog[i];
                         if (tmp.contains("act")){
                             double val = tmp.find("act").value().toDouble();
-                            entity_manager::get_instance()->set_actValue_component(hash,val);
-                            //flowcontroller[i]->updateActByConnection(tmp.find("act").value().toDouble());
+                            //entity_manager::get_instance()->set_actValue_component(entity,val);
+                            emit change_act_value(entity,val);
+
                         }
                         if (tmp.contains("set")){
                             double val = tmp.find("set").value().toDouble();
-                            entity_manager::get_instance()->set_setValue_component(hash,val);
-                            //flowcontroller[i]->updateSetByConnection(tmp.find("set").value().toDouble());
+                            //entity_manager::get_instance()->set_setValue_component(entity,val);
+                            emit change_set_value(entity,val);
                         }
 
                     }
-                    //                    qDebug() << "AV_" << QString::number(i) << " act: " << tmp.find("act").value().toString();
                 }
             }
 
@@ -109,6 +96,14 @@ namespace talorion {
     void qvmbackend::logError(QString errorString)
     {
         qDebug() << errorString << endl;
+    }
+
+    void qvmbackend::avSetChangeProxy(int entity)
+    {
+        double value =entity_manager::get_instance()->get_setValue_component(entity);
+        int id = entity_manager::get_instance()->get_id_component(entity);
+        if(id >= 0)
+            avSetChangeProxy(value, id);
     }
 
     void qvmbackend::avSetChangeProxy(double value, int id)

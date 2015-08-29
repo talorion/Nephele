@@ -2,13 +2,13 @@
 #define TALORION_ENTITY_MANAGER_HPP
 
 #include <QObject>
-#include <QMap>
-#include <QVariant>
 
+#include <QMap>
 
 QT_BEGIN_NAMESPACE
 class QMutex;
 class QSignalMapper;
+class QVariant;
 QT_END_NAMESPACE
 
 
@@ -37,35 +37,39 @@ namespace talorion {
 
         //        void setComponentDataForEntity(int component_id, int entity_id,  QVariantMap component_data);
 
-        analogValue* createNewAnalogValue(QString nameVal, QString unitsVal, double smin, double smax, double amin, double amax, double setVal, int id, int box_id ) ;
+        //analogValue* createNewAnalogValue(QString nameVal, QString unitsVal, double smin, double smax, double amin, double amax, double setVal, int id, int box_id ) ;
+        int createNewAnalogValue(QString nameVal, QString unitsVal, double smin, double smax, double amin, double amax, double setVal, int id, int box_id ) ;
 
-        double get_actValue_component(int hash)const;
-        double get_setValue_component(int hash)const;
-        double get_setMin_component(int hash)const;
-        double get_setMax_component(int hash)const;
-        double get_actMin_component(int hash)const;
-        double get_actMax_component(int hash)const;
-        int get_id_component(int hash)const;
-        QString get_name_component(int hash)const;
-        QString get_units_component(int hash)const;
+        double get_actValue_component(int entity)const;
+        double get_setValue_component(int entity)const;
+        double get_setMin_component(int entity)const;
+        double get_setMax_component(int entity)const;
+        double get_actMin_component(int entity)const;
+        double get_actMax_component(int entity)const;
+        int get_id_component(int entity)const;
+        QString get_name_component(int entity)const;
+        QString get_units_component(int entity)const;
 
-        void set_actValue_component(int hash, double val);
-        void set_setValue_component(int hash, double val);
-        void set_setMin_component(int hash, double val);
-        void set_setMax_component(int hash, double val);
-        void set_actMin_component(int hash, double val);
-        void set_actMax_component(int hash, double val);
-        void set_name_component(int hash, QString val);
-        void set_units_component(int hash, QString val);
+
 
     signals:
-        //void act_value_changed(int id);
-        //void set_value_changed(int id);
 
     private:
-        analogValue* get_analogValue(int hash)const;
-
+        analogValue* get_analogValue(int entity)const;
         int generate_Hash(int box_id, int value_id)const;
+
+        void set_actValue_component(int entity, double val);
+        void set_setValue_component(int entity, double val);
+        void set_setMin_component(int entity, double val);
+        void set_setMax_component(int entity, double val);
+        void set_actMin_component(int entity, double val);
+        void set_actMax_component(int entity, double val);
+        void set_name_component(int entity, QString val);
+        void set_units_component(int entity, QString val);
+
+    private slots:
+        void slot_change_act_value(int entity, double value);
+        void slot_change_set_value(int entity, double value);
 
     private:
         QMap<int, analogValue*> analog_values;

@@ -1,16 +1,16 @@
 #ifndef TALORION_EVENT_MANAGER_HPP
 #define TALORION_EVENT_MANAGER_HPP
 
-#include <QFile>
+
 #include <QObject>
 #include <QVariantMap>
 
 QT_BEGIN_NAMESPACE
 class QMutex;
+class QFile;
 QT_END_NAMESPACE
 
 #include "tcpdriverdatatypes.hpp"
-#include "analogvalue.hpp"
 
 namespace talorion {
 
@@ -31,16 +31,25 @@ namespace talorion {
     signals:
         void application_aboutToQuit();
 
-        //void act_value_changed(QString, double);
-        //void set_value_changed(QString, double);
-        void act_value_changed(int id);
-        void set_value_changed(int id);
+        void act_value_changed(int);
+        void set_value_changed(int);
+
+        void change_act_value(int, double);
+        void change_set_value(int, double);
 
         void send_custom_command(const QString&);
         void receivedCustomData(const QString &);
 
-        void open_dialog();
-        void dialog_finished( double);
+        void open_numeric_dialog();
+        void open_string_dialog();
+        void open_file_dialog();
+        void open_info_dialog(const QString &msg);
+        void open_plot_dialog();
+
+        void dialog_finished();
+        void dialog_finished(double val);
+        void dialog_finished(QString val);
+
 
         void start_script(const QString &);
         void start_script_file(const QString & );
@@ -50,7 +59,7 @@ namespace talorion {
 
         //qvmbackend
         void avSetChangeCommand(QByteArray);
-        void newAnalogValue(analogValue*);
+        void newAnalogValue(int);
 
         //tcpDriver
         void receivedData(QVariantMap, tcpDriverDataTypes::dataType, int);

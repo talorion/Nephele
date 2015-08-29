@@ -3,7 +3,6 @@
 
 #include <QWidget>
 
-#include "core/analogvalue.hpp"
 
 namespace talorion {
 
@@ -11,7 +10,7 @@ namespace talorion {
     {
         Q_OBJECT
     public:
-        analogView(analogValue* ref_analogValue, int hash=0,QWidget *par = 0);
+        analogView(int entity=0,QWidget *par = 0);
         ~analogView(void);
         Q_DISABLE_COPY(analogView)
 
@@ -22,8 +21,8 @@ namespace talorion {
         virtual void changeActValue(double actValue) = 0;
         virtual void changeSetValue(double setValue) = 0;
     protected:
-        analogValue* data;
-        const int hashValue;
+        //analogValue* data;
+        const int m_entity;
 
     };
 }

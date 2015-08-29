@@ -5,8 +5,6 @@
 #include <QVariant>
 #include <QDebug>
 
-
-#include "core/analogvalue.hpp"
 #include "tcpdriver.hpp"
 
 namespace talorion {
@@ -22,16 +20,22 @@ namespace talorion {
         int count();
 
     signals:
-        void newAnalogValue(analogValue* av);
+        //void newAnalogValue(analogValue* av);
+        void newAnalogValue(int);
         void avSetChangeCommand(QByteArray command);
+
+        void change_act_value(int, double);
+        void change_set_value(int, double);
 
     public slots:
         void processData(QVariantMap desc, tcpDriverDataTypes::dataType type, int box_id);
         void logError(QString errorString);
     private slots:
+        void avSetChangeProxy(int entity);
         void avSetChangeProxy(double value, int id);
     private:
-        QList<analogValue*> analog;
+        //QList<analogValue*> analog;
+        QList<int> analog;
     };
 }
 
