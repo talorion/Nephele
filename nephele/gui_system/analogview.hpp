@@ -11,7 +11,7 @@ namespace talorion {
     {
         Q_OBJECT
     public:
-        analogView(analogValue* ref_analogValue, QWidget *par = 0);
+        analogView(analogValue* ref_analogValue, int hash=0,QWidget *par = 0);
         ~analogView(void);
         Q_DISABLE_COPY(analogView)
 
@@ -23,6 +23,7 @@ namespace talorion {
         virtual void changeSetValue(double setValue) = 0;
     protected:
         analogValue* data;
+        const int hashValue;
 
     };
 }

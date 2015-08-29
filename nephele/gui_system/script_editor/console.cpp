@@ -15,7 +15,7 @@ namespace talorion{
         setReadOnly(true);
         setFontFamily("monospace");
         //setStyleSheet("QTextEdit { background-color: 'black'; }");
-        setStyleSheet("QTextEdit { font-family: Courier; font-size: 12pt; background-color: 'white'; }");
+        setStyleSheet("QTextEdit { font-family: Courier; font-size: 12pt; background-color: 'lightGray'; }");
         setTextColor(QColor("white"));
 
         connect(event_manager::get_instance(),SIGNAL(script_message(QString,QString)),this,SLOT(write(QString,QString)));

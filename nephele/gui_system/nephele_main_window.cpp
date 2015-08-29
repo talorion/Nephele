@@ -1,6 +1,9 @@
 #include "nephele_main_window.hpp"
 
 #include "core/event_manager.hpp"
+#include "core/entity_manager.hpp"
+
+
 
 namespace talorion {
 
@@ -12,35 +15,42 @@ namespace talorion {
         response(NULL),
         mainLayout(NULL),
         scriptButton(NULL),
-        script_wnd(NULL)
+        script_wnd(NULL),
+        fc_views()
     {
 
-//        tcpDriver* dev1;
-//        qvmbackend* dcs;
+        //        tcpDriver* dev1;
+        //        qvmbackend* dcs;
 
-//        dcs = new qvmbackend(this);
-//        dev1 = new tcpDriver("uibkav getAll","uibkav getAll"); // for DC Board
-//        //dev1 = new tcpDriver("uibkafc getAll","uibkafc getActSet"); // for AFC Board
+        //        dcs = new qvmbackend(this);
+        //        dev1 = new tcpDriver("uibkav getAll","uibkav getAll"); // for DC Board
+        //        //dev1 = new tcpDriver("uibkafc getAll","uibkafc getActSet"); // for AFC Board
 
-//        //connect(dcs,SIGNAL(avSetChangeCommand(QByteArray)), dev1, SLOT(setDataCommand(QByteArray)));
-//        connect(dcs,SIGNAL(avSetChangeCommand(QByteArray)),event_manager::get_instance(),SIGNAL(avSetChangeCommand(QByteArray)));
-//        connect(event_manager::get_instance(),SIGNAL(avSetChangeCommand(QByteArray)),dev1,SLOT(setDataCommand(QByteArray)));
+        //        //connect(dcs,SIGNAL(avSetChangeCommand(QByteArray)), dev1, SLOT(setDataCommand(QByteArray)));
+        //        connect(dcs,SIGNAL(avSetChangeCommand(QByteArray)),event_manager::get_instance(),SIGNAL(avSetChangeCommand(QByteArray)));
+        //        connect(event_manager::get_instance(),SIGNAL(avSetChangeCommand(QByteArray)),dev1,SLOT(setDataCommand(QByteArray)));
 
-//        //connect(dcs, SIGNAL(newAnalogValue(analogValue*)), this, SLOT(addAV(analogValue*)));
-//        connect(dcs,SIGNAL(newAnalogValue(analogValue*)),event_manager::get_instance(),SIGNAL(newAnalogValue(analogValue*)));
+        //        //connect(dcs, SIGNAL(newAnalogValue(analogValue*)), this, SLOT(addAV(analogValue*)));
+        //        connect(dcs,SIGNAL(newAnalogValue(analogValue*)),event_manager::get_instance(),SIGNAL(newAnalogValue(analogValue*)));
         connect(event_manager::get_instance(),SIGNAL(newAnalogValue(analogValue*)),this, SLOT(addAV(analogValue*)));
 
-//        //connect(dev1, SIGNAL(receivedData(QVariantMap,tcpDriverDataTypes::dataType)), dcs, SLOT(processData(QVariantMap,tcpDriverDataTypes::dataType)));
-//        connect(dev1, SIGNAL(receivedData(QVariantMap,tcpDriverDataTypes::dataType)),event_manager::get_instance(),SIGNAL(receivedData(QVariantMap,tcpDriverDataTypes::dataType)));
-//        connect(event_manager::get_instance(),SIGNAL(receivedData(QVariantMap,tcpDriverDataTypes::dataType)), dcs, SLOT(processData(QVariantMap,tcpDriverDataTypes::dataType)));
+        //        //connect(dev1, SIGNAL(receivedData(QVariantMap,tcpDriverDataTypes::dataType)), dcs, SLOT(processData(QVariantMap,tcpDriverDataTypes::dataType)));
+        //        connect(dev1, SIGNAL(receivedData(QVariantMap,tcpDriverDataTypes::dataType)),event_manager::get_instance(),SIGNAL(receivedData(QVariantMap,tcpDriverDataTypes::dataType)));
+        //        connect(event_manager::get_instance(),SIGNAL(receivedData(QVariantMap,tcpDriverDataTypes::dataType)), dcs, SLOT(processData(QVariantMap,tcpDriverDataTypes::dataType)));
 
-//        //connect(dev1,SIGNAL(error(QString)), dcs, SLOT(logError(QString)));
-//        connect(dev1,SIGNAL(error(QString)),event_manager::get_instance(),SIGNAL(error(QString)));
-//        connect(event_manager::get_instance(),SIGNAL(error(QString)), dcs, SLOT(logError(QString)));
+        //        //connect(dev1,SIGNAL(error(QString)), dcs, SLOT(logError(QString)));
+        //        connect(dev1,SIGNAL(error(QString)),event_manager::get_instance(),SIGNAL(error(QString)));
+        //        connect(event_manager::get_instance(),SIGNAL(error(QString)), dcs, SLOT(logError(QString)));
 
-//        dev1->connectDevice("192.168.0.90");
-//        //connect(dev1, SIGNAL(receivedCustomData(QByteArray)),this,SLOT(displayCustomResponse(QByteArray)));
+        //        dev1->connectDevice("192.168.0.90");
+        //        //connect(dev1, SIGNAL(receivedCustomData(QByteArray)),this,SLOT(displayCustomResponse(QByteArray)));
 
+
+        connect(this, SIGNAL(send_custom_command(QString)),event_manager::get_instance(),SIGNAL(send_custom_command(QString)));
+        connect(event_manager::get_instance(),SIGNAL(receivedCustomData(QString)),this,SLOT(displayCustomResponse(QString)));
+
+        connect(event_manager::get_instance(),SIGNAL(act_value_changed(int)),this,SLOT(slot_act_value_changed(int)));
+        connect(event_manager::get_instance(),SIGNAL(set_value_changed(int)),this,SLOT(slot_set_value_changed(int)));
 
         script_wnd = new script_editor_window();
 
@@ -77,29 +87,52 @@ namespace talorion {
 
     }
 
-    void nephele_main_window::displayCustomResponse(QByteArray res)
+    void nephele_main_window::displayCustomResponse(const QString &cm)
     {
-        response->setText(QString(res));
+        response->setText(cm);
     }
 
-//    QString lastcmd = "";
+    QString lastcmd = "";
     void nephele_main_window::dispatchCommand()
     {
-//        if (lastcmd != cmd->text())// workaround for Qt bug
-//        {
-//            lastcmd = cmd->text();// workaround for Qt bug
-//            cmd->blockSignals(true); // workaround for Qt bug
-//            dev1->customCommand(cmd->text().toLocal8Bit());
-//            cmd->blockSignals(false); // workaround for Qt bug
-//        }
+        if (lastcmd != cmd->text())// workaround for Qt bug
+        {
+            lastcmd = cmd->text();// workaround for Qt bug
+            cmd->blockSignals(true); // workaround for Qt bug
+            //dev1->customCommand(cmd->text().toLocal8Bit());
+            emit send_custom_command(cmd->text());
+            cmd->blockSignals(false); // workaround for Qt bug
+        }
     }
 
     void nephele_main_window::addAV(analogValue *av)
     {
+        int hash = av->getHashVal();
+        QMap<int, flowControllerView*>::ConstIterator fcv = fc_views.constFind(hash);
+        if (fcv == fc_views.constEnd()){
+            flowControllerView* tmp = new flowControllerView(av, av->getHashVal(), this);
+            fc_views.insert(hash,tmp);
+            mainLayout->addWidget(tmp);
+        }
+    }
 
-    //    int row = dcs->count();
-    //    mainLayout->addWidget(new flowControllerView(av,this),row, 0,1,2);
-        mainLayout->addWidget(new flowControllerView(av,this));
+    void nephele_main_window::slot_act_value_changed(int hash)
+    {
+        QMap<int, flowControllerView*>::ConstIterator fcv = fc_views.constFind(hash);
+        if (fcv != fc_views.constEnd()){
+            double tmp = entity_manager::get_instance()->get_actValue_component(hash);
+            fcv.value()->changeActValue(tmp);
+        }
+    }
+
+    void nephele_main_window::slot_set_value_changed(int hash)
+    {
+        QMap<int, flowControllerView*>::ConstIterator fcv = fc_views.constFind(hash);
+        if (fcv != fc_views.constEnd()){
+            //double tmp = entity_manager::get_instance()->get_actValue_component(hash);
+            double tmp = entity_manager::get_instance()->get_setValue_component(hash);
+            fcv.value()->changeSetValue(tmp);
+        }
     }
 
     void nephele_main_window::open_script_window()

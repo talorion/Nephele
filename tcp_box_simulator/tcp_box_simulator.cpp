@@ -94,6 +94,7 @@ void tcp_box_simulator::sessionOpened()
     for (int i = 0; i < ipAddressesList.size(); ++i) {
         if (ipAddressesList.at(i) != QHostAddress::LocalHost && ipAddressesList.at(i).toIPv4Address()) {
 
+            ipAddress="";
             if (!tcpServer->listen(ipAddressesList.at(i),2701)) {
                 //QMessageBox::critical(this, tr("Fortune Server"),tr("Unable to start the server: %1.").arg(tcpServer->errorString()));
                 close();

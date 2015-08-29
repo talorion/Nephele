@@ -22,18 +22,21 @@ namespace talorion {
     {
         Q_OBJECT
     public:
-        flowControllerView(analogValue* ref_analogValue, QWidget* par = 0);
+        flowControllerView(analogValue* ref_analogValue, int hash, QWidget* par = 0);
         ~flowControllerView(void);
         Q_DISABLE_COPY(flowControllerView)
 
     signals:
         void setValueChangedByGui(double setValue);
 
+
     public slots:
-        void changeActValue(double actValue);
-        void changeSetValue(double setValue);
+        virtual void changeActValue(double actValue) Q_DECL_OVERRIDE;
+        virtual void changeSetValue(double setValue) Q_DECL_OVERRIDE;
+
     private slots:
         void newValueTimeout();
+        void slot_set_value_changed(double val);
 
     private:
         void updatePlot(double value);

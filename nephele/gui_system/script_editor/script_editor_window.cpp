@@ -35,13 +35,14 @@ namespace talorion
         clsAct(NULL)
     {
 
+        setupEditor();
+        setupConsole();
 
         createActions();
         createMenus();
         createToolBars();
         createStatusBar();
-        setupEditor();
-        setupConsole();
+
 
         layout = new QVBoxLayout();
         QWidget *wnd = new QWidget();

@@ -1,16 +1,15 @@
 the number between "+"(eg +100+) represents the proirity 0=lowest 
 
 === core system ===
-+100+ logfile
++100+ logfile(system??)
 +100+ optimize data structure to be used as scripting handlers
 +100+ optimize data structure for qml gui use (very low prio)
-
-
 
 === GUI system ===
 +50+ script_editor
     +50+ implement autocomplete
     +25+ fix syntaxhighlighting functions, strings, buildin function
++25+ settings dialog
 	
 === TCP_BOX system ===
 +100+ Multiple connections/boxes

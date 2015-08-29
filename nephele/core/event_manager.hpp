@@ -31,8 +31,13 @@ namespace talorion {
     signals:
         void application_aboutToQuit();
 
-        void act_value_changed(QString, double);
-        void set_value_changed(QString, double);
+        //void act_value_changed(QString, double);
+        //void set_value_changed(QString, double);
+        void act_value_changed(int id);
+        void set_value_changed(int id);
+
+        void send_custom_command(const QString&);
+        void receivedCustomData(const QString &);
 
         void open_dialog();
         void dialog_finished( double);
@@ -41,14 +46,14 @@ namespace talorion {
         void start_script_file(const QString & );
         void script_finished();
 
-        void script_message(const QString& string, const QString& color);
+        void script_message(const QString&, const QString&);
 
         //qvmbackend
         void avSetChangeCommand(QByteArray);
         void newAnalogValue(analogValue*);
 
         //tcpDriver
-        void receivedData(QVariantMap, tcpDriverDataTypes::dataType);
+        void receivedData(QVariantMap, tcpDriverDataTypes::dataType, int);
         void error(QString);
 
     private:

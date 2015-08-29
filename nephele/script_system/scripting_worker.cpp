@@ -29,18 +29,18 @@ namespace talorion {
 
     void scripting_worker::initialize()
     {
-        qDebug()<<"scripting_worker::initialize "<<QThread::currentThreadId();
+        //qDebug()<<"scripting_worker::initialize "<<QThread::currentThreadId();
 
         connect(event_manager::get_instance(),SIGNAL(start_script(QString)),this,SLOT(slot_start_script(QString)));
         connect(event_manager::get_instance(),SIGNAL(start_script_file(QString)),this,SLOT(slot_start_script_file(QString)));
-        connect(event_manager::get_instance(),SIGNAL(act_value_changed(QString,double)),this,SLOT(slot_act_value_changed(QString,double)));
-        connect(event_manager::get_instance(),SIGNAL(set_value_changed(QString,double)),this,SLOT(slot_set_value_changed(QString,double)));
+        //connect(event_manager::get_instance(),SIGNAL(act_value_changed(QString,double)),this,SLOT(slot_act_value_changed(QString,double)));
+        //connect(event_manager::get_instance(),SIGNAL(set_value_changed(QString,double)),this,SLOT(slot_set_value_changed(QString,double)));
 
         //m_script_engine = new QScriptEngine();
 
         //hdl = new script_set_handler();
         //connect(&m_set_hdl,SIGNAL(pcu_value(QString,double)),this,SIGNAL(value_changed(QString,double)));
-        connect(&m_set_hdl,SIGNAL(val(QString,double)),event_manager::get_instance(),SIGNAL(set_value_changed(QString,double)));
+        //connect(&m_set_hdl,SIGNAL(val(QString,double)),event_manager::get_instance(),SIGNAL(set_value_changed(QString,double)));
         m_setHdl = m_script_engine.newQObject(&m_set_hdl);
         m_script_engine.globalObject().setProperty("set", m_setHdl);
 

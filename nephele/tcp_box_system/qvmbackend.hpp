@@ -26,7 +26,7 @@ namespace talorion {
         void avSetChangeCommand(QByteArray command);
 
     public slots:
-        void processData(QVariantMap desc, tcpDriverDataTypes::dataType type);
+        void processData(QVariantMap desc, tcpDriverDataTypes::dataType type, int box_id);
         void logError(QString errorString);
     private slots:
         void avSetChangeProxy(double value, int id);

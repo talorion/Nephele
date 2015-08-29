@@ -7,6 +7,7 @@ namespace talorion{
     public:
         abstract_system(){}
         virtual ~abstract_system(){}
+        Q_DISABLE_COPY(abstract_system)
 
         void start_system(){return do_start_system();}
 

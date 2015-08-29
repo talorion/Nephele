@@ -1,12 +1,40 @@
 #include "gui_system.hpp"
 
-#include "nephele_main_window.hpp"
+
 #include <QDebug>
+#include <QInputDialog>
+
+#include "nephele_main_window.hpp"
+#include "core/event_manager.hpp"
 
 namespace talorion{
-    gui_system::gui_system(QObject *par) : QObject(par), abstract_system()
+    gui_system::gui_system(QObject *par) :
+        QObject(par),
+        abstract_system(),
+        window(NULL)
     {
 
+    }
+
+    gui_system::~gui_system()
+    {
+
+    }
+
+    void gui_system::slot_open_dialog()
+    {
+        if(!window){
+            emit dialog_finished(NAN);
+            return;
+        }
+
+        bool ok;
+        double d = QInputDialog::getDouble(NULL, tr("QInputDialog::getDouble()"), tr("Amount:"), 37.56, -10000, 10000, 2, &ok);
+
+        if (!ok)
+           d=NAN;
+
+        emit dialog_finished(d);
     }
 
     void talorion::gui_system::do_start_system()
@@ -30,7 +58,7 @@ namespace talorion{
         while( QTime::currentTime() < dieTime )
             QApplication::instance()->processEvents();
 
-        nephele_main_window* window= new nephele_main_window();
+        window= new nephele_main_window();
         QDesktopWidget *desktop = QApplication::desktop();
 
         screenWidth = desktop->width();
@@ -44,5 +72,10 @@ namespace talorion{
         window->show();
 
         splash.finish(window);
+
+        // connect dialoges
+        connect(event_manager::get_instance(),SIGNAL(open_dialog()),this,SLOT(slot_open_dialog()));
+        connect(this, SIGNAL(dialog_finished(double)),event_manager::get_instance(),SIGNAL(dialog_finished(double)));
+        // connect dialoges
     }
 }

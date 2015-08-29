@@ -70,7 +70,8 @@ SOURCES += main.cpp\
     gui_system/script_editor/script_editor_window.cpp \
     gui_system/script_editor/highlighter.cpp \
     gui_system/script_editor/console.cpp \
-    script_system/script_handler/script_log_handler.cpp
+    script_system/script_handler/script_log_handler.cpp \
+    core/entity_manager.cpp
 
 HEADERS  += version.hpp \
     nephele.rc \
@@ -97,7 +98,8 @@ HEADERS  += version.hpp \
     gui_system/script_editor/script_editor_window.hpp \
     gui_system/script_editor/highlighter.h \
     gui_system/script_editor/console.h \
-    script_system/script_handler/script_log_handler.hpp
+    script_system/script_handler/script_log_handler.hpp \
+    core/entity_manager.hpp
 
 
 win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../qcustomplot/release/ -lqcustomplot

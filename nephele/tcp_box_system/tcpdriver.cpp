@@ -8,7 +8,7 @@
 
 namespace talorion {
 
-    tcpDriver::tcpDriver(QByteArray getInfoCommand, QByteArray getMinimalSetActCommand, QObject *par):
+    tcpDriver::tcpDriver(int id, QByteArray getInfoCommand, QByteArray getMinimalSetActCommand, QObject *par):
         QObject(par),
         tcpSocket(NULL),
         transmissionContext(),
@@ -25,12 +25,15 @@ namespace talorion {
         ongoingRequest(false),
         requestCounter(0),
         responseCounter(0),
-        queue(NULL)
+        queue(NULL),
+        box_id(id)
     {
 
         connect(event_manager::get_instance(),SIGNAL(avSetChangeCommand(QByteArray)),this,SLOT(setDataCommand(QByteArray)));
-        connect(this, SIGNAL(receivedData(QVariantMap,tcpDriverDataTypes::dataType)),event_manager::get_instance(),SIGNAL(receivedData(QVariantMap,tcpDriverDataTypes::dataType)));
+        connect(event_manager::get_instance(),SIGNAL(send_custom_command(QString)),this,SLOT(customCommand(QString)));
+        connect(this, SIGNAL(receivedData(QVariantMap,tcpDriverDataTypes::dataType,int)),event_manager::get_instance(),SIGNAL(receivedData(QVariantMap,tcpDriverDataTypes::dataType,int)));
         connect(this,SIGNAL(error(QString)),event_manager::get_instance(),SIGNAL(error(QString)));
+        connect(this,SIGNAL(receivedCustomData(QString)),event_manager::get_instance(),SIGNAL(receivedCustomData(QString)));
 
         getInfoCommand_val = getInfoCommand;
         getMinimalSetActCommand_val = getMinimalSetActCommand;
@@ -69,7 +72,7 @@ namespace talorion {
             pollTimer->start();
             return true;
         }
-        emit error("Connection Timeout to " + ip + ":" + QString::number(port));
+        emit error("Connection Timeout to " + ip + ":" + QString::number(port),getBox_id());
         return false;
     }
 
@@ -81,8 +84,9 @@ namespace talorion {
         queue->pushLast(command);
     }
 
-    void tcpDriver::customCommand(QByteArray cmd)
+    void tcpDriver::customCommand(const QString& cm)
     {
+        QByteArray cmd = cm.toLocal8Bit();
         //genericCriticalCommand(cmd, tcpDriverDataTypes::SETDATA);
         tcpCommand* command = new tcpCommand(cmd,tcpDriverDataTypes::CUSTOMCOMMAND);
         queue->pushLast(command);
@@ -101,6 +105,11 @@ namespace talorion {
         transmissionContext = type;
         requestCounter++;
     }
+    int tcpDriver::getBox_id() const
+    {
+        return box_id;
+    }
+
 
     void tcpDriver::recheckConnection()
     {
@@ -108,7 +117,7 @@ namespace talorion {
         {
             if (connectDevice(lastIP, lastPort, timeoutTimer->interval()))
             {
-                emit connected();
+                emit connected(getBox_id());
             }
         }
     }
@@ -144,7 +153,7 @@ namespace talorion {
             {
                 timeoutTimer->stop();
                 QJsonObject obj = QJsonDocument::fromJson(recBuf).object();
-                emit receivedData(obj.toVariantMap(), transmissionContext);
+                emit receivedData(obj.toVariantMap(), transmissionContext, getBox_id());
                 ongoingRequest = false;
                 pollTimer->start();
                 responseCounter++;
@@ -155,7 +164,7 @@ namespace talorion {
             ongoingRequest = false;
             timeoutTimer->stop();
             if (tmp.trimmed() != "OK")
-                emit setDataError("Could not set Value: " + tmp);
+                emit setDataError("Could not set Value: " + tmp, getBox_id());
             pollTimer->start();
             responseCounter++;
         }
@@ -163,13 +172,14 @@ namespace talorion {
         {
             ongoingRequest = false;
             timeoutTimer->stop();
-            emit receivedCustomData(tmp);
+            QString rec= QString::fromLocal8Bit(tmp);
+            emit receivedCustomData(rec, getBox_id());
             pollTimer->start();
             responseCounter++;
         }
         else if (transmissionContext == tcpDriverDataTypes::IDLE)
         {
-            emit error("Unexpected Package received: " + tmp);
+            emit error("Unexpected Package received: " + tmp, getBox_id());
         }
     }
 
@@ -180,14 +190,14 @@ namespace talorion {
             ongoingRequest = false;
             pollTimer->start();
             qDebug() << "Receive Timeout!";
-            emit error("Receive Timeout");
+            emit error("Receive Timeout", getBox_id());
         }
     }
 
     void tcpDriver::tcpError(QAbstractSocket::SocketError tcpErr)
     {
         Q_UNUSED(tcpErr)
-        emit error(tcpSocket->errorString());
+        emit error(tcpSocket->errorString(), getBox_id());
     }
 }
 

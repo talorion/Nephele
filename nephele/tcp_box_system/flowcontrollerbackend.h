@@ -22,9 +22,10 @@ namespace talorion {
         void fcSetChangeCommand(QByteArray command);
 
     public slots:
-        void processData(QVariantMap desc, tcpDriverDataTypes::dataType type);
+        void processData(QVariantMap desc, tcpDriverDataTypes::dataType type, int box_id);
         void logError(QString errorString);
     private slots:
+        void fcSetChangeProxy(int hash);
         void fcSetChangeProxy(double value, int id);
     private:
         QList<analogValue*> flowcontroller;

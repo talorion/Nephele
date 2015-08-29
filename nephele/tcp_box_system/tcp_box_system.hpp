@@ -12,6 +12,8 @@ namespace talorion {
     {
     public:
         tcp_box_system(QObject* par=0);
+        ~tcp_box_system();
+        Q_DISABLE_COPY(tcp_box_system)
 
         // QThread interface
     protected:
@@ -20,6 +22,10 @@ namespace talorion {
         // abstract_system interface
     private:
         virtual void do_start_system() Q_DECL_OVERRIDE;
+        int new_box_id();
+
+    private:
+        int curr_box_id;
     };
 
 } // namespace talorion

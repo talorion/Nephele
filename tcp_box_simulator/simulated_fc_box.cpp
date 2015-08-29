@@ -23,10 +23,10 @@ void simulated_fc_box::init_all_fcs()
         simulated_fc fc;
         fc.set_Id(i);
         fc.set_Smin(0);
-        fc.set_Smax(100);
+        fc.set_Smax(i*10+200);
         fc.set_Amin(0);
-        fc.set_Amax(100);
-        fc.set_Set(50);
+        fc.set_Amax(i*10+200);
+        fc.set_Set(i*10+10);
         fc.set_Name(nme);
         fc.set_Units("sccm");
 
