@@ -3,10 +3,13 @@
 
 #include <QObject>
 #include <QThread>
+#include <QList>
 
 #include <core/abstract_system.hpp>
 
 namespace talorion {
+
+    class tcpDriver;
 
     class tcp_box_system : public QThread, public abstract_system
     {
@@ -22,10 +25,13 @@ namespace talorion {
         // abstract_system interface
     private:
         virtual void do_start_system() Q_DECL_OVERRIDE;
+
         int new_box_id();
+        void connect_to_fc_box(QString ip, quint16 port=2701);
 
     private:
         int curr_box_id;
+        QList<tcpDriver*> drivers;
     };
 
 } // namespace talorion

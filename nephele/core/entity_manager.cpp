@@ -19,7 +19,10 @@ namespace talorion {
         analog_values(),
         act_value_signalMapper(NULL),
         set_value_signalMapper(NULL),
-        current_identity_id(0)
+        current_identity_id(0),
+        components(),
+        entities(),
+        entity_components()
     {
         act_value_signalMapper = new QSignalMapper(this);
         set_value_signalMapper = new QSignalMapper(this);
@@ -64,7 +67,33 @@ namespace talorion {
     int entity_manager::createNewEntity(QString human_readable_label)
     {
         Q_UNUSED(human_readable_label);
-        return current_identity_id++;
+        int entity_id= current_identity_id++;
+        entity_t et;
+        et.entity_id= entity_id;
+        et.human_readable_label =human_readable_label;
+        entities.insert(entity_id, et);
+        return entity_id;
+    }
+
+    void entity_manager::createComponentAndAddTo(component_id comp_id, int entity_id)
+    {
+        if(!components.contains(comp_id)){
+            comonent_t ct;
+            ct.component_id = comp_id;
+            ct.human_readable_description = QString();
+            ct.official_name = QString();
+            ct.table_name = QString();
+            components.insert(comp_id, ct);
+        }
+
+        int component_data_id = (comp_id*P1 + entity_id)*P2;
+
+        entity_components_t ect;
+        ect.component_data_id = component_data_id;
+        ect.component_id = comp_id;
+        ect.entity_id = entity_id;
+        entity_components.insert(component_data_id, ect);
+
     }
 
     //analogValue* entity_manager::createNewAnalogValue(QString nameVal, QString unitsVal, double smin, double smax, double amin, double amax, double setVal, int id, int box_id)
@@ -124,6 +153,16 @@ namespace talorion {
         }
         return -1;
     }
+
+    //    int entity_manager::create_new_fc_box_connection(QString nameVal, int box_id, QString ip_address, quint16 port)
+    //    {
+    //        int new_id = createNewEntity();
+
+    //        createComponentAndAddTo( IP_ADDRESS_COMPONENT, new_id );
+    //        createComponentAndAddTo( PORT_COMPONENT, new_id );
+    //        createComponentAndAddTo( BOX_ID_COMPONENT, new_id );
+    //        createComponentAndAddTo( NAME_COMPONENT, new_id );
+    //    }
 
     void entity_manager::set_actValue_component(int entity, double val)
     {

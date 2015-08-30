@@ -15,7 +15,6 @@ the number between "+"(eg +100+) represents the proirity 0=lowest
 +25+ settings dialog
 	
 === TCP_BOX system ===
-+100+ Multiple connections/boxes
 
 === SCRIPT system ===
 +100+ act_handler
