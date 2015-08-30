@@ -6,13 +6,14 @@
 #include <QTcpSocket>
 
 
-tcp_box_simulator::tcp_box_simulator(QWidget *par) :
+tcp_box_simulator::tcp_box_simulator(qint16 port, QWidget *par) :
     QDialog(par),
     statusLabel(),
     quitButton(),
     tcpServer(0),
     networkSession(0),
-    box(NULL)
+    box(NULL),
+    m_port(port)
 {
     box = new simulated_fc_box();
 
@@ -99,7 +100,7 @@ void tcp_box_simulator::sessionOpened()
         if (ipAddressesList.at(i) != QHostAddress::LocalHost && ipAddressesList.at(i).toIPv4Address()) {
 
             ipAddress="";
-            if (!tcpServer->listen(ipAddressesList.at(i),2701)) {
+            if (!tcpServer->listen(ipAddressesList.at(i),m_port)) {
                 //QMessageBox::critical(this, tr("Fortune Server"),tr("Unable to start the server: %1.").arg(tcpServer->errorString()));
                 close();
                 continue;

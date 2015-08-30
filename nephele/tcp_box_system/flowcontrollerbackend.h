@@ -5,14 +5,18 @@
 #include <QVariant>
 #include <QDebug>
 
-#include "tcpdriver.hpp"
+#include "tcpdriverdatatypes.hpp"
 
 namespace talorion {
+    class tcpDriver;
+
     class flowControllerBackend : public QObject
     {
         Q_OBJECT
     public:
         flowControllerBackend(QObject *par = 0);
+        ~flowControllerBackend(void);                                  // not desctructable
+        Q_DISABLE_COPY(flowControllerBackend)
         int count();
 
     signals:
@@ -34,6 +38,7 @@ namespace talorion {
         QList<int> flowcontroller;
         QList<double> actbuffer;
         QList<double> setbuffer;
+        //const tcpDriver* drv;
     };
 }
 

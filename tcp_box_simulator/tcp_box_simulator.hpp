@@ -17,7 +17,7 @@ class tcp_box_simulator : public QDialog
     Q_OBJECT
 
 public:
-    explicit tcp_box_simulator(QWidget *par = 0);
+    explicit tcp_box_simulator(qint16 port =2701,QWidget *par = 0);
     ~tcp_box_simulator();
     Q_DISABLE_COPY(tcp_box_simulator)
 
@@ -30,6 +30,7 @@ private:
     tcp_box_server *tcpServer;
     QNetworkSession *networkSession;
     simulated_fc_box* box;
+    const qint16 m_port;
 };
 
 #endif // TCP_BOX_SIMULATOR_HPP

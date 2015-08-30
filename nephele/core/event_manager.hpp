@@ -10,7 +10,7 @@ class QMutex;
 class QFile;
 QT_END_NAMESPACE
 
-#include "tcpdriverdatatypes.hpp"
+//#include "tcpdriverdatatypes.hpp"
 
 namespace talorion {
 
@@ -59,11 +59,11 @@ namespace talorion {
         void script_message(const QString&, const QString&);
 
         //qvmbackend
-        void avSetChangeCommand(QByteArray);
+        //void avSetChangeCommand(QByteArray);
         void newAnalogValue(int);
 
         //tcpDriver
-        void receivedData(QVariantMap, tcpDriverDataTypes::dataType, int);
+        //void receivedData(QVariantMap, tcpDriverDataTypes::dataType, int);
         void error(QString);
 
     private:

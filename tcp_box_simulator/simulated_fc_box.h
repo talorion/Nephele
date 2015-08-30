@@ -22,6 +22,7 @@ public:
 
 private:
     QList<simulated_fc*> all_fcs;
+    int random_id;
 
 };
 

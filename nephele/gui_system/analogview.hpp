@@ -14,8 +14,8 @@ namespace talorion {
         ~analogView(void);
         Q_DISABLE_COPY(analogView)
 
-    signals:
-        void setValueChangedByGui(double setValue);
+    //signals:
+    //    void setValueChangedByGui(double setValue);
 
     public slots:
         virtual void changeActValue(double actValue) = 0;

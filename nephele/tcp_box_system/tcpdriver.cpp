@@ -3,6 +3,9 @@
 #include "core/event_manager.hpp"
 
 #include <QDebug>
+#include <QHostAddress>
+
+#include "flowcontrollerbackend.h"
 
 #define POLLINTERVAL_MS 10
 
@@ -27,12 +30,19 @@ namespace talorion {
         responseCounter(0),
         queue(NULL),
         box_id(id),
-        mutex()
+        mutex(),
+        m_back(NULL)
     {
+        qDebug()<<"creating box"<<box_id;
 
-        connect(event_manager::get_instance(),SIGNAL(avSetChangeCommand(QByteArray)),this,SLOT(setDataCommand(QByteArray)));
+        //flowControllerBackend* m_back;
+        m_back= new flowControllerBackend();
+        connect(this, SIGNAL(receivedData(QVariantMap,tcpDriverDataTypes::dataType,int)),m_back,SLOT(processData(QVariantMap,tcpDriverDataTypes::dataType,int)));
+        connect(m_back, SIGNAL(fcSetChangeCommand(QByteArray)),this,SLOT(setDataCommand(QByteArray)));
+
+        //connect(event_manager::get_instance(),SIGNAL(avSetChangeCommand(QByteArray)),this,SLOT(setDataCommand(QByteArray)));
         connect(event_manager::get_instance(),SIGNAL(send_custom_command(QString)),this,SLOT(customCommand(QString)));
-        connect(this, SIGNAL(receivedData(QVariantMap,tcpDriverDataTypes::dataType,int)),event_manager::get_instance(),SIGNAL(receivedData(QVariantMap,tcpDriverDataTypes::dataType,int)));
+        //connect(this, SIGNAL(receivedData(QVariantMap,tcpDriverDataTypes::dataType,int)),event_manager::get_instance(),SIGNAL(receivedData(QVariantMap,tcpDriverDataTypes::dataType,int)));
         connect(this,SIGNAL(error(QString)),event_manager::get_instance(),SIGNAL(error(QString)));
         connect(this,SIGNAL(receivedCustomData(QString)),event_manager::get_instance(),SIGNAL(receivedCustomData(QString)));
 
@@ -82,7 +92,7 @@ namespace talorion {
 
     void tcpDriver::setDataCommand(QByteArray cmd)
     {
-        //genericCriticalCommand(cmd, tcpDriverDataTypes::SETDATA);
+        //qDebug()<<"sending "<<getBox_id()<<cmd<<"to "<<tcpSocket->peerAddress()<<tcpSocket->peerPort()<<"from "<<tcpSocket->localAddress()<<tcpSocket->localPort();
         tcpCommand* command = new tcpCommand(cmd,tcpDriverDataTypes::SETDATA);
         queue->pushLast(command);
     }
@@ -90,13 +100,13 @@ namespace talorion {
     void tcpDriver::customCommand(const QString& cm)
     {
         QByteArray cmd = cm.toLocal8Bit();
-        //genericCriticalCommand(cmd, tcpDriverDataTypes::SETDATA);
         tcpCommand* command = new tcpCommand(cmd,tcpDriverDataTypes::CUSTOMCOMMAND);
         queue->pushLast(command);
     }
 
     void tcpDriver::sendCommand(QByteArray cmd, tcpDriverDataTypes::dataType type)
     {
+        //qDebug()<<getBox_id()<<cmd;
         QMutexLocker locker(&mutex);
 
         recheckConnection();
@@ -132,17 +142,13 @@ namespace talorion {
 
     void tcpDriver::poll()
     {
-        //    qDebug() << "TX: " << QString::number(requestCounter) << " RX: " << QString::number(responseCounter);
-        //    qDebug() << "Queue Length: " << QString::number(queue->length());
         tcpCommand* cmd = queue->getNext();
         if (cmd != NULL)
         {
-            qDebug() << "Working on command: " << cmd->getCmd();
             sendCommand(cmd->getCmd(),cmd->getCmdType());
         }
         else
         {
-            //sendCommand("uibkafc getActSet",tcpDriverDataTypes::ACTSETDATA);
             sendCommand(getMinimalSetActCommand_val,tcpDriverDataTypes::ACTSETDATA);
         }
     }
@@ -150,8 +156,8 @@ namespace talorion {
     void tcpDriver::parsePackage()
     {
         QMutexLocker locker(&mutex);
+
         QByteArray tmp = tcpSocket->readAll();
-        //qDebug() << tmp ;
         if (transmissionContext == tcpDriverDataTypes::ALLDATA || transmissionContext == tcpDriverDataTypes::ACTSETDATA)
         {
             curlyOpen += tmp.count('{');
@@ -170,6 +176,7 @@ namespace talorion {
         }
         else if (transmissionContext == tcpDriverDataTypes::SETDATA)
         {
+            //qDebug()<<"receiving from "<<tcpSocket->peerAddress()<<tcpSocket->peerPort()<<"to "<<tcpSocket->localAddress()<<tcpSocket->localPort();
             ongoingRequest = false;
             timeoutTimer->stop();
             if (tmp.trimmed() != "OK")

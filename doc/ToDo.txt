@@ -1,29 +1,32 @@
 the number between "+"(eg +100+) represents the proirity 0=lowest 
 
 === core system ===
-+100+ logfile(system??)
-+100+ optimize data structure to be used as scripting handlers
-+100+ optimize data structure for qml gui use (very low prio)
++50+ allow digital, analog, and trace array values
++25+ logfile(system??)
++25+ optimize data structure to be used as scripting handlers
++1+ optimize data structure for qml gui use (very low prio)
 +1+ move analogValue to a db like map structure
 
 === GUI system ===
 +50+ script_editor
     +50+ implement autocomplete
     +25+ fix syntaxhighlighting functions, strings, buildin function
+    +25+ script debugger
 +25+ settings dialog
 	
 === TCP_BOX system ===
 +100+ Multiple connections/boxes
 
 === SCRIPT system ===
++100+ act_handler
++100+ dialoges_handler
+        +100+ plot dialog
++100+ log_handler
++100+ set_handler
++100+ util_handler
 +100+ tofdaq_handler
 +100+ toftps_handler
 +100+ tcpbox_handler
-+100+ gui_handler
-	+100+ plot dialog
-	+100+ log to console
-+100+ util_handler
-        +100+ sleep
 
 === TOF_DAQ_DLL system ===
 +50+ start Measurement
@@ -45,5 +48,3 @@ the number between "+"(eg +100+) represents the proirity 0=lowest
 === TOF_TPS_REMOTE system ===
 +1+ webinterface/json com
 
-== tcp box simulator ==
-implement setter

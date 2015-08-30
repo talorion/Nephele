@@ -29,7 +29,8 @@ namespace talorion {
     public:
         static entity_manager *get_instance();
         static void destroy();
-        //        int createNewEntity(QString human_readable_label=QString());
+
+        int createNewEntity(QString human_readable_label=QString());
 
         //        void createComponentAndAddTo(int component_id, int entity_id);
 
@@ -60,7 +61,6 @@ namespace talorion {
 
     private:
         analogValue* get_analogValue(int entity)const;
-        int generate_Hash(int box_id, int value_id)const;
 
         void set_actValue_component(int entity, double val);
         void set_setValue_component(int entity, double val);
@@ -79,6 +79,7 @@ namespace talorion {
         QMap<int, analogValue*> analog_values;
         QSignalMapper *act_value_signalMapper;
         QSignalMapper *set_value_signalMapper;
+        int current_identity_id;
 
     private:
         static QAtomicPointer<entity_manager> _instance;

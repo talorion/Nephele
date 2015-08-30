@@ -13,8 +13,9 @@
 
 #include "tcpcommandqueue.hpp"
 
-
 namespace talorion {
+
+    class flowControllerBackend;
 
     class tcpDriver : public QObject
     {
@@ -22,7 +23,7 @@ namespace talorion {
 
     public:
         tcpDriver(int id, QByteArray getInfoCommand, QByteArray getMinimalSetActCommand, QObject* par=0);
-         ~tcpDriver(void);
+        ~tcpDriver(void);
         Q_DISABLE_COPY(tcpDriver)
 
         enum requestStatus {OK,BUSY,DISCONNECTED,CONNECTION_ERROR};
@@ -34,7 +35,7 @@ namespace talorion {
         void setDataCommand(QByteArray cmd);
         void customCommand(const QString &cm);
 
-    signals:    
+    signals:
         void receivedData(QVariantMap data, tcpDriverDataTypes::dataType type, int box_id=0);
         void receivedCustomData(const QString &cm, int box_id=0);
         void error(QString errorString, int box_id=0);
@@ -65,6 +66,8 @@ namespace talorion {
         tcpCommandQueue* queue;
         const int box_id;
         QMutex mutex;
+
+        flowControllerBackend* m_back;
 
 
     private slots:

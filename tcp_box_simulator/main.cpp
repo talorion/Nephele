@@ -14,8 +14,8 @@ int main(int argc, char *argv[])
     tcp_box_simulator w;
     w.show();
 
-//    tcp_box_simulator t;
-//    t.show();
+    tcp_box_simulator t(4414);
+    t.show();
 
     return a.exec();
 }

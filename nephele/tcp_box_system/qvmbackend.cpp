@@ -12,7 +12,7 @@ namespace talorion {
         connect(this,SIGNAL(avSetChangeCommand(QByteArray)),event_manager::get_instance(),SIGNAL(avSetChangeCommand(QByteArray)));
         connect(this,SIGNAL(newAnalogValue(int)),event_manager::get_instance(),SIGNAL(newAnalogValue(int)));
 
-        connect(event_manager::get_instance(),SIGNAL(receivedData(QVariantMap,tcpDriverDataTypes::dataType, int)), this, SLOT(processData(QVariantMap,tcpDriverDataTypes::dataType,int)));
+        //connect(event_manager::get_instance(),SIGNAL(receivedData(QVariantMap,tcpDriverDataTypes::dataType, int)), this, SLOT(processData(QVariantMap,tcpDriverDataTypes::dataType,int)));
         connect(event_manager::get_instance(),SIGNAL(error(QString)), this, SLOT(logError(QString)));
         connect(event_manager::get_instance(),SIGNAL(set_value_changed(int)), this, SLOT(avSetChangeProxy(int)));
 
@@ -58,7 +58,6 @@ namespace talorion {
                                                                                                );
                         analog.append(av);
                         emit newAnalogValue(av);
-                        qDebug() << "Found Analog Value: " << desc.find("AV").value().toList()[i].toMap().find("name").value().toString();
                     }
                 }
             }

@@ -89,7 +89,6 @@ HEADERS  += version.hpp \
     script_system/script_handler/script_util_handler.hpp \
     script_system/scripting_worker.hpp \
     core/analogvalue.hpp \
-    core/tcpdriverdatatypes.hpp \
     tcp_box_system/flowcontrollerbackend.h \
     script_system/script_system.hpp \
     tcp_box_system/tcp_box_system.hpp \
@@ -99,7 +98,8 @@ HEADERS  += version.hpp \
     gui_system/script_editor/highlighter.h \
     gui_system/script_editor/console.h \
     script_system/script_handler/script_log_handler.hpp \
-    core/entity_manager.hpp
+    core/entity_manager.hpp \
+    tcp_box_system/tcpdriverdatatypes.hpp
 
 
 win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../qcustomplot/release/ -lqcustomplot

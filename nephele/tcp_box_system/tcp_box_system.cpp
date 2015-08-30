@@ -12,6 +12,8 @@ namespace talorion {
         QThread(par),
         curr_box_id(0)
     {
+        qRegisterMetaType<tcpDriverDataTypes::dataType>("tcpDriverDataTypes::dataType");
+
         connect(event_manager::get_instance(),SIGNAL(application_aboutToQuit()),this,SLOT(quit()));
     }
 
@@ -22,25 +24,26 @@ namespace talorion {
 
     void tcp_box_system::run()
     {
+
+
+        //flowControllerBackend* dcs;
+        //dcs = new flowControllerBackend();
+
         tcpDriver* dev1;
-        //qvmbackend* dcs;
-        flowControllerBackend* dcs;
-
-        dcs = new flowControllerBackend();
-
-        dev1 = new tcpDriver(new_box_id(), "uibkafc getAll","uibkafc getActSet"); // for AFC Board
+        dev1 = new tcpDriver(0, "uibkafc getAll","uibkafc getActSet"); // for AFC Board
         //dev1->connectDevice("192.168.0.90");
         dev1->connectDevice("10.0.1.23");
 
         //sudo ifconfig eth0:0 192.168.168.90
         //sudo ifconfig eth0:0 down
-        //tcpDriver* dev2;
-        //dev2 = new tcpDriver(new_box_id(), "uibkafc getAll","uibkafc getActSet"); // for AFC Board
-        //dev2->connectDevice("192.168.168.90");
+        tcpDriver* dev2;
+        dev2 = new tcpDriver(1, "uibkafc getAll","uibkafc getActSet"); // for AFC Board
+        dev2->connectDevice("10.0.1.23",4414);
+        //dev2->connectDevice("localhost");
 
         exec();
 
-        delete dcs;
+        //delete dcs;
         delete dev1;
     }
 

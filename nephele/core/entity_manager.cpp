@@ -6,11 +6,8 @@
 #include <QSignalMapper>
 #include <QVariant>
 
-
 #include "core/event_manager.hpp"
 #include "analogvalue.hpp"
-
-
 
 namespace talorion {
 
@@ -21,7 +18,8 @@ namespace talorion {
         QObject(par),
         analog_values(),
         act_value_signalMapper(NULL),
-        set_value_signalMapper(NULL)
+        set_value_signalMapper(NULL),
+        current_identity_id(0)
     {
         act_value_signalMapper = new QSignalMapper(this);
         set_value_signalMapper = new QSignalMapper(this);
@@ -63,10 +61,16 @@ namespace talorion {
         _mutex.unlock();
     }
 
+    int entity_manager::createNewEntity(QString human_readable_label)
+    {
+        Q_UNUSED(human_readable_label);
+        return current_identity_id++;
+    }
+
     //analogValue* entity_manager::createNewAnalogValue(QString nameVal, QString unitsVal, double smin, double smax, double amin, double amax, double setVal, int id, int box_id)
     int entity_manager::createNewAnalogValue(QString nameVal, QString unitsVal, double smin, double smax, double amin, double amax, double setVal, int id, int box_id)
     {
-        int entity = generate_Hash(box_id, id);
+        int entity = createNewEntity(QString("box:")+QString::number(box_id)+QString(" value:")+nameVal);
         analogValue* fc =get_analogValue(entity);
         if (!fc){
             fc = new analogValue(nameVal,
@@ -250,17 +254,11 @@ namespace talorion {
 
     analogValue *entity_manager::get_analogValue(int entity) const
     {
-        //qDebug() << hash;
         QMap<int, analogValue*>::ConstIterator av = analog_values.constFind(entity);
         if (av == analog_values.constEnd()){
             return NULL;
         }
         return av.value();
-    }
-
-    int entity_manager::generate_Hash(int box_id, int value_id) const
-    {
-        return (box_id*P1 + value_id)*P2;
     }
 
     void entity_manager::slot_change_act_value(int entity, double value)
@@ -275,7 +273,6 @@ namespace talorion {
     void entity_manager::slot_change_set_value(int entity, double value)
     {
         if( get_setValue_component(entity)!= value){
-            qDebug()<<get_setValue_component(entity)<<value;
             set_setValue_component(entity, value);
             emit set_value_changed(entity);
         }

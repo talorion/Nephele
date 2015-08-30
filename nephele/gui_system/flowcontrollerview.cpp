@@ -40,6 +40,9 @@ namespace talorion {
         editAct->setDecimals(editSet->decimals());
         editAct->setSuffix(editSet->suffix());
         editAct->setRange(entity_manager::get_instance()->get_actMin_component(entity), entity_manager::get_instance()->get_actMax_component(entity));
+        editAct->setButtonSymbols(QDoubleSpinBox::NoButtons);
+        editAct->setMinimumWidth(100);
+        editAct->setStyleSheet("QDoubleSpinBox { background-color :  lightGray;}");
 
         QLabel* lblName = new QLabel(entity_manager::get_instance()->get_name_component(entity),this);
         QGridLayout* m_layout = new QGridLayout;

@@ -3,10 +3,11 @@
 
 simulated_fc_box::simulated_fc_box(QObject *par)
     : QObject(par),
-      all_fcs()
+      all_fcs(),
+      random_id(0)
 {
-    qDebug()<<"newbox";
     init_all_fcs();
+    random_id=qrand();
 }
 
 simulated_fc_box::~simulated_fc_box()
@@ -16,6 +17,7 @@ simulated_fc_box::~simulated_fc_box()
 
 void simulated_fc_box::set(int id, double val)
 {
+    //qDebug()<<random_id;
     foreach (simulated_fc* fc, all_fcs) {
         if(fc->get_Id()==id){
             fc->set_Set(val);

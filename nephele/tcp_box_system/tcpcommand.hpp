@@ -3,7 +3,7 @@
 
 #include <QObject>
 
-#include "core/tcpdriverdatatypes.hpp"
+#include "tcpdriverdatatypes.hpp"
 
 namespace talorion {
 
