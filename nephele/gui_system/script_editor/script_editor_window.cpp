@@ -125,10 +125,10 @@ namespace talorion
 
     }
 
-    void script_editor_window::stop_script()
-    {
+//    void script_editor_window::stop_script()
+//    {
 
-    }
+//    }
 
     void script_editor_window::setupEditor()
     {
@@ -192,7 +192,8 @@ namespace talorion
 
         stopAct= new QAction(QIcon(":/images/images/stop_script.png"), tr("Stop script"), this);
         stopAct->setStatusTip(tr("Stop"));
-        connect(stopAct, SIGNAL(triggered()), this, SLOT(stop_script()));
+        //connect(stopAct, SIGNAL(triggered()), this, SLOT(stop_script()));
+        connect(stopAct, SIGNAL(triggered()), event_manager::get_instance(),SIGNAL(abort_script()));
 
         aboutAct = new QAction(tr("&About"), this);
         aboutAct->setStatusTip(tr("Show the application's About box"));

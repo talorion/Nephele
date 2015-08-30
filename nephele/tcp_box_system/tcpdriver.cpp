@@ -26,7 +26,8 @@ namespace talorion {
         requestCounter(0),
         responseCounter(0),
         queue(NULL),
-        box_id(id)
+        box_id(id),
+        mutex()
     {
 
         connect(event_manager::get_instance(),SIGNAL(avSetChangeCommand(QByteArray)),this,SLOT(setDataCommand(QByteArray)));
@@ -60,6 +61,8 @@ namespace talorion {
 
     bool tcpDriver::connectDevice(QString ip, qint32 port, int timeoutMs)
     {
+        QMutexLocker locker(&mutex);
+
         timeoutTimer->setInterval(timeoutMs);
 
         this->tcpSocket->connectToHost(ip,port);
@@ -94,6 +97,8 @@ namespace talorion {
 
     void tcpDriver::sendCommand(QByteArray cmd, tcpDriverDataTypes::dataType type)
     {
+        QMutexLocker locker(&mutex);
+
         recheckConnection();
         recBuf = "";
         curlyOpen = 0;
@@ -104,6 +109,7 @@ namespace talorion {
         tcpSocket->write(cmd.trimmed().append("\r\n"));
         transmissionContext = type;
         requestCounter++;
+
     }
     int tcpDriver::getBox_id() const
     {
@@ -113,6 +119,7 @@ namespace talorion {
 
     void tcpDriver::recheckConnection()
     {
+
         if (tcpSocket->state() != QTcpSocket::ConnectedState && lastIP != "")
         {
             if (connectDevice(lastIP, lastPort, timeoutTimer->interval()))
@@ -120,6 +127,7 @@ namespace talorion {
                 emit connected(getBox_id());
             }
         }
+
     }
 
     void tcpDriver::poll()
@@ -141,6 +149,7 @@ namespace talorion {
 
     void tcpDriver::parsePackage()
     {
+        QMutexLocker locker(&mutex);
         QByteArray tmp = tcpSocket->readAll();
         //qDebug() << tmp ;
         if (transmissionContext == tcpDriverDataTypes::ALLDATA || transmissionContext == tcpDriverDataTypes::ACTSETDATA)

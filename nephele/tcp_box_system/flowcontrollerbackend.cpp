@@ -6,11 +6,13 @@
 namespace talorion {
     flowControllerBackend::flowControllerBackend(QObject *par) :
         QObject(par),
-        flowcontroller()
+        flowcontroller(),
+        actbuffer(),
+        setbuffer()
     {
 
         connect(this,SIGNAL(fcSetChangeCommand(QByteArray)),event_manager::get_instance(),SIGNAL(avSetChangeCommand(QByteArray)));
-        connect(this,SIGNAL(newFlowcontroller(int)),event_manager::get_instance(),SIGNAL(newAnalogValue(int)));
+        //connect(this,SIGNAL(newFlowcontroller(int)),event_manager::get_instance(),SIGNAL(newAnalogValue(int)));
 
         connect(event_manager::get_instance(),SIGNAL(receivedData(QVariantMap,tcpDriverDataTypes::dataType, int)), this, SLOT(processData(QVariantMap,tcpDriverDataTypes::dataType, int)));
         connect(event_manager::get_instance(),SIGNAL(error(QString)), this, SLOT(logError(QString)));
@@ -35,6 +37,8 @@ namespace talorion {
 
 
             flowcontroller.clear();
+            actbuffer.clear();
+            setbuffer.clear();
             if((desc.find("FC").value().canConvert<QVariantList>()))
             {
                 for(int i=0; i < desc.find("FC").value().toList().length(); i++)
@@ -53,7 +57,9 @@ namespace talorion {
                                                                                       box_id
                                                                                       );
                         flowcontroller.append(fc);
-                        emit newFlowcontroller(fc);
+                        setbuffer.append(tmp.find("set").value().toDouble());
+                        actbuffer.append(0);
+                        //emit newFlowcontroller(fc);
                         qDebug() << "Found FC: " << desc.find("FC").value().toList()[i].toMap().find("name").value().toString();
                     }
                 }
@@ -71,13 +77,17 @@ namespace talorion {
                         int entity= flowcontroller[i];
                         if (tmp.contains("act")){
                             double val = tmp.find("act").value().toDouble();
-                            //entity_manager::get_instance()->set_actValue_component(entity,val);
-                            emit change_act_value(entity,val);
+                            if(actbuffer[i] != val){
+                                actbuffer[i] =val;
+                                emit change_act_value(entity,val);
+                            }
                         }
                         if (tmp.contains("set")){
                             double val = tmp.find("set").value().toDouble();
-                            //entity_manager::get_instance()->set_setValue_component(entity,val);
-                            emit change_set_value(entity,val);
+                            if(setbuffer[i] != val){
+                                setbuffer[i] =val;
+                                emit change_set_value(entity,val);
+                            }
                         }
                     }
                 }

@@ -8,7 +8,7 @@ class simulated_fc
 public:
     explicit simulated_fc();
     ~simulated_fc();
-    //Q_DISABLE_COPY(simulated_fc)
+    Q_DISABLE_COPY(simulated_fc)
 
     int get_Id() const;
     void set_Id(int value);

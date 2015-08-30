@@ -50,9 +50,13 @@ namespace talorion {
         QString get_name_component(int entity)const;
         QString get_units_component(int entity)const;
 
-
+        int get_entity_by_name(const QString& name) const;
 
     signals:
+        void set_value_changed(int entity );
+        void act_value_changed(int entity);
+
+        void newAnalogValue(int);
 
     private:
         analogValue* get_analogValue(int entity)const;

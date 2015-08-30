@@ -5,13 +5,17 @@
 #include <QMessageBox>
 #include <QTcpSocket>
 
+
 tcp_box_simulator::tcp_box_simulator(QWidget *par) :
     QDialog(par),
     statusLabel(),
     quitButton(),
     tcpServer(0),
-    networkSession(0)
+    networkSession(0),
+    box(NULL)
 {
+    box = new simulated_fc_box();
+
     statusLabel = new QLabel;
     quitButton = new QPushButton(tr("Quit"));
     quitButton->setAutoDefault(false);
@@ -81,7 +85,7 @@ void tcp_box_simulator::sessionOpened()
     }
 
 
-    tcpServer = new tcp_box_server(this);
+    tcpServer = new tcp_box_server(box, this);
 //    if (!tcpServer->listen(QHostAddress::Any,2701)) {
 //        QMessageBox::critical(this, tr("Fortune Server"),tr("Unable to start the server: %1.").arg(tcpServer->errorString()));
 //        close();

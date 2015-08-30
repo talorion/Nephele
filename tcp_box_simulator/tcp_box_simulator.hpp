@@ -9,6 +9,7 @@
 #include <QNetworkSession>
 
 #include "tcp_box_server.h"
+#include "simulated_fc_box.h"
 
 
 class tcp_box_simulator : public QDialog
@@ -28,6 +29,7 @@ private:
     QPushButton *quitButton;
     tcp_box_server *tcpServer;
     QNetworkSession *networkSession;
+    simulated_fc_box* box;
 };
 
 #endif // TCP_BOX_SIMULATOR_HPP

@@ -4,15 +4,17 @@
 #include <QObject>
 #include <QTcpSocket>
 #include <QList>
+#include "simulated_fc_box.h"
 
 static const int MaxBufferSize = 1024000;
-static const char SeparatorToken = '?';
+//static const char SeparatorToken = '?';
+static const char SeparatorToken = ' ';
 
 class tcp_box_connection : public QTcpSocket
 {
     Q_OBJECT
 public:
-    explicit tcp_box_connection(QObject *par = 0);
+    explicit tcp_box_connection(simulated_fc_box* box,QObject *par = 0);
     ~tcp_box_connection();
     Q_DISABLE_COPY(tcp_box_connection)
 
@@ -25,6 +27,7 @@ private slots:
 private:
     int readDataIntoBuffer(const char sep=SeparatorToken, int maxSize = MaxBufferSize);
     bool readCommand();
+    bool parseSubCommand();
     bool parseArguments();
     void processData();
 
@@ -33,6 +36,8 @@ private:
 
 private:
     QByteArray buffer;
+    simulated_fc_box *const m_box;
+
 };
 
 #endif // TCP_BOX_CONNECTION_H

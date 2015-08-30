@@ -37,9 +37,9 @@ namespace talorion {
         void setAct(double val);
         void setSet(double val);
 
-    signals:
-        void set_value_changed();
-        void act_value_changed();
+    //signals:
+    //    void set_value_changed();
+    //    void act_value_changed();
 
     private:
         double setVal;

@@ -17,7 +17,7 @@ namespace talorion {
 
     signals:
         //void newFlowcontroller(analogValue* fc);
-        void newFlowcontroller(int entity);
+        //void newFlowcontroller(int entity);
         void fcSetChangeCommand(QByteArray command);
 
         void change_act_value(int, double);
@@ -32,6 +32,8 @@ namespace talorion {
     private:
         //QList<analogValue*> flowcontroller;
         QList<int> flowcontroller;
+        QList<double> actbuffer;
+        QList<double> setbuffer;
     };
 }
 

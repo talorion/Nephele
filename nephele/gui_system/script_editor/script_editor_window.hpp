@@ -33,7 +33,7 @@ namespace talorion{
 
         void start_script();
         void debug_script();
-        void stop_script();
+        //void stop_script();
 
     private:
         void setupEditor();

@@ -25,8 +25,14 @@ namespace talorion {
     {
         act_value_signalMapper = new QSignalMapper(this);
         set_value_signalMapper = new QSignalMapper(this);
-        connect(act_value_signalMapper, SIGNAL(mapped(int)), event_manager::get_instance(), SIGNAL(act_value_changed(int)));
-        connect(set_value_signalMapper, SIGNAL(mapped(int)), event_manager::get_instance(), SIGNAL(set_value_changed(int)));
+        //connect(act_value_signalMapper, SIGNAL(mapped(int)), event_manager::get_instance(), SIGNAL(act_value_changed(int)));
+        //connect(set_value_signalMapper, SIGNAL(mapped(int)), event_manager::get_instance(), SIGNAL(set_value_changed(int)));
+
+        connect(this, SIGNAL(act_value_changed(int)), event_manager::get_instance(), SIGNAL(act_value_changed(int)));
+        connect(this, SIGNAL(set_value_changed(int)), event_manager::get_instance(), SIGNAL(set_value_changed(int)));
+
+        connect(this,SIGNAL(newAnalogValue(int)),event_manager::get_instance(),SIGNAL(newAnalogValue(int)));
+
 
         connect(event_manager::get_instance(),SIGNAL(change_act_value(int,double)),this,SLOT(slot_change_act_value(int,double)));
         connect(event_manager::get_instance(),SIGNAL(change_set_value(int,double)),this,SLOT(slot_change_set_value(int,double)));
@@ -75,10 +81,11 @@ namespace talorion {
                                  entity
                                  );
             analog_values.insert(entity,fc);
-            connect(fc, SIGNAL(act_value_changed()), act_value_signalMapper, SLOT(map()));
-            act_value_signalMapper->setMapping(fc, entity);
-            connect(fc, SIGNAL(set_value_changed()), set_value_signalMapper, SLOT(map()));
-            set_value_signalMapper->setMapping(fc, entity);
+            //connect(fc, SIGNAL(act_value_changed()), act_value_signalMapper, SLOT(map()));
+            //act_value_signalMapper->setMapping(fc, entity);
+            //connect(fc, SIGNAL(set_value_changed()), set_value_signalMapper, SLOT(map()));
+            //set_value_signalMapper->setMapping(fc, entity);
+            emit newAnalogValue(entity);
         }
 
         //return fc;
@@ -101,6 +108,17 @@ namespace talorion {
             return "";
         }
         return fc->getUnits();
+    }
+
+    int entity_manager::get_entity_by_name(const QString &name) const
+    {
+        QMap<int, analogValue*>::ConstIterator it = analog_values.constBegin();
+        for(it=analog_values.constBegin(); it !=analog_values.constEnd(); ++it){
+            //int entity = it.value()->getEntity();
+            if(QString::compare(name,it.value()->getName(), Qt::CaseInsensitive) == 0)
+                return it.value()->getEntity();;
+        }
+        return -1;
     }
 
     void entity_manager::set_actValue_component(int entity, double val)
@@ -247,12 +265,20 @@ namespace talorion {
 
     void entity_manager::slot_change_act_value(int entity, double value)
     {
-        set_actValue_component(entity, value);
+        if( get_actValue_component(entity)!= value){
+
+            set_actValue_component(entity, value);
+            emit act_value_changed(entity);
+        }
     }
 
     void entity_manager::slot_change_set_value(int entity, double value)
     {
-        set_setValue_component(entity, value);
+        if( get_setValue_component(entity)!= value){
+            qDebug()<<get_setValue_component(entity)<<value;
+            set_setValue_component(entity, value);
+            emit set_value_changed(entity);
+        }
     }
 
 

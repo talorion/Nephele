@@ -1,5 +1,7 @@
 #include "simulated_fc.h"
 
+#include <QDebug>
+
 simulated_fc::simulated_fc():
      id_(0),
      smin_(0),
@@ -71,15 +73,19 @@ double simulated_fc::get_Set() const
 
 void simulated_fc::set_Set(double value)
 {
-    value = std::min(value, get_Amax());
-    value = std::max(value, get_Amin());
+    value = std::min(value, get_Smax());
+    value = std::max(value, get_Smin());
     set_ = value;
 }
 double simulated_fc::get_Act() const
 {
     double rnd = double(qrand()) / RAND_MAX ;
     double percent = (get_Set()*0.01);
-    return (((percent*2)-percent)*rnd)+get_Set();
+
+    double act =(((percent*2)-percent)*rnd)+get_Set();
+    act = std::min(act, get_Amax());
+    act = std::max(act, get_Amin());
+    return act;
 }
 
 QString simulated_fc::get_Name() const

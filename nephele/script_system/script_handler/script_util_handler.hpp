@@ -14,6 +14,7 @@ namespace talorion {
         Q_DISABLE_COPY(script_util_handler)
 
         Q_INVOKABLE void sleep(unsigned long millisecs);
+        Q_INVOKABLE int get_entity_by_name(QString name);
 
     signals:
 

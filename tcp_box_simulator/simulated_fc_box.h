@@ -14,12 +14,14 @@ public:
     ~simulated_fc_box();
     Q_DISABLE_COPY(simulated_fc_box)
 
+    void set(int id, double val);
+
     void init_all_fcs();
 
     QString getAll_json();
 
 private:
-    QList<simulated_fc> all_fcs;
+    QList<simulated_fc*> all_fcs;
 
 };
 

@@ -36,6 +36,8 @@ namespace talorion {
         connect(event_manager::get_instance(),SIGNAL(start_script_file(QString)),this,SLOT(slot_start_script_file(QString)));
         connect(event_manager::get_instance(),SIGNAL(act_value_changed(int)),this,SLOT(slot_act_value_changed(int)));
         connect(event_manager::get_instance(),SIGNAL(set_value_changed(int)),this,SLOT(slot_set_value_changed(int)));
+        connect(event_manager::get_instance(),SIGNAL(newAnalogValue(int)),this,SLOT(slot_newAnalogValue(int)));
+        connect(event_manager::get_instance(),SIGNAL(abort_script()),this,SLOT(slot_abort_script()));
 
         //m_script_engine = new QScriptEngine();
 
@@ -62,18 +64,24 @@ namespace talorion {
         m_script_engine.globalObject().setProperty("console", m_loghdl);
     }
 
+    void scripting_worker::slot_newAnalogValue(int entity)
+    {
+        slot_act_value_changed(entity);
+        slot_set_value_changed(entity);
+    }
+
     void scripting_worker::slot_act_value_changed(int entity)
     {
         QString nme = entity_manager::get_instance()->get_name_component(entity);
         double val = entity_manager::get_instance()->get_actValue_component(entity);
-        m_actHdl.setProperty(nme, val);
+        m_actHdl.setProperty(nme, val,QScriptValue::ReadOnly);
     }
 
     void scripting_worker::slot_set_value_changed(int entity)
     {
         QString nme = entity_manager::get_instance()->get_name_component(entity);
         double val = entity_manager::get_instance()->get_setValue_component(entity);
-        m_setHdl.setProperty(nme, val);
+        m_setHdl.setProperty(nme, val, QScriptValue::ReadOnly);
     }
 
     void scripting_worker::slot_start_script(const QString &script)
@@ -122,5 +130,14 @@ namespace talorion {
 
         m_log_hdl.log_info("Starting "+script);
         slot_start_script(sc);
+    }
+
+    void scripting_worker::slot_abort_script()
+    {
+        if(m_script_engine.isEvaluating()){
+            m_script_engine.abortEvaluation();
+            m_log_hdl.log_fatal("another script aborted");
+            return;
+        }
     }
 }

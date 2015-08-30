@@ -9,6 +9,7 @@
 #include <QVariant>
 #include <QThread>
 #include <QCoreApplication>
+#include <QMutex>
 
 #include "tcpcommandqueue.hpp"
 
@@ -63,6 +64,7 @@ namespace talorion {
         int responseCounter;
         tcpCommandQueue* queue;
         const int box_id;
+        QMutex mutex;
 
 
     private slots:

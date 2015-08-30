@@ -6,6 +6,7 @@
 #include <QDoubleSpinBox>
 #include <QDateTime>
 #include <QTimer>
+#include <QDebug>
 
 #include <qcustomplot.hpp>
 

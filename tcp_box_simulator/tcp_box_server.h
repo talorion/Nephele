@@ -12,15 +12,18 @@ class tcp_box_server : public QTcpServer
     Q_OBJECT
 
 public:
-    tcp_box_server(QObject *par = 0);
+    tcp_box_server(simulated_fc_box* box,QObject *par = 0);
     ~tcp_box_server();
     Q_DISABLE_COPY(tcp_box_server)
 
 signals:
-    void newConnection(tcp_box_connection *connection);
+    void newConnection( tcp_box_connection *connection);
 
 protected:
     virtual void incomingConnection(qintptr socketDesc) Q_DECL_OVERRIDE;
+
+private:
+    simulated_fc_box *const m_box;
 };
 
 #endif // TCP_BOX_SERVER_H

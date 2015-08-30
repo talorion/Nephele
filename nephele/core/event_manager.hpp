@@ -53,6 +53,7 @@ namespace talorion {
 
         void start_script(const QString &);
         void start_script_file(const QString & );
+        void abort_script();
         void script_finished();
 
         void script_message(const QString&, const QString&);

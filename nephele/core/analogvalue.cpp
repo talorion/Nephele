@@ -83,17 +83,17 @@ namespace talorion {
 
     void analogValue::setAct(double val)
     {
-        if(actVal != val){
+        //if(actVal != val){
             actVal = val;
-            emit act_value_changed();
-        }
+            //emit act_value_changed();
+        //}
     }
 
     void analogValue::setSet(double val)
     {
-        if(setVal != val){
+        //if(setVal != val){
             setVal = val;
-            emit set_value_changed();
-        }
+            //emit set_value_changed();
+        //}
     }
 }
