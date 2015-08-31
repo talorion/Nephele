@@ -13,7 +13,7 @@ namespace talorion {
     script_set_handler::script_set_handler(QObject *par) :
         QObject(par)
     {
-        connect(this,SIGNAL(set_value_changed(int,double)),event_manager::get_instance(),SIGNAL(change_set_value(int,double)));
+        connect(this,SIGNAL(set_value_changed(int,double)),event_manager::get_instance(),SIGNAL(change_analogSet_component(int,double)));
 
     }
 

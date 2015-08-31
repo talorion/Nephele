@@ -99,7 +99,7 @@ namespace talorion {
 
     void qvmbackend::avSetChangeProxy(int entity)
     {
-        double value =entity_manager::get_instance()->get_setValue_component(entity);
+        double value =entity_manager::get_instance()->get_analogSetValue_component(entity);
         int id = entity_manager::get_instance()->get_id_component(entity);
         if(id >= 0)
             avSetChangeProxy(value, id);

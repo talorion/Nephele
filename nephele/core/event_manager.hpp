@@ -31,21 +31,29 @@ namespace talorion {
     signals:
         void application_aboutToQuit();
 
-        void act_value_changed(int);
-        void set_value_changed(int);
+        void analogAct_component_changed(int);
+        void analogSet_component_changed(int);       
+        void digitalSet_component_changed(int entity);
+        void digitalAct_component_changed(int entity);
 
-        void change_act_value(int, double);
-        void change_set_value(int, double);
+        void change_analogAct_component(int, double);
+        void change_analogSet_component(int, double);
+        void change_digitalAct_component(int, bool);
+        void change_digitalSet_component(int, bool);
+
 
         void send_custom_command(const QString&);
         void receivedCustomData(const QString &);
+        void newAnalogValue(int);
+        void newDigitalValue(int);
+        void error(QString);
+
 
         void open_numeric_dialog();
         void open_string_dialog();
         void open_file_dialog();
         void open_info_dialog(const QString &msg);
         void open_plot_dialog();
-
         void dialog_finished();
         void dialog_finished(double val);
         void dialog_finished(QString val);
@@ -55,16 +63,10 @@ namespace talorion {
         void start_script_file(const QString & );
         void abort_script();
         void script_finished();
-
         void script_message(const QString&, const QString&);
 
-        //qvmbackend
-        //void avSetChangeCommand(QByteArray);
-        void newAnalogValue(int);
-
-        //tcpDriver
-        //void receivedData(QVariantMap, tcpDriverDataTypes::dataType, int);
-        void error(QString);
+        void start_aquisition();
+        void stop_aquisition();
 
     private:
         static QAtomicPointer<event_manager> _instance;

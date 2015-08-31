@@ -16,11 +16,13 @@ namespace talorion {
         m_diag_hdl(),
         m_util_hdl(),
         m_log_hdl(),
+        m_daq_hdl(),
         m_actHdl(),
         m_setHdl(),
         m_diagHdl(),
         m_utilhdl(),
-        m_loghdl()
+        m_loghdl(),
+        m_daqhdl()
     {
     }
 
@@ -33,8 +35,8 @@ namespace talorion {
 
         connect(event_manager::get_instance(),SIGNAL(start_script(QString)),this,SLOT(slot_start_script(QString)));
         connect(event_manager::get_instance(),SIGNAL(start_script_file(QString)),this,SLOT(slot_start_script_file(QString)));
-        connect(event_manager::get_instance(),SIGNAL(act_value_changed(int)),this,SLOT(slot_act_value_changed(int)));
-        connect(event_manager::get_instance(),SIGNAL(set_value_changed(int)),this,SLOT(slot_set_value_changed(int)));
+        connect(event_manager::get_instance(),SIGNAL(analogAct_component_changed(int)),this,SLOT(slot_act_value_changed(int)));
+        connect(event_manager::get_instance(),SIGNAL(analogSet_component_changed(int)),this,SLOT(slot_set_value_changed(int)));
         connect(event_manager::get_instance(),SIGNAL(newAnalogValue(int)),this,SLOT(slot_newAnalogValue(int)));
         connect(event_manager::get_instance(),SIGNAL(abort_script()),this,SLOT(slot_abort_script()));
 
@@ -61,6 +63,9 @@ namespace talorion {
 
         m_loghdl = m_script_engine.newQObject(&m_log_hdl, QScriptEngine::QtOwnership, QScriptEngine::ExcludeSuperClassContents);
         m_script_engine.globalObject().setProperty("console", m_loghdl);
+
+        m_daqhdl = m_script_engine.newQObject(&m_daq_hdl, QScriptEngine::QtOwnership, QScriptEngine::ExcludeSuperClassContents);
+        m_script_engine.globalObject().setProperty("console", m_daqhdl);
     }
 
     void scripting_worker::slot_newAnalogValue(int entity)
@@ -72,14 +77,14 @@ namespace talorion {
     void scripting_worker::slot_act_value_changed(int entity)
     {
         QString nme = entity_manager::get_instance()->get_name_component(entity);
-        double val = entity_manager::get_instance()->get_actValue_component(entity);
+        double val = entity_manager::get_instance()->get_analogActValue_component(entity);
         m_actHdl.setProperty(nme, val,QScriptValue::ReadOnly);
     }
 
     void scripting_worker::slot_set_value_changed(int entity)
     {
         QString nme = entity_manager::get_instance()->get_name_component(entity);
-        double val = entity_manager::get_instance()->get_setValue_component(entity);
+        double val = entity_manager::get_instance()->get_analogSetValue_component(entity);
         m_setHdl.setProperty(nme, val, QScriptValue::ReadOnly);
     }
 

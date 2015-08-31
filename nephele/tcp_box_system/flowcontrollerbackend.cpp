@@ -20,10 +20,10 @@ namespace talorion {
 
         //connect(event_manager::get_instance(),SIGNAL(receivedData(QVariantMap,tcpDriverDataTypes::dataType, int)), this, SLOT(processData(QVariantMap,tcpDriverDataTypes::dataType, int)));
         connect(event_manager::get_instance(),SIGNAL(error(QString)), this, SLOT(logError(QString)));
-        connect(event_manager::get_instance(),SIGNAL(set_value_changed(int)), this, SLOT(fcSetChangeProxy(int)));
+        connect(event_manager::get_instance(),SIGNAL(analogSet_component_changed(int)), this, SLOT(fcSetChangeProxy(int)));
 
-        connect(this,SIGNAL(change_act_value(int,double)),event_manager::get_instance(),SIGNAL(change_act_value(int,double)));
-        connect(this,SIGNAL(change_set_value(int,double)),event_manager::get_instance(),SIGNAL(change_set_value(int,double)));
+        connect(this,SIGNAL(change_act_value(int,double)),event_manager::get_instance(),SIGNAL(change_analogAct_component(int,double)));
+        connect(this,SIGNAL(change_set_value(int,double)),event_manager::get_instance(),SIGNAL(change_analogSet_component(int,double)));
 
     }
 
@@ -109,7 +109,7 @@ namespace talorion {
 
     void flowControllerBackend::fcSetChangeProxy(int entity)
     {
-        double value =entity_manager::get_instance()->get_setValue_component(entity);
+        double value =entity_manager::get_instance()->get_analogSetValue_component(entity);
         int id = entity_manager::get_instance()->get_id_component(entity);
         if(id >= 0 && flowcontroller.contains(entity))
             fcSetChangeProxy(value, id);

@@ -21,8 +21,8 @@ namespace talorion {
         connect(event_manager::get_instance(),SIGNAL(newAnalogValue(int)),this, SLOT(addAV(int)));
         connect(this, SIGNAL(send_custom_command(QString)),event_manager::get_instance(),SIGNAL(send_custom_command(QString)));
         connect(event_manager::get_instance(),SIGNAL(receivedCustomData(QString)),this,SLOT(displayCustomResponse(QString)));
-        connect(event_manager::get_instance(),SIGNAL(act_value_changed(int)),this,SLOT(slot_act_value_changed(int)));
-        connect(event_manager::get_instance(),SIGNAL(set_value_changed(int)),this,SLOT(slot_set_value_changed(int)));
+        connect(event_manager::get_instance(),SIGNAL(analogAct_component_changed(int)),this,SLOT(slot_act_value_changed(int)));
+        connect(event_manager::get_instance(),SIGNAL(analogSet_component_changed(int)),this,SLOT(slot_set_value_changed(int)));
 
         script_wnd = new script_editor_window();
 
@@ -75,7 +75,7 @@ namespace talorion {
         QMap<int, flowControllerView*>::ConstIterator fcv = fc_views.constFind(entity);
         if (fcv == fc_views.constEnd()){
             flowControllerView* tmp = new flowControllerView(entity, this);
-            connect(tmp, SIGNAL(change_set_value(int,double)),event_manager::get_instance(),SIGNAL(change_set_value(int,double)));
+            connect(tmp, SIGNAL(change_set_value(int,double)),event_manager::get_instance(),SIGNAL(change_analogSet_component(int,double)));
             fc_views.insert(entity,tmp);
             mainLayout->addWidget(tmp);
         }
@@ -85,7 +85,7 @@ namespace talorion {
     {
         QMap<int, flowControllerView*>::ConstIterator fcv = fc_views.constFind(entity);
         if (fcv != fc_views.constEnd()){
-            double tmp = entity_manager::get_instance()->get_actValue_component(entity);
+            double tmp = entity_manager::get_instance()->get_analogActValue_component(entity);
             fcv.value()->changeActValue(tmp);
         }
     }
@@ -94,7 +94,7 @@ namespace talorion {
     {
         QMap<int, flowControllerView*>::ConstIterator fcv = fc_views.constFind(entity);
         if (fcv != fc_views.constEnd()){
-            double tmp = entity_manager::get_instance()->get_setValue_component(entity);
+            double tmp = entity_manager::get_instance()->get_analogSetValue_component(entity);
             fcv.value()->changeSetValue(tmp);
         }
     }

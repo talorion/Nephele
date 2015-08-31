@@ -33,7 +33,7 @@ namespace talorion {
         if (entity_manager::get_instance()->get_setMax_component(entity) > 1 && log10(entity_manager::get_instance()->get_setMax_component(entity))<=6)
             editSet->setDecimals(6-log10(entity_manager::get_instance()->get_setMax_component(entity)));
 
-        editSet->setValue(entity_manager::get_instance()->get_setValue_component(entity));
+        editSet->setValue(entity_manager::get_instance()->get_analogSetValue_component(entity));
 
         editAct = new QDoubleSpinBox(this);
         editAct->setReadOnly(true);

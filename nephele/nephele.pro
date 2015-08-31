@@ -71,7 +71,11 @@ SOURCES += main.cpp\
     gui_system/script_editor/highlighter.cpp \
     gui_system/script_editor/console.cpp \
     script_system/script_handler/script_log_handler.cpp \
-    core/entity_manager.cpp
+    core/entity_manager.cpp \
+    data_aquisition_dll_system/data_aquisition_dll_system.cpp \
+    data_aquisition_dll_system/data_aquisition_dll_wrapper.cpp \
+    power_supply_dll_system/power_supply_dll_system.cpp \
+    script_system/script_handler/script_daq_handler.cpp
 
 HEADERS  += version.hpp \
     nephele.rc \
@@ -99,7 +103,11 @@ HEADERS  += version.hpp \
     gui_system/script_editor/console.h \
     script_system/script_handler/script_log_handler.hpp \
     core/entity_manager.hpp \
-    tcp_box_system/tcpdriverdatatypes.hpp
+    tcp_box_system/tcpdriverdatatypes.hpp \
+    data_aquisition_dll_system/data_aquisition_dll_wrapper.hpp \
+    data_aquisition_dll_system/data_aquisition_dll_system.hpp \
+    power_supply_dll_system/power_supply_dll_system.hpp \
+    script_system/script_handler/script_daq_handler.hpp
 
 
 win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../qcustomplot/release/ -lqcustomplot

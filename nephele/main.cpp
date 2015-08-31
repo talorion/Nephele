@@ -4,6 +4,7 @@
 
 #include "core/event_manager.hpp"
 
+#include "data_aquisition_dll_system/data_aquisition_dll_system.hpp"
 #include "gui_system/gui_system.hpp"
 #include "script_system/script_system.hpp"
 #include "tcp_box_system/tcp_box_system.hpp"
@@ -30,6 +31,9 @@ int main(int argc, char *argv[])
 
     tcp_box_system *tcp_box_s = new tcp_box_system();
     tcp_box_s->start_system();
+
+    //data_aquisition_dll_system* data_aquisition_dll_s = new data_aquisition_dll_system();
+    //data_aquisition_dll_s->start_system();
 
     int ret = a.exec();
 
