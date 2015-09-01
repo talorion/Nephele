@@ -21,8 +21,10 @@ namespace talorion {
         components(),
         entities(),
         entity_components(),
-        component_data_table_N()
+        component_data_table_N(),
+        component_widget_table()
     {
+        connect(this,SIGNAL(newSystem(int)),event_manager::get_instance(),SIGNAL(newSystem(int)));
 
         connect(this, SIGNAL(analogAct_component_changed(int)), event_manager::get_instance(), SIGNAL(analogAct_component_changed(int)));
         connect(this, SIGNAL(analogSet_component_changed(int)), event_manager::get_instance(), SIGNAL(analogSet_component_changed(int)));
@@ -134,6 +136,23 @@ namespace talorion {
 
     }
 
+    int entity_manager::createNewSystem(QString nameVal, QWidget *sys_cfg_wdg)
+    {
+        int entity = createNewEntity();
+
+       createComponentAndAddTo(NAME_COMPONENT, entity);
+        if(sys_cfg_wdg)
+            createComponentAndAddTo(SYSTEM_CONFIGURAION_WIDGET_COMPONENT, entity);
+
+        set_name_component(entity,nameVal);
+        if(sys_cfg_wdg)
+            set_systemConfigurationWidget_component(entity, sys_cfg_wdg);
+
+        emit newSystem(entity);
+        return entity;
+
+    }
+
     int entity_manager::createNewAnalogValue(QString nameVal, QString unitsVal, double smin, double smax, double amin, double amax, double setVal, int id, int box_id)
     {
         int new_id = createNewEntity();
@@ -182,6 +201,36 @@ namespace talorion {
         emit newDigitalValue(new_id);
         return new_id;
     }
+
+
+    QWidget *entity_manager::get_systemConfigurationWidget_component(int entity_id) const
+    {
+        int component_id = SYSTEM_CONFIGURAION_WIDGET_COMPONENT;
+        int component_data_id = calc_enity_component_hash(component_id, entity_id );
+        QMap<int, QWidget*>::ConstIterator av = component_widget_table.constFind(component_data_id);
+        if (av == component_widget_table.constEnd()){
+            return NULL;
+        }
+
+        return av.value();
+    }
+
+    void entity_manager::set_systemConfigurationWidget_component(int entity_id, QWidget *wdgt)
+    {
+        if(!wdgt)
+            return;
+
+        int component_id = SYSTEM_CONFIGURAION_WIDGET_COMPONENT;
+        QWidget* tmp = get_systemConfigurationWidget_component(entity_id);
+
+        if(tmp == wdgt )
+            return;
+
+        int component_data_id = calc_enity_component_hash(component_id, entity_id );
+        component_widget_table.insert(component_data_id, wdgt);
+        emit component_changed(entity_id, component_id);
+    }
+
 
     //        int entity_manager::create_new_fc_box_connection(QString nameVal, int box_id, QString ip_address, quint16 port)
     //        {

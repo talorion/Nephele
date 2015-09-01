@@ -14,6 +14,7 @@ namespace talorion {
 
     class flowControllerView;
     class script_editor_window;
+    class settings_dialog;
 
     class nephele_main_window : public QMainWindow
     {
@@ -28,11 +29,16 @@ namespace talorion {
         void send_custom_command(const QString& cm);
 
     private:
+        void createStatusBar();
+
+    private:
         QLineEdit* cmd;
         QLabel* response;
         QGridLayout* mainLayout;
         QPushButton* scriptButton;
+        QPushButton* settingsButton;
         script_editor_window* script_wnd;
+        settings_dialog* sett_dlg;
         QMap<int, flowControllerView* > fc_views;
 
     private slots:
@@ -43,6 +49,7 @@ namespace talorion {
         void slot_set_value_changed(int entity);
 
         void open_script_window();
+        //void open_settings_window();
     };
 }
 

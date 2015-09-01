@@ -25,6 +25,8 @@ namespace talorion {
         // abstract_system interface
     private:
         virtual void do_start_system() Q_DECL_OVERRIDE;
+        virtual QString do_get_system_name() Q_DECL_OVERRIDE {return "tcp_box_system";}
+        virtual QWidget* do_get_configuration_widget(){return NULL;}
 
         int new_box_id();
         void connect_to_fc_box(QString ip, quint16 port=2701);

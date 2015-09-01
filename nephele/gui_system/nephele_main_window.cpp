@@ -5,6 +5,9 @@
 
 #include "flowcontrollerview.hpp"
 #include "script_editor/script_editor_window.hpp"
+#include "settings_dialog/settings_dialog.hpp"
+
+#include <QStatusBar>
 
 namespace talorion {
 
@@ -14,16 +17,20 @@ namespace talorion {
         response(NULL),
         mainLayout(NULL),
         scriptButton(NULL),
+        settingsButton(NULL),
         script_wnd(NULL),
+        sett_dlg(NULL),
         fc_views()
     {
+
+        createStatusBar();
 
         connect(event_manager::get_instance(),SIGNAL(newAnalogValue(int)),this, SLOT(addAV(int)));
         connect(this, SIGNAL(send_custom_command(QString)),event_manager::get_instance(),SIGNAL(send_custom_command(QString)));
         connect(event_manager::get_instance(),SIGNAL(receivedCustomData(QString)),this,SLOT(displayCustomResponse(QString)));
         connect(event_manager::get_instance(),SIGNAL(analogAct_component_changed(int)),this,SLOT(slot_act_value_changed(int)));
         connect(event_manager::get_instance(),SIGNAL(analogSet_component_changed(int)),this,SLOT(slot_set_value_changed(int)));
-
+        connect(event_manager::get_instance(),SIGNAL(error(QString)),statusBar(),SLOT(showMessage(QString)));
 
         script_wnd = new script_editor_window();
 
@@ -32,13 +39,19 @@ namespace talorion {
         lbl->setBuddy(cmd);
 
         response = new QLabel();
-                connect(event_manager::get_instance(),SIGNAL(error(QString)),response,SLOT(setText(QString)));
+
 
         scriptButton = new QPushButton("script");
         connect(scriptButton,SIGNAL(clicked(bool)),this,SLOT(open_script_window()));
 
+        sett_dlg = new settings_dialog(this);
+
+        settingsButton = new QPushButton("settings");
+        connect(settingsButton,SIGNAL(clicked(bool)),sett_dlg,SLOT(open()));
+
         mainLayout = new QGridLayout();
         mainLayout->addWidget(scriptButton,0,0,1,1);
+        mainLayout->addWidget(settingsButton,0,1,1,1);
         mainLayout->addWidget(lbl,1,0,1,1);
         mainLayout->addWidget(cmd,1,1,1,1);
         mainLayout->addWidget(response,2,0,1,2);
@@ -48,6 +61,9 @@ namespace talorion {
 
         setWindowTitle("Nephele");
         setCentralWidget(central_wdgt);
+
+
+
     }
 
     nephele_main_window::~nephele_main_window()
@@ -108,5 +124,10 @@ namespace talorion {
         script_wnd->show();
     }
 
+
+    void nephele_main_window::createStatusBar()
+    {
+        statusBar()->showMessage(tr("Ready"));
+    }
 
 }

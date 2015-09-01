@@ -49,6 +49,7 @@ namespace talorion {
         BOX_ID_COMPONENT,
         DIGITAL_SET_VALUE_COMPONENT,
         DIGITAL_ACT_VALUE_COMPONENT,
+        SYSTEM_CONFIGURAION_WIDGET_COMPONENT
     } static_component_id;
 
     class entity_manager : public QObject
@@ -74,9 +75,13 @@ namespace talorion {
         //===
 
         //=== Factory methods
+        int createNewSystem(QString nameVal, QWidget* sys_cfg_wdg);
         int createNewAnalogValue(QString nameVal, QString unitsVal, double smin, double smax, double amin, double amax, double setVal, int id, int box_id ) ;
         int createNewDigitalValue(QString nameVal, bool setVal, int id, int box_id ) ;
         //===
+
+        QWidget* get_systemConfigurationWidget_component(int entity) const;
+
 
         double get_analogActValue_component(int entity)const;
         double get_analogSetValue_component(int entity)const;
@@ -94,6 +99,8 @@ namespace talorion {
         QList<int> get_all_components_of_entity(int entity)const;
 
     signals:
+        void newSystem(int entity);
+
         void component_changed(int entity, int component);
 
         void analogSet_component_changed(int entity);
@@ -104,6 +111,7 @@ namespace talorion {
 
         void newAnalogValue(int);
         void newDigitalValue(int);
+
 
     private:
         void set_analogActValue_component(int entity, double val);
@@ -116,6 +124,7 @@ namespace talorion {
         void set_actMax_component(int entity, double val);
         void set_name_component(int entity, QString val);
         void set_units_component(int entity, QString val);
+        void set_systemConfigurationWidget_component(int entity_id, QWidget *wdgt);
 
         int calc_enity_component_hash(int entity_id, int comp_id)const{return (comp_id*P1 + entity_id)*P2;}
 
@@ -134,7 +143,7 @@ namespace talorion {
         QMap<int, entity_t> entities;                           //entity_id | human-readable label FOR DEBUGGING ONLY
         QMap<int, entity_components_t> entity_components;       //enity_component_hash | entity_id | component_id
         QMap<int, QVariant> component_data_table_N;             //enity_component_hash | [1..M columns, one column for each piece of data in your component]
-
+        QMap<int, QWidget*> component_widget_table;
 
     private:
         //static QAtomicPointer<entity_manager> _instance;

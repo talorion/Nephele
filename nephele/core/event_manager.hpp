@@ -29,6 +29,8 @@ namespace talorion {
         static void destroy();
 
     signals:
+        void newSystem(int);
+
         void application_aboutToQuit();
 
         void analogAct_component_changed(int);
