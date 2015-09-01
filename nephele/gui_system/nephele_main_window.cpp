@@ -24,6 +24,7 @@ namespace talorion {
         connect(event_manager::get_instance(),SIGNAL(analogAct_component_changed(int)),this,SLOT(slot_act_value_changed(int)));
         connect(event_manager::get_instance(),SIGNAL(analogSet_component_changed(int)),this,SLOT(slot_set_value_changed(int)));
 
+
         script_wnd = new script_editor_window();
 
         QLabel* lbl = new QLabel("&Custom Command");
@@ -31,6 +32,7 @@ namespace talorion {
         lbl->setBuddy(cmd);
 
         response = new QLabel();
+                connect(event_manager::get_instance(),SIGNAL(error(QString)),response,SLOT(setText(QString)));
 
         scriptButton = new QPushButton("script");
         connect(scriptButton,SIGNAL(clicked(bool)),this,SLOT(open_script_window()));

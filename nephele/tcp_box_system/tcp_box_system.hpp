@@ -28,6 +28,7 @@ namespace talorion {
 
         int new_box_id();
         void connect_to_fc_box(QString ip, quint16 port=2701);
+        void connect_to_av_box(QString ip, quint16 port=2701);
 
     private:
         int curr_box_id;

@@ -6,12 +6,12 @@
 //#include "tcpdriver.hpp"
 
 namespace talorion {
-    flowControllerBackend::flowControllerBackend(QObject *par) :
-        QObject(par),
+    flowControllerBackend::flowControllerBackend(abstract_backend *par) :
+        abstract_backend(par),
         flowcontroller(),
         actbuffer(),
         setbuffer()
-        //drv(driver)
+      //drv(driver)
     {
 
         //connect(this,SIGNAL(fcSetChangeCommand(QByteArray)),drv,SLOT(setDataCommand(QByteArray)));
@@ -19,11 +19,11 @@ namespace talorion {
         //connect(this,SIGNAL(newFlowcontroller(int)),event_manager::get_instance(),SIGNAL(newAnalogValue(int)));
 
         //connect(event_manager::get_instance(),SIGNAL(receivedData(QVariantMap,tcpDriverDataTypes::dataType, int)), this, SLOT(processData(QVariantMap,tcpDriverDataTypes::dataType, int)));
-        connect(event_manager::get_instance(),SIGNAL(error(QString)), this, SLOT(logError(QString)));
-        connect(event_manager::get_instance(),SIGNAL(analogSet_component_changed(int)), this, SLOT(fcSetChangeProxy(int)));
+        //        connect(event_manager::get_instance(),SIGNAL(error(QString)), this, SLOT(logError(QString)));
+        //        connect(event_manager::get_instance(),SIGNAL(analogSet_component_changed(int)), this, SLOT(fcSetChangeProxy(int)));
 
-        connect(this,SIGNAL(change_act_value(int,double)),event_manager::get_instance(),SIGNAL(change_analogAct_component(int,double)));
-        connect(this,SIGNAL(change_set_value(int,double)),event_manager::get_instance(),SIGNAL(change_analogSet_component(int,double)));
+        //        connect(this,SIGNAL(change_act_value(int,double)),event_manager::get_instance(),SIGNAL(change_analogAct_component(int,double)));
+        //        connect(this,SIGNAL(change_set_value(int,double)),event_manager::get_instance(),SIGNAL(change_analogSet_component(int,double)));
 
     }
 
@@ -117,7 +117,8 @@ namespace talorion {
 
     void flowControllerBackend::fcSetChangeProxy(double value, int id)
     {
-        QByteArray command = "uibkafc set ";
+        //QByteArray command = "uibkafc set ";
+        QByteArray command = "uibkafc setByModule ";
         command.append(QByteArray::number(id));
         command.append(" ");
         command.append(QByteArray::number(value));

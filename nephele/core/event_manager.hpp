@@ -69,7 +69,8 @@ namespace talorion {
         void stop_aquisition();
 
     private:
-        static QAtomicPointer<event_manager> _instance;
+        //static QAtomicPointer<event_manager> _instance;
+        static event_manager* _instance;
         static QMutex _mutex;
     };
 

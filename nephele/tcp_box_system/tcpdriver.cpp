@@ -11,7 +11,7 @@
 
 namespace talorion {
 
-    tcpDriver::tcpDriver(int id, QByteArray getInfoCommand, QByteArray getMinimalSetActCommand, QObject *par):
+    tcpDriver::tcpDriver(int id, QByteArray getInfoCommand, QByteArray getMinimalSetActCommand, abstract_backend* bk, QObject *par):
         QObject(par),
         tcpSocket(NULL),
         transmissionContext(),
@@ -31,12 +31,13 @@ namespace talorion {
         queue(NULL),
         box_id(id),
         mutex(),
-        m_back(NULL)
+        m_back(bk)
     {
         qDebug()<<"creating box"<<box_id;
 
-        //flowControllerBackend* m_back;
-        m_back= new flowControllerBackend();
+        if(!bk)
+             m_back= new flowControllerBackend();
+
         connect(this, SIGNAL(receivedData(QVariantMap,tcpDriverDataTypes::dataType,int)),m_back,SLOT(processData(QVariantMap,tcpDriverDataTypes::dataType,int)));
         connect(m_back, SIGNAL(fcSetChangeCommand(QByteArray)),this,SLOT(setDataCommand(QByteArray)));
 

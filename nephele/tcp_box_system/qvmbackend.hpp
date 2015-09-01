@@ -1,15 +1,14 @@
 #ifndef QVMBACKEND_H
 #define QVMBACKEND_H
 
-#include <QObject>
+#include "abstract_backend.hpp"
 #include <QVariant>
 #include <QDebug>
 
-#include "tcpdriver.hpp"
 
 namespace talorion {
 
-    class qvmbackend : public QObject
+    class qvmbackend : public abstract_backend
     {
         Q_OBJECT
     public:
@@ -21,21 +20,24 @@ namespace talorion {
 
     signals:
         //void newAnalogValue(analogValue* av);
-        void newAnalogValue(int);
-        void avSetChangeCommand(QByteArray command);
+        //void newAnalogValue(int);
+        //void avSetChangeCommand(QByteArray command);
 
-        void change_act_value(int, double);
-        void change_set_value(int, double);
+        //void change_act_value(int, double);
+        //void change_set_value(int, double);
 
     public slots:
-        void processData(QVariantMap desc, tcpDriverDataTypes::dataType type, int box_id);
-        void logError(QString errorString);
+        virtual void processData(QVariantMap desc, tcpDriverDataTypes::dataType type, int box_id) Q_DECL_OVERRIDE;
+        virtual void logError(QString errorString)Q_DECL_OVERRIDE;
     private slots:
-        void avSetChangeProxy(int entity);
-        void avSetChangeProxy(double value, int id);
+        virtual void fcSetChangeProxy(int entity)Q_DECL_OVERRIDE;
+        virtual void fcSetChangeProxy(double value, int id) Q_DECL_OVERRIDE;
     private:
         //QList<analogValue*> analog;
+        //QList<int> analog;
         QList<int> analog;
+        QList<double> actbuffer;
+        QList<double> setbuffer;
     };
 }
 

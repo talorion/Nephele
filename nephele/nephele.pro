@@ -31,21 +31,27 @@ unix: QMAKE_CXXFLAGS += -Wshadow
 unix: QMAKE_CXXFLAGS += -Weffc++
 unix: QMAKE_CXXFLAGS += -Wstrict-aliasing
 
+
+
 CONFIG += c++11
 
-#message(Qt version: $$[QT_VERSION])
-#message(Qt is installed in $$[QT_INSTALL_PREFIX])
-#message(Qt resources can be found in the following locations:)
-#message(Documentation: $$[QT_INSTALL_DOCS])
-#message(Header files: $$[QT_INSTALL_HEADERS])
-#message(Libraries: $$[QT_INSTALL_LIBS])
-#message(Binary files (executables): $$[QT_INSTALL_BINS])
-#message(Plugins: $$[QT_INSTALL_PLUGINS])
-#message(Data files: $$[QT_INSTALL_DATA])
-#message(Translation files: $$[QT_INSTALL_TRANSLATIONS])
-#message(Settings: $$[QT_INSTALL_SETTINGS])
-#message(Examples: $$[QT_INSTALL_EXAMPLES])
-#message(Demonstrations: $$[QT_INSTALL_DEMOS])
+win32: TARGET_EXT = .exe
+
+win32:CONFIG( debug, debug|release ) {
+    # debug
+    DEPLOY_TARGET = $$shell_quote($$shell_path($${OUT_PWD}/debug/$${TARGET}$${TARGET_EXT}))
+    # PKG_DESTINATION = $$shell_quote($$shell_path($${OUT_PWD}/debug/pkg/))
+} else {
+    # release
+    DEPLOY_TARGET = $$shell_quote($$shell_path($${OUT_PWD}/release/$${TARGET}$${TARGET_EXT}))
+    # PKG_DESTINATION = $$shell_quote($$shell_path($${OUT_PWD}/release/pkg/))
+}
+
+win32: QMAKE_LFLAGS += -static-libgcc -static-libstdc++ -static # statically link libGCC, STDlib, winpthread, ...
+win32: DEPLOY_COMMAND = windeployqt # collects dll dependencies
+win32:DLLDESTDIR = $$OUT_PWD/../out/ # copy to destination after build
+win32:QMAKE_POST_LINK = $${DEPLOY_COMMAND} $${DEPLOY_TARGET} --dir $${DLLDESTDIR} --no-translations &&
+win32:QMAKE_POST_LINK += $${QMAKE_COPY} $${DEPLOY_TARGET} $${DLLDESTDIR}
 
 
 SOURCES += main.cpp\
@@ -75,7 +81,8 @@ SOURCES += main.cpp\
     data_aquisition_dll_system/data_aquisition_dll_system.cpp \
     data_aquisition_dll_system/data_aquisition_dll_wrapper.cpp \
     power_supply_dll_system/power_supply_dll_system.cpp \
-    script_system/script_handler/script_daq_handler.cpp
+    script_system/script_handler/script_daq_handler.cpp \
+    tcp_box_system/abstract_backend.cpp
 
 HEADERS  += version.hpp \
     nephele.rc \
@@ -107,7 +114,8 @@ HEADERS  += version.hpp \
     data_aquisition_dll_system/data_aquisition_dll_wrapper.hpp \
     data_aquisition_dll_system/data_aquisition_dll_system.hpp \
     power_supply_dll_system/power_supply_dll_system.hpp \
-    script_system/script_handler/script_daq_handler.hpp
+    script_system/script_handler/script_daq_handler.hpp \
+    tcp_box_system/abstract_backend.hpp
 
 
 win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../qcustomplot/release/ -lqcustomplot
@@ -125,3 +133,6 @@ else:unix: PRE_TARGETDEPS += $$OUT_PWD/../qcustomplot/libqcustomplot.a
 
 DISTFILES += \
     nephele.ico
+
+
+

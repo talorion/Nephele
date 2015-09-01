@@ -27,6 +27,8 @@ namespace talorion {
     {
 
         connect_to_fc_box("10.0.1.23");
+        //connect_to_fc_box("172.25.11.241");
+        //connect_to_fc_box("192.168.168.91");
 
         //connect_to_fc_box("10.0.1.23",4414);
 
@@ -50,8 +52,21 @@ namespace talorion {
 
     void tcp_box_system::connect_to_fc_box(QString ip, quint16 port)
     {
+        flowControllerBackend* back = new flowControllerBackend();
+
         tcpDriver* dev1;
-        dev1 = new tcpDriver(new_box_id(), "uibkafc getAll","uibkafc getActSet"); // for AFC Board
+        dev1 = new tcpDriver(new_box_id(), "uibkafc getAll","uibkafc getAll", back); // for AFC Board
+        dev1->connectDevice(ip, port);
+
+        drivers.append(dev1);
+    }
+
+    void tcp_box_system::connect_to_av_box(QString ip, quint16 port)
+    {
+        qvmbackend* back = new qvmbackend();
+
+        tcpDriver* dev1;
+        dev1 = new tcpDriver(new_box_id(), "uibkafc getAll","uibkafc getAll", back); // for AFC Board
         dev1->connectDevice(ip, port);
 
         drivers.append(dev1);

@@ -11,7 +11,8 @@
 
 namespace talorion {
 
-    QAtomicPointer<entity_manager> entity_manager::_instance;
+    //QAtomicPointer<entity_manager> entity_manager::_instance;
+    entity_manager* entity_manager::_instance;
     QMutex entity_manager::_mutex;
 
     entity_manager::entity_manager(QObject *par) :

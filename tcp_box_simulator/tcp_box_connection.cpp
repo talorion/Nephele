@@ -112,7 +112,8 @@ bool tcp_box_connection::parseSubCommand()
         parseArguments();
         //write("OK\r\n");
         //    } else if (buffer == "uibkafc setById"){
-        //    } else if (buffer == "uibkafc setByModule"){
+    } else if (buffer == "uibkafc setByModule "){
+        parseArguments();
         //    } else if (buffer == "uibkafc saveChannelInfos"){
         //    } else if (buffer == "uibkafc setDefaultChannelInfos"){
         //    } else if (buffer == "uibkafc setChannelName"){

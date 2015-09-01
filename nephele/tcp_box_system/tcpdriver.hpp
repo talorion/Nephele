@@ -15,14 +15,14 @@
 
 namespace talorion {
 
-    class flowControllerBackend;
+    class abstract_backend;
 
     class tcpDriver : public QObject
     {
         Q_OBJECT
 
     public:
-        tcpDriver(int id, QByteArray getInfoCommand, QByteArray getMinimalSetActCommand, QObject* par=0);
+        tcpDriver(int id, QByteArray getInfoCommand, QByteArray getMinimalSetActCommand, abstract_backend *bk=NULL, QObject* par=0);
         ~tcpDriver(void);
         Q_DISABLE_COPY(tcpDriver)
 
@@ -67,7 +67,7 @@ namespace talorion {
         const int box_id;
         QMutex mutex;
 
-        flowControllerBackend* m_back;
+        abstract_backend* m_back;
 
 
     private slots:

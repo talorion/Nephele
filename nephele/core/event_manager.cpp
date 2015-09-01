@@ -7,7 +7,8 @@
 
 namespace talorion {
 
-    QAtomicPointer<event_manager> event_manager::_instance;
+    //QAtomicPointer<event_manager> event_manager::_instance;
+    event_manager* event_manager::_instance;
     QMutex event_manager::_mutex;
 
     event_manager::event_manager(QObject *par):

@@ -137,7 +137,8 @@ namespace talorion {
 
 
     private:
-        static QAtomicPointer<entity_manager> _instance;
+        //static QAtomicPointer<entity_manager> _instance;
+        static entity_manager* _instance;
         static QMutex _mutex;
 
         static const int P1=997;
