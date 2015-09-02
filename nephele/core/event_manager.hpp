@@ -30,8 +30,14 @@ namespace talorion {
 
     signals:
         void newSystem(int);
+        void newTcpBox(int);
 
         void application_aboutToQuit();
+
+        void connect_tcp_box(int entity, int mode);
+        void disconnect_tcp_box(int entity);
+
+        void connection_state_component_changed(int entity);
 
         void analogAct_component_changed(int);
         void analogSet_component_changed(int);       

@@ -1,9 +1,15 @@
 #ifndef TALORION_TBS_CONFIG_WIDGET_HPP
 #define TALORION_TBS_CONFIG_WIDGET_HPP
 
+#include <QDoubleSpinBox>
 #include <QGridLayout>
 #include <QLabel>
+#include <QLineEdit>
+#include <QListWidget>
+#include <QPushButton>
+
 #include "core/abstract_configuration_widget.hpp"
+#include "core/entity_manager.hpp"
 
 namespace talorion {
 
@@ -16,12 +22,40 @@ namespace talorion {
         Q_DISABLE_COPY(tbs_config_widget)
 
     signals:
+        void connect_tcp_box(int entity, int mode);
+        void disconnect_tcp_box(int entity);
 
-    public slots:
+    private slots:
+        void slot_newTcpBox(int entity);
+        void slot_add_button_clicked(bool);
+        void slot_itemClicked(QListWidgetItem * item);
+        void slot_connection_state_changed(int entity);
+
+        void update_visibility(bool connected);
+
+        void slot_connect_button_clicked(bool);
+        void slot_disconnect_button_clicked(bool);
 
     private:
-        QLabel* m_label;
+        QListWidget* boxes_list;
+        QLabel* box_name_label;
+        QLabel* ip_address_label;
+        QLabel* port_label;
+        QLabel* backend_label;
         QGridLayout* mainLayout;
+        QGridLayout* editLayout;
+        QLineEdit* box_name_field;
+        QLineEdit* ip_address_field;
+        QLineEdit* backend_field;
+        QSpinBox* portField;
+
+        QPushButton* add_button;
+        QPushButton* remove_button;
+        QPushButton* connect_button;
+        QPushButton* disconnect_button;
+
+        QMap<QListWidgetItem*,int> list2entity;
+        int current_entity;
     };
 
 } // namespace talorion

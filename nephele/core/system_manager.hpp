@@ -24,6 +24,8 @@ namespace talorion {
         template<typename T>
         void register_new_system();
 
+        QList<int> get_all_systems()const;
+
    private:
         void load_system(abstract_system* sys);
 

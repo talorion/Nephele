@@ -5,10 +5,12 @@
 #include <QGridLayout>
 #include <QLabel>
 #include <QLineEdit>
-#include <QListView>
+#include <QListWidget>
 #include <QStringListModel>
 
 namespace talorion {
+
+    class abstract_configuration_widget;
 
     class settings_dialog : public QDialog
     {
@@ -21,16 +23,19 @@ namespace talorion {
 
     private slots:
         void newSystem(int entity);
+        void slot_itemClicked(QListWidgetItem * item);
 
     private:
         QLineEdit* serach_field;
-        QListView* settings_group_list;
+        QListWidget* settings_group_list;
         QLabel* settings_widget_label;
         QWidget* settings_widget;
 
         QStringListModel* lst_mdl;
 
         QGridLayout* mainLayout;
+
+        QMap<QListWidgetItem*,int> list2entity;
     };
 
 } // namespace talorion

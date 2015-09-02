@@ -34,6 +34,7 @@ namespace talorion
         aboutAct(NULL),
         clsAct(NULL)
     {
+        setMinimumSize(800,600);
 
         setupEditor();
         setupConsole();
@@ -46,8 +47,8 @@ namespace talorion
 
         layout = new QVBoxLayout();
         QWidget *wnd = new QWidget();
-        layout->addWidget(editor);
-        layout->addWidget(console);
+        layout->addWidget(editor,3);
+        layout->addWidget(console,1);
         wnd->setLayout(layout);
         setCentralWidget(wnd);
 

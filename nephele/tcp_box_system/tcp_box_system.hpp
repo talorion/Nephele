@@ -4,6 +4,7 @@
 #include <QObject>
 #include <QThread>
 #include <QList>
+#include <QMap>
 
 #include <core/abstract_system.hpp>
 
@@ -14,6 +15,7 @@ namespace talorion {
 
     class tcp_box_system : public QThread, public abstract_system
     {
+        Q_OBJECT
     public:
         tcp_box_system(QObject* par=0);
         ~tcp_box_system();
@@ -23,6 +25,10 @@ namespace talorion {
     protected:
         virtual void run() Q_DECL_OVERRIDE;
 
+    private slots:
+        void slot_connect_tcp_box(int entity, int mode);
+        void slot_disconnect_tcp_box(int entity);
+
         // abstract_system interface
     private:
         virtual void do_start_system() Q_DECL_OVERRIDE;
@@ -30,13 +36,13 @@ namespace talorion {
         virtual abstract_configuration_widget* do_get_configuration_widget() Q_DECL_OVERRIDE;
 
         int new_box_id();
-        void connect_to_fc_box(QString ip, quint16 port=2701);
-        void connect_to_av_box(QString ip, quint16 port=2701);
+        void connect_to_fc_box(int box_id);
+        void connect_to_av_box(int box_id);
 
     private:
         int curr_box_id;
-        QList<tcpDriver*> drivers;
-
+        QMap<int, tcpDriver*> boxes;
+        //QList<tcpDriver*> drivers;
         tbs_config_widget* config_wdg;
     };
 

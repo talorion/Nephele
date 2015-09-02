@@ -27,6 +27,8 @@ namespace talorion {
     {
         connect(this,SIGNAL(newSystem(int)),event_manager::get_instance(),SIGNAL(newSystem(int)));
 
+        connect(this,SIGNAL(connection_state_component_changed(int)),event_manager::get_instance(),SIGNAL(connection_state_component_changed(int)));
+
         connect(this, SIGNAL(analogAct_component_changed(int)), event_manager::get_instance(), SIGNAL(analogAct_component_changed(int)));
         connect(this, SIGNAL(analogSet_component_changed(int)), event_manager::get_instance(), SIGNAL(analogSet_component_changed(int)));
         connect(this, SIGNAL(digitalAct_component_changed(int)), event_manager::get_instance(), SIGNAL(digitalAct_component_changed(int)));
@@ -39,7 +41,7 @@ namespace talorion {
 
         connect(this,SIGNAL(newAnalogValue(int)),event_manager::get_instance(),SIGNAL(newAnalogValue(int)));
         connect(this,SIGNAL(newDigitalValue(int)),event_manager::get_instance(),SIGNAL(newDigitalValue(int)));
-
+        connect(this, SIGNAL(newTcpBox(int)),event_manager::get_instance(),SIGNAL(newTcpBox(int)));
     }
 
     entity_manager::~entity_manager()
@@ -141,7 +143,7 @@ namespace talorion {
     {
         int entity = createNewEntity();
 
-       createComponentAndAddTo(NAME_COMPONENT, entity);
+        createComponentAndAddTo(NAME_COMPONENT, entity);
         if(sys_cfg_wdg)
             createComponentAndAddTo(SYSTEM_CONFIGURAION_WIDGET_COMPONENT, entity);
         createComponentAndAddTo(IS_SYSTEM_COMPONENT, entity);
@@ -205,8 +207,27 @@ namespace talorion {
         return new_id;
     }
 
+    int entity_manager::createNewTcpBox(QString nameVal, QString ip, quint16 port)
+    {
+        int new_id = createNewEntity();
+        createComponentAndAddTo( NAME_COMPONENT, new_id );
+        createComponentAndAddTo( BOX_ID_COMPONENT, new_id );
+        createComponentAndAddTo( IP_ADDRESS_COMPONENT, new_id );
+        createComponentAndAddTo( PORT_COMPONENT, new_id );
+        createComponentAndAddTo( CONNECTION_STATE_COMPONENT, new_id );
 
-    QWidget *entity_manager::get_systemConfigurationWidget_component(int entity_id) const
+        setComponentDataForEntity(NAME_COMPONENT,               new_id, nameVal);
+        setComponentDataForEntity(BOX_ID_COMPONENT,             new_id, new_id);
+        setComponentDataForEntity(IP_ADDRESS_COMPONENT,         new_id, ip);
+        setComponentDataForEntity(PORT_COMPONENT,               new_id, port);
+        setComponentDataForEntity(CONNECTION_STATE_COMPONENT,               new_id, false);
+
+        emit newTcpBox(new_id);
+        return new_id;
+    }
+
+
+    abstract_configuration_widget *entity_manager::get_systemConfigurationWidget_component(int entity_id) const
     {
         int component_id = SYSTEM_CONFIGURAION_WIDGET_COMPONENT;
         int component_data_id = calc_enity_component_hash(component_id, entity_id );
@@ -277,11 +298,43 @@ namespace talorion {
         return ecs;
     }
 
-    QList<int> entity_manager::get_all_systems() const
+    void entity_manager::slot_change_name_component(int entity, QString value)
     {
-        QList<int> tmp;
-        return tmp;
+        if( get_name_component(entity)!= value){
+            set_name_component(entity, value);
+            //emit analogAct_component_changed(entity);
+        }
     }
+
+    void entity_manager::slot_change_ip_address_component(int entity, QString value)
+    {
+        if( get_ip_address_component(entity)!= value){
+            set_ip_address_component(entity, value);
+            //emit analogAct_component_changed(entity);
+        }
+    }
+
+    void entity_manager::slot_change_port_component(int entity, quint16 value)
+    {
+        if( get_port_component(entity)!= value){
+            set_port_component(entity, value);
+            //emit analogAct_component_changed(entity);
+        }
+    }
+
+    void entity_manager::slot_connection_state_component(int entity, quint16 value)
+    {
+        if( get_connection_state_component(entity)!= value){
+            set_connection_state_component(entity, value);
+            emit connection_state_component_changed(entity);
+        }
+    }
+
+    //    QList<int> entity_manager::get_all_systems() const
+    //    {
+    //        QList<int> tmp;
+    //        return tmp;
+    //    }
 
     void entity_manager::set_analogActValue_component(int entity, double val){setComponentDataForEntity(ANALOG_ACT_VALUE_COMPONENT, entity, val);}
 
@@ -305,10 +358,25 @@ namespace talorion {
 
     void entity_manager::set_id_component(int entity, int val){setComponentDataForEntity(ID_COMPONENT, entity, val);}
 
+    void entity_manager::set_ip_address_component(int entity, QString val) {setComponentDataForEntity(IP_ADDRESS_COMPONENT, entity, val);}
+
+    void entity_manager::set_port_component(int entity, quint16 val){setComponentDataForEntity(PORT_COMPONENT, entity, val);}
+
+    void entity_manager::set_box_id_component(int entity, int val) {setComponentDataForEntity(BOX_ID_COMPONENT, entity, val);}
+
+    void entity_manager::set_connection_state_component(int entity, bool val){setComponentDataForEntity(CONNECTION_STATE_COMPONENT, entity, val);}
+
     QString entity_manager::get_name_component(int entity) const{return getComponentDataForEntity(NAME_COMPONENT, entity).toString();}
 
     QString entity_manager::get_units_component(int entity) const{return getComponentDataForEntity(UNITS_COMPONENT, entity).toString();}
 
+    QString entity_manager::get_ip_address_component(int entity) const{return getComponentDataForEntity(IP_ADDRESS_COMPONENT, entity).toString();}
+
+    quint16 entity_manager::get_port_component(int entity) const{return getComponentDataForEntity(PORT_COMPONENT, entity).toUInt();}
+
+    int entity_manager::get_box_id_component(int entity) const{return getComponentDataForEntity(BOX_ID_COMPONENT, entity).toInt();}
+
+    bool entity_manager::get_connection_state_component(int entity) const{return getComponentDataForEntity(CONNECTION_STATE_COMPONENT, entity).toBool();}
 
     double entity_manager::get_analogActValue_component(int entity) const{return getComponentDataForEntity(ANALOG_ACT_VALUE_COMPONENT, entity).toDouble();}
 

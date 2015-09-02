@@ -90,6 +90,13 @@ namespace talorion {
         return false;
     }
 
+    void tcpDriver::disconect()
+    {
+        if(!tcpSocket)
+            return;
+        tcpSocket->close();
+    }
+
 
     void tcpDriver::setDataCommand(QByteArray cmd)
     {

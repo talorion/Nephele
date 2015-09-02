@@ -39,6 +39,17 @@ namespace talorion {
         _mutex.unlock();
     }
 
+    QList<int> system_manager::get_all_systems() const
+    {
+        QList<int> tmp;
+        //QSet<abstract_system*> m_systems;
+        foreach (abstract_system* sys, m_systems) {
+            if(sys)
+                tmp.append(sys->getEntity_id());
+        }
+        return tmp;
+    }
+
     void system_manager::load_system(abstract_system *sys)
     {
         if(!sys)

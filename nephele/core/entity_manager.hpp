@@ -54,7 +54,8 @@ namespace talorion {
         DIGITAL_SET_VALUE_COMPONENT,
         DIGITAL_ACT_VALUE_COMPONENT,
         SYSTEM_CONFIGURAION_WIDGET_COMPONENT,
-        IS_SYSTEM_COMPONENT
+        IS_SYSTEM_COMPONENT,
+        CONNECTION_STATE_COMPONENT
     } static_component_id;
 
     class entity_manager : public QObject
@@ -83,9 +84,10 @@ namespace talorion {
         int createNewSystem(QString nameVal, abstract_configuration_widget* sys_cfg_wdg);
         int createNewAnalogValue(QString nameVal, QString unitsVal, double smin, double smax, double amin, double amax, double setVal, int id, int box_id ) ;
         int createNewDigitalValue(QString nameVal, bool setVal, int id, int box_id ) ;
+        int createNewTcpBox(QString nameVal="New Box", QString ip="localhost", quint16 port=2701);
         //===
 
-        QWidget* get_systemConfigurationWidget_component(int entity) const;
+        abstract_configuration_widget* get_systemConfigurationWidget_component(int entity) const;
 
 
         double get_analogActValue_component(int entity)const;
@@ -99,17 +101,28 @@ namespace talorion {
         int get_id_component(int entity)const;
         QString get_name_component(int entity)const;
         QString get_units_component(int entity)const;
+        QString get_ip_address_component(int entity)const;
+        quint16 get_port_component(int entity)const;
+        int get_box_id_component(int entity)const;
+        bool get_connection_state_component(int entity)const;
 
 
-        QList<int> get_all_systems()const;
+        //QList<int> get_all_systems()const;
         int get_entity_by_name(const QString& name) const;
         QList<int> get_all_components_of_entity(int entity)const;
 
+    public slots:
+        void slot_change_name_component(int entity, QString value);
+        void slot_change_ip_address_component(int entity, QString value);
+        void slot_change_port_component(int entity, quint16 value);
+        void slot_connection_state_component(int entity, quint16 value);
 
     signals:
         void newSystem(int entity);
 
         void component_changed(int entity, int component);
+
+        void connection_state_component_changed(int entity);
 
         void analogSet_component_changed(int entity);
         void analogAct_component_changed(int entity);
@@ -119,7 +132,7 @@ namespace talorion {
 
         void newAnalogValue(int);
         void newDigitalValue(int);
-
+        void newTcpBox(int);
 
     private:
         void set_analogActValue_component(int entity, double val);
@@ -133,6 +146,10 @@ namespace talorion {
         void set_name_component(int entity, QString val);
         void set_units_component(int entity, QString val);
         void set_id_component(int entity, int val);
+        void set_ip_address_component(int entity, QString val);
+        void set_port_component(int entity, quint16 val);
+        void set_box_id_component(int entity, int val);
+        void set_connection_state_component(int entity, bool val);
         void set_systemConfigurationWidget_component(int entity_id, abstract_configuration_widget *wdgt);
 
         int calc_enity_component_hash(int entity_id, int comp_id)const{return (comp_id*P1 + entity_id)*P2;}
