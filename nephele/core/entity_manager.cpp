@@ -7,6 +7,7 @@
 #include <QVariant>
 
 #include "core/event_manager.hpp"
+#include "abstract_configuration_widget.hpp"
 //#include "analogvalue.hpp"
 
 namespace talorion {
@@ -136,17 +137,19 @@ namespace talorion {
 
     }
 
-    int entity_manager::createNewSystem(QString nameVal, QWidget *sys_cfg_wdg)
+    int entity_manager::createNewSystem(QString nameVal, abstract_configuration_widget *sys_cfg_wdg)
     {
         int entity = createNewEntity();
 
        createComponentAndAddTo(NAME_COMPONENT, entity);
         if(sys_cfg_wdg)
             createComponentAndAddTo(SYSTEM_CONFIGURAION_WIDGET_COMPONENT, entity);
+        createComponentAndAddTo(IS_SYSTEM_COMPONENT, entity);
 
-        set_name_component(entity,nameVal);
+        setComponentDataForEntity(NAME_COMPONENT,               entity, nameVal);
         if(sys_cfg_wdg)
             set_systemConfigurationWidget_component(entity, sys_cfg_wdg);
+        setComponentDataForEntity(IS_SYSTEM_COMPONENT,               entity, true);
 
         emit newSystem(entity);
         return entity;
@@ -207,7 +210,7 @@ namespace talorion {
     {
         int component_id = SYSTEM_CONFIGURAION_WIDGET_COMPONENT;
         int component_data_id = calc_enity_component_hash(component_id, entity_id );
-        QMap<int, QWidget*>::ConstIterator av = component_widget_table.constFind(component_data_id);
+        QMap<int, abstract_configuration_widget*>::ConstIterator av = component_widget_table.constFind(component_data_id);
         if (av == component_widget_table.constEnd()){
             return NULL;
         }
@@ -215,7 +218,7 @@ namespace talorion {
         return av.value();
     }
 
-    void entity_manager::set_systemConfigurationWidget_component(int entity_id, QWidget *wdgt)
+    void entity_manager::set_systemConfigurationWidget_component(int entity_id, abstract_configuration_widget *wdgt)
     {
         if(!wdgt)
             return;
@@ -255,7 +258,7 @@ namespace talorion {
     {
         QMap<int, entity_t>::const_iterator it= entities.constBegin();
         for(it = entities.constBegin(); it !=entities.constEnd(); ++it){
-            if(QString::compare(get_name_component(it.key()), name)){
+            if(QString::compare(get_name_component(it.key()), name)==0){
                 return it.key();
             }
         }
@@ -272,6 +275,12 @@ namespace talorion {
                 ecs.append(ecit.value().entity_id);
         }
         return ecs;
+    }
+
+    QList<int> entity_manager::get_all_systems() const
+    {
+        QList<int> tmp;
+        return tmp;
     }
 
     void entity_manager::set_analogActValue_component(int entity, double val){setComponentDataForEntity(ANALOG_ACT_VALUE_COMPONENT, entity, val);}
@@ -294,9 +303,12 @@ namespace talorion {
 
     void entity_manager::set_units_component(int entity, QString val){setComponentDataForEntity(UNITS_COMPONENT, entity, val);}
 
+    void entity_manager::set_id_component(int entity, int val){setComponentDataForEntity(ID_COMPONENT, entity, val);}
+
     QString entity_manager::get_name_component(int entity) const{return getComponentDataForEntity(NAME_COMPONENT, entity).toString();}
 
     QString entity_manager::get_units_component(int entity) const{return getComponentDataForEntity(UNITS_COMPONENT, entity).toString();}
+
 
     double entity_manager::get_analogActValue_component(int entity) const{return getComponentDataForEntity(ANALOG_ACT_VALUE_COMPONENT, entity).toDouble();}
 
@@ -314,7 +326,7 @@ namespace talorion {
 
     double entity_manager::get_actMax_component(int entity) const{return getComponentDataForEntity(ACT_MAX_COMPONENT, entity).toDouble();}
 
-    int entity_manager::get_id_component(int entity) const{return getComponentDataForEntity(ID_COMPONENT, entity).toDouble();}
+    int entity_manager::get_id_component(int entity) const{return getComponentDataForEntity(ID_COMPONENT, entity).toInt();}
 
     void entity_manager::slot_change_analogAct_component(int entity, double value)
     {

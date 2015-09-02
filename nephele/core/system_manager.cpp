@@ -43,7 +43,7 @@ namespace talorion {
     {
         if(!sys)
             return;
-        QWidget* tmp = sys->get_configuration_widget();
+        abstract_configuration_widget* tmp = sys->get_configuration_widget();
         int entity = entity_manager::get_instance()->createNewSystem(sys->get_system_name(), tmp);
         sys->setEntity_id(entity);
 

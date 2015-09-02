@@ -11,7 +11,11 @@ class QVariant;
 QT_END_NAMESPACE
 
 
+
+
 namespace talorion {
+
+    class abstract_configuration_widget;
 
     typedef struct comonent_t_{
         comonent_t_():component_id(0),official_name(), human_readable_description(), table_name(){}
@@ -49,7 +53,8 @@ namespace talorion {
         BOX_ID_COMPONENT,
         DIGITAL_SET_VALUE_COMPONENT,
         DIGITAL_ACT_VALUE_COMPONENT,
-        SYSTEM_CONFIGURAION_WIDGET_COMPONENT
+        SYSTEM_CONFIGURAION_WIDGET_COMPONENT,
+        IS_SYSTEM_COMPONENT
     } static_component_id;
 
     class entity_manager : public QObject
@@ -75,7 +80,7 @@ namespace talorion {
         //===
 
         //=== Factory methods
-        int createNewSystem(QString nameVal, QWidget* sys_cfg_wdg);
+        int createNewSystem(QString nameVal, abstract_configuration_widget* sys_cfg_wdg);
         int createNewAnalogValue(QString nameVal, QString unitsVal, double smin, double smax, double amin, double amax, double setVal, int id, int box_id ) ;
         int createNewDigitalValue(QString nameVal, bool setVal, int id, int box_id ) ;
         //===
@@ -95,8 +100,11 @@ namespace talorion {
         QString get_name_component(int entity)const;
         QString get_units_component(int entity)const;
 
+
+        QList<int> get_all_systems()const;
         int get_entity_by_name(const QString& name) const;
         QList<int> get_all_components_of_entity(int entity)const;
+
 
     signals:
         void newSystem(int entity);
@@ -124,7 +132,8 @@ namespace talorion {
         void set_actMax_component(int entity, double val);
         void set_name_component(int entity, QString val);
         void set_units_component(int entity, QString val);
-        void set_systemConfigurationWidget_component(int entity_id, QWidget *wdgt);
+        void set_id_component(int entity, int val);
+        void set_systemConfigurationWidget_component(int entity_id, abstract_configuration_widget *wdgt);
 
         int calc_enity_component_hash(int entity_id, int comp_id)const{return (comp_id*P1 + entity_id)*P2;}
 
@@ -143,7 +152,7 @@ namespace talorion {
         QMap<int, entity_t> entities;                           //entity_id | human-readable label FOR DEBUGGING ONLY
         QMap<int, entity_components_t> entity_components;       //enity_component_hash | entity_id | component_id
         QMap<int, QVariant> component_data_table_N;             //enity_component_hash | [1..M columns, one column for each piece of data in your component]
-        QMap<int, QWidget*> component_widget_table;
+        QMap<int, abstract_configuration_widget*> component_widget_table;
 
     private:
         //static QAtomicPointer<entity_manager> _instance;

@@ -2,9 +2,11 @@
 #define ABSTRACT_SYSTEM
 
 #include <QString>
-#include <QWidget>
 
 namespace talorion{
+
+    class abstract_configuration_widget;
+
     class abstract_system
     {
     public:
@@ -14,7 +16,7 @@ namespace talorion{
 
         void start_system(){return do_start_system();}
         QString get_system_name(){return do_get_system_name();}
-        QWidget* get_configuration_widget(){return do_get_configuration_widget();}
+        abstract_configuration_widget* get_configuration_widget(){return do_get_configuration_widget();}
 
         int getEntity_id() const{return entity_id;}
         void setEntity_id(int value){entity_id = value;}
@@ -22,7 +24,7 @@ namespace talorion{
     private:
         virtual void do_start_system()=0;
         virtual QString do_get_system_name()=0;
-        virtual QWidget* do_get_configuration_widget()=0;
+        virtual abstract_configuration_widget* do_get_configuration_widget()=0;
 
     private:
         int entity_id;

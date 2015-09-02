@@ -84,7 +84,9 @@ SOURCES += main.cpp\
     script_system/script_handler/script_daq_handler.cpp \
     tcp_box_system/abstract_backend.cpp \
     gui_system/settings_dialog/settings_dialog.cpp \
-    core/system_manager.cpp
+    core/system_manager.cpp \
+    tcp_box_system/tbs_config_widget/tbs_config_widget.cpp \
+    core/abstract_configuration_widget.cpp
 
 HEADERS  += version.hpp \
     nephele.rc \
@@ -119,7 +121,9 @@ HEADERS  += version.hpp \
     script_system/script_handler/script_daq_handler.hpp \
     tcp_box_system/abstract_backend.hpp \
     gui_system/settings_dialog/settings_dialog.hpp \
-    core/system_manager.hpp
+    core/system_manager.hpp \
+    tcp_box_system/tbs_config_widget/tbs_config_widget.hpp \
+    core/abstract_configuration_widget.hpp
 
 
 win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../qcustomplot/release/ -lqcustomplot

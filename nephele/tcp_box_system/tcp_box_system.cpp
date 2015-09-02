@@ -6,13 +6,18 @@
 #include "qvmbackend.hpp"
 #include "flowcontrollerbackend.h"
 
+#include "tbs_config_widget/tbs_config_widget.hpp"
+
 namespace talorion {
 
     tcp_box_system::tcp_box_system(QObject *par):
         QThread(par),
         curr_box_id(0),
-        drivers()
+        drivers(),
+        config_wdg(NULL)
     {
+        config_wdg = new tbs_config_widget();
+
         qRegisterMetaType<tcpDriverDataTypes::dataType>("tcpDriverDataTypes::dataType");
 
         connect(event_manager::get_instance(),SIGNAL(application_aboutToQuit()),this,SLOT(quit()));
@@ -43,6 +48,11 @@ namespace talorion {
     void tcp_box_system::do_start_system()
     {
         this->start();
+    }
+
+    abstract_configuration_widget *tcp_box_system::do_get_configuration_widget()
+    {
+        return config_wdg;
     }
 
     int tcp_box_system::new_box_id()

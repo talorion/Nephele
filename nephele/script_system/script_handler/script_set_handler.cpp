@@ -4,6 +4,7 @@
 #include <QThread>
 #include <QTime>
 #include <QTimer>
+#include <QDebug>
 
 #include "core/event_manager.hpp"
 #include "core/entity_manager.hpp"
@@ -25,8 +26,9 @@ namespace talorion {
     void script_set_handler::val(QString name, double value)
     {
         int entity=entity_manager::get_instance()->get_entity_by_name(name);
-        if(entity >= 0)
+        if(entity >= 0){
             emit set_value_changed(entity, value);
+        }
     }
 }
 

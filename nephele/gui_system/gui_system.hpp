@@ -31,7 +31,7 @@ namespace talorion{
     private:
         virtual void do_start_system() Q_DECL_OVERRIDE;
         virtual QString do_get_system_name() Q_DECL_OVERRIDE {return "gui_system";}
-        virtual QWidget* do_get_configuration_widget(){return NULL;}
+        virtual abstract_configuration_widget* do_get_configuration_widget() Q_DECL_OVERRIDE{return NULL;}
 
     private:
         nephele_main_window* window;
