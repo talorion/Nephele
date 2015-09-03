@@ -34,15 +34,16 @@ namespace talorion {
 
         void application_aboutToQuit();
 
-        void connect_tcp_box(int entity, int mode);
-        void disconnect_tcp_box(int entity);
+        void connect_tcp_box(int );
+        void disconnect_tcp_box(int );
 
-        void connection_state_component_changed(int entity);
+        void connection_state_component_changed(int );
 
         void analogAct_component_changed(int);
         void analogSet_component_changed(int);       
-        void digitalSet_component_changed(int entity);
-        void digitalAct_component_changed(int entity);
+        void digitalSet_component_changed(int );
+        void digitalAct_component_changed(int );
+        void name_component_changed(int);
 
         void change_analogAct_component(int, double);
         void change_analogSet_component(int, double);

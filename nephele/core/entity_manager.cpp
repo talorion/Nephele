@@ -5,6 +5,7 @@
 #include <QDebug>
 #include <QSignalMapper>
 #include <QVariant>
+#include <QSettings>
 
 #include "core/event_manager.hpp"
 #include "abstract_configuration_widget.hpp"
@@ -33,6 +34,7 @@ namespace talorion {
         connect(this, SIGNAL(analogSet_component_changed(int)), event_manager::get_instance(), SIGNAL(analogSet_component_changed(int)));
         connect(this, SIGNAL(digitalAct_component_changed(int)), event_manager::get_instance(), SIGNAL(digitalAct_component_changed(int)));
         connect(this, SIGNAL(digitalSet_component_changed(int)), event_manager::get_instance(), SIGNAL(digitalSet_component_changed(int)));
+        connect(this,SIGNAL(name_component_changed(int)),event_manager::get_instance(),SIGNAL(name_component_changed(int)));
 
         connect(event_manager::get_instance(),SIGNAL(change_analogAct_component(int,double)),this,SLOT(slot_change_analogAct_component(int,double)));
         connect(event_manager::get_instance(),SIGNAL(change_analogSet_component(int,double)),this,SLOT(slot_change_analogSet_component(int,double)));
@@ -68,10 +70,87 @@ namespace talorion {
         _mutex.unlock();
     }
 
-    int entity_manager::createNewEntity(QString human_readable_label)
+    void entity_manager::initialize()
     {
-        Q_UNUSED(human_readable_label);
-        int entity_id= current_identity_id++;
+        int zero_entity = createNewEntity();
+        createComponentAndAddTo(IP_ADDRESS_COMPONENT, zero_entity);
+        createComponentAndAddTo(PORT_COMPONENT, zero_entity);
+        createComponentAndAddTo( NAME_COMPONENT, zero_entity);
+        createComponentAndAddTo(UNITS_COMPONENT, zero_entity);
+        createComponentAndAddTo(SET_MIN_COMPONENT, zero_entity);
+        createComponentAndAddTo(SET_MAX_COMPONENT, zero_entity);
+        createComponentAndAddTo(ACT_MIN_COMPONENT, zero_entity);
+        createComponentAndAddTo(ACT_MAX_COMPONENT, zero_entity);
+        createComponentAndAddTo(ANALOG_SET_VALUE_COMPONENT, zero_entity);
+        createComponentAndAddTo(ANALOG_ACT_VALUE_COMPONENT, zero_entity);
+        createComponentAndAddTo(ID_COMPONENT, zero_entity);
+        createComponentAndAddTo(BOX_ID_COMPONENT, zero_entity);
+        createComponentAndAddTo(DIGITAL_SET_VALUE_COMPONENT, zero_entity);
+        createComponentAndAddTo(DIGITAL_ACT_VALUE_COMPONENT, zero_entity);
+        createComponentAndAddTo(SYSTEM_CONFIGURAION_WIDGET_COMPONENT, zero_entity);
+        createComponentAndAddTo(IS_SYSTEM_COMPONENT, zero_entity);
+        createComponentAndAddTo(CONNECTION_STATE_COMPONENT, zero_entity);
+        createComponentAndAddTo(SERIAL_VERSION_UID_COMPONENT, zero_entity);
+        createComponentAndAddTo(TCP_BOX_BACKEND_COMPONENT, zero_entity);
+
+        QSettings settings;
+        //QStringList groups = settings.childGroups();
+        foreach (QString entity, settings.childGroups()) {
+            settings.beginGroup(entity);
+            foreach (QString component, settings.childKeys()) {
+                int ent =  entity.toInt();
+                int comp= component.toInt();
+
+                QVariant value = settings.value(component);
+                qDebug()<<entity<<component<<value;
+                createNewEntity("",ent);
+                createComponentAndAddTo(comp, ent);
+                setComponentDataForEntity(comp,ent,value);
+                current_identity_id = qMax(current_identity_id+1, ent+1);
+
+            }
+            settings.endGroup();
+        }
+
+    }
+
+    void entity_manager::dispose()
+    {
+        foreach (int id, get_all_AnalogValues()) {
+            delete_entity(id);
+        }
+
+        QString group;
+        QString path;
+        QVariant value;
+
+        QSettings settings;
+        qDebug() << settings.fileName();
+        foreach (int entity, get_all_entities()) {
+            group =QString::number(entity);
+            settings.beginGroup(group);
+            foreach (int component, get_all_components_of_entity(entity)) {
+                path    = QString::number(component);
+                value   = getComponentDataForEntity(component,entity);
+                //qDebug()<<group<<path<<value;
+                if(value.isValid())
+                    settings.setValue(path,value);
+            }
+            settings.endGroup();
+        }
+
+
+    }
+
+    int entity_manager::createNewEntity(QString human_readable_label, int entity)
+    {
+        //Q_UNUSED(human_readable_label);
+        int entity_id;
+        if(entity<0)
+            entity_id= current_identity_id++;
+        else
+            entity_id= qMax(current_identity_id+1, entity+1);
+
         entity_t et;
         et.entity_id= entity_id;
         et.human_readable_label =human_readable_label;
@@ -90,7 +169,7 @@ namespace talorion {
 
     }
 
-    void entity_manager::createComponentAndAddTo(static_component_id comp_id, int entity_id)
+    void entity_manager::createComponentAndAddTo(int comp_id, int entity_id)
     {
         if(!components.contains(comp_id)){
             comonent_t ct;
@@ -109,6 +188,12 @@ namespace talorion {
         ect.entity_id = entity_id;
         entity_components.insert(component_data_id, ect);
 
+    }
+
+
+    void entity_manager::createComponentAndAddTo(static_component_id comp_id, int entity_id)
+    {
+        createComponentAndAddTo((int)comp_id, entity_id);
     }
 
     QVariant entity_manager::getComponentDataForEntity(int component_id, int entity_id) const
@@ -139,27 +224,39 @@ namespace talorion {
 
     }
 
-    int entity_manager::createNewSystem(QString nameVal, abstract_configuration_widget *sys_cfg_wdg)
+    int entity_manager::createNewSystem(QUuid suid, QString nameVal, abstract_configuration_widget* sys_cfg_wdg)
     {
-        int entity = createNewEntity();
+        QList<int> list =get_entity_by_serialVersionUID(suid);
+        int entity = -1;
+        if(list.empty()){
+            entity = createNewEntity();
 
-        createComponentAndAddTo(NAME_COMPONENT, entity);
+            createComponentAndAddTo(SERIAL_VERSION_UID_COMPONENT, entity);
+            createComponentAndAddTo(NAME_COMPONENT, entity);
+
+            createComponentAndAddTo(IS_SYSTEM_COMPONENT, entity);
+        }else{
+            entity = list[0];
+        }
+
         if(sys_cfg_wdg)
             createComponentAndAddTo(SYSTEM_CONFIGURAION_WIDGET_COMPONENT, entity);
-        createComponentAndAddTo(IS_SYSTEM_COMPONENT, entity);
 
+        setComponentDataForEntity(SERIAL_VERSION_UID_COMPONENT,               entity, suid);
         setComponentDataForEntity(NAME_COMPONENT,               entity, nameVal);
         if(sys_cfg_wdg)
             set_systemConfigurationWidget_component(entity, sys_cfg_wdg);
         setComponentDataForEntity(IS_SYSTEM_COMPONENT,               entity, true);
 
         emit newSystem(entity);
+
         return entity;
 
     }
 
     int entity_manager::createNewAnalogValue(QString nameVal, QString unitsVal, double smin, double smax, double amin, double amax, double setVal, int id, int box_id)
     {
+        //QUuid uid("{6ddc030e-2001-4a38-a8ce-57b309f902ff}");
         int new_id = createNewEntity();
 
         createComponentAndAddTo( NAME_COMPONENT, new_id );
@@ -172,6 +269,7 @@ namespace talorion {
         createComponentAndAddTo( ANALOG_ACT_VALUE_COMPONENT, new_id );
         createComponentAndAddTo( ID_COMPONENT, new_id );
         createComponentAndAddTo( BOX_ID_COMPONENT, new_id );
+        createComponentAndAddTo(SERIAL_VERSION_UID_COMPONENT, new_id);
 
         setComponentDataForEntity(NAME_COMPONENT,               new_id, nameVal);
         setComponentDataForEntity(UNITS_COMPONENT,              new_id, unitsVal);
@@ -183,6 +281,7 @@ namespace talorion {
         setComponentDataForEntity(ANALOG_ACT_VALUE_COMPONENT,   new_id, setVal);
         setComponentDataForEntity(ID_COMPONENT,                 new_id, id);
         setComponentDataForEntity(BOX_ID_COMPONENT,             new_id, box_id);
+        setComponentDataForEntity(SERIAL_VERSION_UID_COMPONENT, new_id, get_AnalogValue_uid());
 
         emit newAnalogValue(new_id);
         return new_id;
@@ -190,18 +289,21 @@ namespace talorion {
 
     int entity_manager::createNewDigitalValue(QString nameVal, bool setVal, int id, int box_id)
     {
+        //QUuid uid("{837c326e-e5fb-4271-97e8-8a3161cfc02c}");
         int new_id = createNewEntity();
         createComponentAndAddTo( NAME_COMPONENT, new_id );
         createComponentAndAddTo( DIGITAL_ACT_VALUE_COMPONENT, new_id );
         createComponentAndAddTo( DIGITAL_SET_VALUE_COMPONENT, new_id );
         createComponentAndAddTo( ID_COMPONENT, new_id );
         createComponentAndAddTo( BOX_ID_COMPONENT, new_id );
+        createComponentAndAddTo(SERIAL_VERSION_UID_COMPONENT, new_id);
 
         setComponentDataForEntity(NAME_COMPONENT,               new_id, nameVal);
         setComponentDataForEntity(DIGITAL_SET_VALUE_COMPONENT,  new_id, setVal);
         setComponentDataForEntity(DIGITAL_ACT_VALUE_COMPONENT,  new_id, setVal);
         setComponentDataForEntity(ID_COMPONENT,                 new_id, id);
         setComponentDataForEntity(BOX_ID_COMPONENT,             new_id, box_id);
+        setComponentDataForEntity(SERIAL_VERSION_UID_COMPONENT, new_id, get_DigitalValue_uid());
 
         emit newDigitalValue(new_id);
         return new_id;
@@ -209,18 +311,23 @@ namespace talorion {
 
     int entity_manager::createNewTcpBox(QString nameVal, QString ip, quint16 port)
     {
+        //QUuid uid("{99060fb8-676f-47d8-b9f1-c9c492721009}");
         int new_id = createNewEntity();
         createComponentAndAddTo( NAME_COMPONENT, new_id );
         createComponentAndAddTo( BOX_ID_COMPONENT, new_id );
         createComponentAndAddTo( IP_ADDRESS_COMPONENT, new_id );
         createComponentAndAddTo( PORT_COMPONENT, new_id );
         createComponentAndAddTo( CONNECTION_STATE_COMPONENT, new_id );
+        createComponentAndAddTo(SERIAL_VERSION_UID_COMPONENT, new_id);
+        createComponentAndAddTo(TCP_BOX_BACKEND_COMPONENT, new_id);
 
         setComponentDataForEntity(NAME_COMPONENT,               new_id, nameVal);
         setComponentDataForEntity(BOX_ID_COMPONENT,             new_id, new_id);
         setComponentDataForEntity(IP_ADDRESS_COMPONENT,         new_id, ip);
         setComponentDataForEntity(PORT_COMPONENT,               new_id, port);
-        setComponentDataForEntity(CONNECTION_STATE_COMPONENT,               new_id, false);
+        setComponentDataForEntity(CONNECTION_STATE_COMPONENT,   new_id, false);
+        setComponentDataForEntity(SERIAL_VERSION_UID_COMPONENT, new_id, get_TcpBox_uid());
+        setComponentDataForEntity(TCP_BOX_BACKEND_COMPONENT, new_id, 0);
 
         emit newTcpBox(new_id);
         return new_id;
@@ -255,26 +362,6 @@ namespace talorion {
         emit component_changed(entity_id, component_id);
     }
 
-
-    //        int entity_manager::create_new_fc_box_connection(QString nameVal, int box_id, QString ip_address, quint16 port)
-    //        {
-    //            int new_id = createNewEntity();
-
-    //            createComponentAndAddTo( IP_ADDRESS_COMPONENT, new_id );
-    //            createComponentAndAddTo( PORT_COMPONENT, new_id );
-    //            createComponentAndAddTo( BOX_ID_COMPONENT, new_id );
-    //            createComponentAndAddTo( NAME_COMPONENT, new_id );
-
-    //            setComponentDataForEntity(IP_ADDRESS_COMPONENT, new_id, ip_address);
-    //            setComponentDataForEntity(PORT_COMPONENT, new_id, port);
-    //            setComponentDataForEntity(BOX_ID_COMPONENT, new_id, box_id);
-    //            setComponentDataForEntity(NAME_COMPONENT, new_id, nameVal);
-
-    //            return new_id;
-    //        }
-
-
-
     int entity_manager::get_entity_by_name(const QString &name) const
     {
         QMap<int, entity_t>::const_iterator it= entities.constBegin();
@@ -287,13 +374,35 @@ namespace talorion {
 
     }
 
+    QList<int> entity_manager::get_entity_by_serialVersionUID(const QUuid &uid) const
+    {
+        QList<int> ecs;
+        QMap<int, entity_t>::const_iterator it= entities.constBegin();
+        for(it = entities.constBegin(); it !=entities.constEnd(); ++it){
+            if(get_serialVersionUID_component(it.key()) == uid){
+                ecs.append(it.key());
+            }
+        }
+        return ecs;
+    }
+
+    QList<int> entity_manager::get_all_entities() const
+    {
+        QList<int> ecs;
+        QMap<int, entity_t>::const_iterator ecit;
+        for(ecit=entities.constBegin(); ecit !=entities.constEnd(); ++ecit){
+            ecs.append(ecit.key());
+        }
+        return ecs;
+    }
+
     QList<int> entity_manager::get_all_components_of_entity(int entity) const
     {
         QList<int> ecs;
         QMap<int, entity_components_t>::const_iterator ecit;
         for(ecit=entity_components.constBegin(); ecit !=entity_components.constEnd(); ++ecit){
             if(ecit.value().entity_id == entity)
-                ecs.append(ecit.value().entity_id);
+                ecs.append(ecit.value().component_id);
         }
         return ecs;
     }
@@ -302,7 +411,7 @@ namespace talorion {
     {
         if( get_name_component(entity)!= value){
             set_name_component(entity, value);
-            //emit analogAct_component_changed(entity);
+            emit name_component_changed(entity);
         }
     }
 
@@ -327,6 +436,14 @@ namespace talorion {
         if( get_connection_state_component(entity)!= value){
             set_connection_state_component(entity, value);
             emit connection_state_component_changed(entity);
+        }
+    }
+
+    void entity_manager::slot_change_tcp_box_backend_component(int entity, int value)
+    {
+        if( get_tcp_box_backend_component(entity)!= value){
+            set_tcp_box_backend_component(entity, value);
+            //emit connection_state_component_changed(entity);
         }
     }
 
@@ -366,6 +483,10 @@ namespace talorion {
 
     void entity_manager::set_connection_state_component(int entity, bool val){setComponentDataForEntity(CONNECTION_STATE_COMPONENT, entity, val);}
 
+    void entity_manager::set_serialVersionUID_component(int entity, QUuid val){setComponentDataForEntity(SERIAL_VERSION_UID_COMPONENT, entity, val);}
+
+    void entity_manager::set_tcp_box_backend_component(int entity, int val){setComponentDataForEntity(TCP_BOX_BACKEND_COMPONENT, entity, val);}
+
     QString entity_manager::get_name_component(int entity) const{return getComponentDataForEntity(NAME_COMPONENT, entity).toString();}
 
     QString entity_manager::get_units_component(int entity) const{return getComponentDataForEntity(UNITS_COMPONENT, entity).toString();}
@@ -377,6 +498,10 @@ namespace talorion {
     int entity_manager::get_box_id_component(int entity) const{return getComponentDataForEntity(BOX_ID_COMPONENT, entity).toInt();}
 
     bool entity_manager::get_connection_state_component(int entity) const{return getComponentDataForEntity(CONNECTION_STATE_COMPONENT, entity).toBool();}
+
+    QUuid entity_manager::get_serialVersionUID_component(int entity) const{return getComponentDataForEntity(SERIAL_VERSION_UID_COMPONENT, entity).toUuid();}
+
+    int entity_manager::get_tcp_box_backend_component(int entity) const{return getComponentDataForEntity(TCP_BOX_BACKEND_COMPONENT, entity).toInt();}
 
     double entity_manager::get_analogActValue_component(int entity) const{return getComponentDataForEntity(ANALOG_ACT_VALUE_COMPONENT, entity).toDouble();}
 

@@ -2,6 +2,7 @@
 #include <QApplication>
 
 
+#include "core/entity_manager.hpp"
 #include "core/event_manager.hpp"
 #include "core/system_manager.hpp"
 
@@ -20,6 +21,11 @@ int main(int argc, char *argv[])
 
 
     QApplication a(argc, argv);
+    QCoreApplication::setOrganizationName("Gregor Mayramhof");
+    QCoreApplication::setOrganizationDomain("github.com/talorion");
+    QCoreApplication::setApplicationName("Nephele");
+
+    entity_manager::get_instance()->initialize();
 
     QObject::connect(&a,SIGNAL(aboutToQuit()), event_manager::get_instance(), SIGNAL(application_aboutToQuit()));
 
@@ -42,6 +48,9 @@ int main(int argc, char *argv[])
     int ret = a.exec();
 
     event_manager::destroy();
+
+    entity_manager::get_instance()->dispose();
+    entity_manager::destroy();
 
     return ret;
 }

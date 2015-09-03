@@ -22,19 +22,23 @@ namespace talorion {
         Q_DISABLE_COPY(tbs_config_widget)
 
     signals:
-        void connect_tcp_box(int entity, int mode);
+        void connect_tcp_box(int entity);
         void disconnect_tcp_box(int entity);
+        void change_name_component(int, QString);
 
     private slots:
         void slot_newTcpBox(int entity);
         void slot_add_button_clicked(bool);
         void slot_itemClicked(QListWidgetItem * item);
         void slot_connection_state_changed(int entity);
+        void slot_name_component_changed(int entity);
 
         void update_visibility(bool connected);
 
         void slot_connect_button_clicked(bool);
         void slot_disconnect_button_clicked(bool);
+
+        void box_name_field_textChanged(const QString name);
 
     private:
         QListWidget* boxes_list;

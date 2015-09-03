@@ -7,7 +7,7 @@ namespace talorion {
 
     data_aquisition_dll_system::data_aquisition_dll_system(QObject *par) :
         QThread(par),
-        abstract_system()
+        abstract_system("{e6ec66b4-85e5-44bd-b9c5-73fea98413a8}")
     {
         connect(event_manager::get_instance(),SIGNAL(application_aboutToQuit()),this,SLOT(quit()));
     }

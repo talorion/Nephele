@@ -17,7 +17,7 @@
 namespace talorion{
     gui_system::gui_system(QObject *par) :
         QObject(par),
-        abstract_system(),
+        abstract_system("{93647299-a839-4cb6-ada7-7dabf01f297d}"),
         window(NULL)
     {
 

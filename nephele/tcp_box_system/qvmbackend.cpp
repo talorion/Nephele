@@ -116,7 +116,7 @@ namespace talorion {
     void qvmbackend::fcSetChangeProxy(double value, int id)
     {
         //QByteArray command = "uibkav setById ";
-        QByteArray command = "uibkav setByModule ";
+        QByteArray command = "uibkav setById ";
         command.append(QByteArray::number(id));
         command.append(" ");
         command.append(QByteArray::number(value));

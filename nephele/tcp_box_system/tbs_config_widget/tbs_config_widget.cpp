@@ -26,8 +26,10 @@ namespace talorion {
     {
         connect(event_manager::get_instance(),SIGNAL(newTcpBox(int)),this,SLOT(slot_newTcpBox(int)));
         connect(event_manager::get_instance(),SIGNAL(connection_state_component_changed(int)),this,SLOT(slot_connection_state_changed(int)));
-        connect(this,SIGNAL(connect_tcp_box(int,int)),event_manager::get_instance(),SIGNAL(connect_tcp_box(int,int)));
+        connect(this,SIGNAL(connect_tcp_box(int)),event_manager::get_instance(),SIGNAL(connect_tcp_box(int)));
         connect(this,SIGNAL(disconnect_tcp_box(int)),event_manager::get_instance(),SIGNAL(disconnect_tcp_box(int)));
+        connect(event_manager::get_instance(),SIGNAL(name_component_changed(int)),this,SLOT(slot_name_component_changed(int)));
+        //connect(this,SIGNAL(change_name_component(int,QString)),event_manager::get_instance(),SIGNAL(change_
 
         boxes_list = new QListWidget();
 
@@ -80,6 +82,12 @@ namespace talorion {
         connect(connect_button,SIGNAL(clicked(bool)),this,SLOT(slot_connect_button_clicked(bool)));
         connect(disconnect_button,SIGNAL(clicked(bool)),this,SLOT(slot_disconnect_button_clicked(bool)));
 
+        connect(box_name_field, SIGNAL(textChanged(QString)),this,SLOT(box_name_field_textChanged(QString)));
+
+        foreach (int box, entity_manager::get_instance()->get_all_tcpBoxes()) {
+            slot_newTcpBox(box);
+        }
+
     }
 
     tbs_config_widget::~tbs_config_widget()
@@ -127,6 +135,14 @@ namespace talorion {
         update_visibility(tmp);
     }
 
+    void tbs_config_widget::slot_name_component_changed(int entity)
+    {
+        if(current_entity != entity)
+            return;
+        QString tmp = entity_manager::get_instance()->get_name_component(entity);
+        boxes_list->currentItem()->setText(tmp);
+    }
+
     void tbs_config_widget::update_visibility(bool connected)
     {
         box_name_field->setDisabled(connected);
@@ -148,9 +164,9 @@ namespace talorion {
             entity_manager::get_instance()->slot_change_name_component(current_entity, box_name_field->text());
             entity_manager::get_instance()->slot_change_ip_address_component(current_entity, ip_address_field->text());
             entity_manager::get_instance()->slot_change_port_component(current_entity, portField->value());
+            entity_manager::get_instance()->slot_change_tcp_box_backend_component(current_entity, mode);
 
-
-            emit connect_tcp_box(current_entity, mode);
+            emit connect_tcp_box(current_entity);
         }
     }
 
@@ -158,6 +174,11 @@ namespace talorion {
     {
         if(current_entity>=0)
             emit disconnect_tcp_box(current_entity);
+    }
+
+    void tbs_config_widget::box_name_field_textChanged(const QString name)
+    {
+        Q_UNUSED(name)
     }
 
 } // namespace talorion

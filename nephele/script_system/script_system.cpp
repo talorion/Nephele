@@ -8,7 +8,7 @@ namespace talorion {
 
     script_system::script_system(QObject *par) :
         QThread(par),
-        abstract_system()
+        abstract_system("{8c2f892c-e2e2-417b-a3b1-96600e7822d3}")
     {
         connect(event_manager::get_instance(),SIGNAL(application_aboutToQuit()),this,SLOT(quit()));
     }

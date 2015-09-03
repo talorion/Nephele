@@ -6,7 +6,7 @@ namespace talorion{
 
     power_supply_dll_system::power_supply_dll_system(QObject *par):
         QThread(par),
-        abstract_system()
+        abstract_system("{1a08d877-a8cd-4b03-9780-171e02fb77d8}")
     {
         connect(event_manager::get_instance(),SIGNAL(application_aboutToQuit()),this,SLOT(quit()));
     }

@@ -55,7 +55,7 @@ namespace talorion {
         if(!sys)
             return;
         abstract_configuration_widget* tmp = sys->get_configuration_widget();
-        int entity = entity_manager::get_instance()->createNewSystem(sys->get_system_name(), tmp);
+        int entity = entity_manager::get_instance()->createNewSystem(sys->getSerialVersionUID(),sys->get_system_name(), tmp);
         sys->setEntity_id(entity);
 
         sys->start_system();

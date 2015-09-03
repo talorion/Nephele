@@ -26,7 +26,7 @@ namespace talorion {
         virtual void run() Q_DECL_OVERRIDE;
 
     private slots:
-        void slot_connect_tcp_box(int entity, int mode);
+        void slot_connect_tcp_box(int entity);
         void slot_disconnect_tcp_box(int entity);
 
         // abstract_system interface
