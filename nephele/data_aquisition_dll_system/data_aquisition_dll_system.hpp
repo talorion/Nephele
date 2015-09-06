@@ -9,6 +9,7 @@
 namespace talorion {
 
     class dad_config_widget;
+    class data_aquisition_dll_wrapper;
 
     class data_aquisition_dll_system : public QThread, public abstract_system
     {

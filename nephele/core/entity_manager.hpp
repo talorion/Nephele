@@ -62,7 +62,9 @@ namespace talorion {
         TCP_BOX_BACKEND_COMPONENT,
         SYSTEM_VERSION_UID_COMPONENT,
         QT_SCRIPT_ENGINE_COMPONENT,
-        SCRIPT_FILE_COMPONENT
+        SCRIPT_FILE_COMPONENT,
+        DATA_AQUISITION_DLL_COMPONENT,
+        TIMEOUT_COMPONENT
     } static_component_id;
 
     class entity_manager : public QObject
@@ -97,6 +99,7 @@ namespace talorion {
         int createNewDigitalValue(QString nameVal, bool setVal, int id, int box_id ) ;
         int createNewTcpBox(QString nameVal="New Box", QString ip="localhost", quint16 port=2701);
         int createQtScriptEngine(QString nameVal="Qt Script Engine", QScriptEngine* engine=NULL);
+        int createTofDaqDll(QString nameVal="TofDaqDll", QString pathVal="C:\\Tofwerk\\TofDaq_1.97_noHW\\TofDaqDll.dll", int timeout = 5000);
         //===
 
         //=== Factory constants
@@ -105,12 +108,14 @@ namespace talorion {
         QUuid get_TcpBox_uid()const{return ("{99060fb8-676f-47d8-b9f1-c9c492721009}");}
         QUuid get_System_uid()const{return ("{b50224fa-8908-4503-8296-8b0c8531e1ce}");}
         QUuid get_Qt_Script_Engine_uid()const{return ("{3a31ae25-c7f4-4e79-93c4-2a4f7b675298}");}
+        QUuid get_TofDaqDll_uid()const{return ("{e16e6a36-4f76-4746-995d-62996c86f74a}");}
         //
 
         QList<int> get_all_tcpBoxes()const{return get_entity_by_serialVersionUID(get_TcpBox_uid());}
         QList<int> get_all_AnalogValues()const{return get_entity_by_serialVersionUID(get_AnalogValue_uid());}
         QList<int> get_all_Systems()const{return get_entity_by_serialVersionUID(get_System_uid());}
         QList<int> get_all_Qt_Script_Engines()const{return get_entity_by_serialVersionUID(get_Qt_Script_Engine_uid());}
+        QList<int> get_all_TofDaqDlls()const{return get_entity_by_serialVersionUID(get_TofDaqDll_uid());}
 
         abstract_configuration_widget* get_systemConfigurationWidget_component(int entity_id) const;
         QScriptEngine* get_qt_script_engine_component(int entity_id) const;
@@ -135,7 +140,8 @@ namespace talorion {
         QUuid get_systemVersionUID_component(int entity)const;
         int get_tcp_box_backend_component(int entity)const;
         QString get_script_file_component(int entity)const;
-
+        QString get_data_aquistion_dll_component(int entity)const;
+        int get_timeout_component(int entity)const;
 
 
         //QList<int> get_all_systems()const;
@@ -168,12 +174,17 @@ namespace talorion {
 
         void name_component_changed(int entity);
 
+        void timeout_component_changed(int entity);
+
         void script_file_component_changed(int entity);
+
+        void data_aquistion_dll_component_changed(int entity);
 
         void newAnalogValue(int);
         void newDigitalValue(int);
         void newTcpBox(int);
         void newQtScriptEngine(int);
+        void newTofDaqDll(int);
 
     private:
         void set_analogActValue_component(int entity, double val);
@@ -196,6 +207,8 @@ namespace talorion {
         void set_systemConfigurationWidget_component(int entity_id, abstract_configuration_widget *wdgt);
         void set_qt_script_engine_component(int entity_id, QScriptEngine *engine);
         void set_script_file_component(int entity, QString val);
+        void set_data_aquistion_dll_component(int entity, QString val);
+        void set_timeout_component(int entity, int val);
 
         int calc_enity_component_hash(int entity_id, int comp_id)const{return (comp_id*P1 + entity_id)*P2;}
 
@@ -207,6 +220,10 @@ namespace talorion {
         void slot_change_digitalSet_component(int entity, bool value);
 
         void slot_change_script_file_component(int entity, QString value);
+
+        void slot_change_data_aquistion_dll_component(int entity, QString value);
+
+        void slot_change_timeout_component(int entity, int value);
 
     private:
 

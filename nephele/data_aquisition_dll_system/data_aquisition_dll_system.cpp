@@ -4,6 +4,8 @@
 #include "data_aquisition_dll_wrapper.hpp"
 #include "core/event_manager.hpp"
 
+#include "data_aquisition_dll_worker.hpp"
+
 namespace talorion {
 
     data_aquisition_dll_system::data_aquisition_dll_system(QObject *par) :
@@ -22,13 +24,11 @@ namespace talorion {
 
     void data_aquisition_dll_system::run()
     {
-        data_aquisition_dll_wrapper* wrap= new data_aquisition_dll_wrapper();
-        //wrap->init();
+        data_aquisition_dll_worker* wrk = new data_aquisition_dll_worker();
 
         exec();
 
-        wrap->dispose();
-        delete wrap;
+        delete wrk;
     }
 
     void data_aquisition_dll_system::do_start_system()

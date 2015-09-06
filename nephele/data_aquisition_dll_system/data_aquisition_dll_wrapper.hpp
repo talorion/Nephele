@@ -51,6 +51,7 @@ namespace talorion {
         int initialize_dll();
         void cleanup_dll();
 
+    private slots:
         int start_aquisition();
         int stop_aquisition();
         bool aquisition_active();

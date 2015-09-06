@@ -21,10 +21,12 @@ namespace talorion {
 
     void script_system::run()
     {
-        scripting_worker worker;
-        worker.initialize();
+        scripting_worker* wrk = new scripting_worker();
+        wrk->initialize();
 
         exec();
+
+        delete wrk;
     }
 
     void script_system::do_start_system()

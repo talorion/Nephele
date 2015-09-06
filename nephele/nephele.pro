@@ -82,7 +82,6 @@ SOURCES += main.cpp\
     tcp_box_system/tcpdriver.cpp \
     tcp_box_system/tcpcommand.cpp \
     tcp_box_system/tcpcommandqueue.cpp \
-    core/analogvalue.cpp \
     tcp_box_system/flowcontrollerbackend.cpp \
     script_system/script_system.cpp \
     tcp_box_system/tcp_box_system.cpp \
@@ -102,7 +101,9 @@ SOURCES += main.cpp\
     tcp_box_system/tbs_config_widget/tbs_config_widget.cpp \
     core/abstract_configuration_widget.cpp \
     data_aquisition_dll_system/tof_daq_specific/tof_daq_dll_tools.cpp \
-    data_aquisition_dll_system/dad_config_widget/dad_config_widget.cpp
+    data_aquisition_dll_system/dad_config_widget/dad_config_widget.cpp \
+    data_aquisition_dll_system/data_aquisition_dll_worker.cpp \
+    tcp_box_system/tcp_box_worker.cpp
 
 HEADERS  += version.hpp \
     nephele.rc \
@@ -119,7 +120,6 @@ HEADERS  += version.hpp \
     script_system/script_handler/script_set_handler.hpp \
     script_system/script_handler/script_util_handler.hpp \
     script_system/scripting_worker.hpp \
-    core/analogvalue.hpp \
     tcp_box_system/flowcontrollerbackend.h \
     script_system/script_system.hpp \
     tcp_box_system/tcp_box_system.hpp \
@@ -142,7 +142,9 @@ HEADERS  += version.hpp \
     core/abstract_configuration_widget.hpp \
     data_aquisition_dll_system/tof_daq_specific/tof_daq_dll_tools.hpp \
     data_aquisition_dll_system/dad_config_widget/dad_config_widget.hpp \
-    build_number.h
+    build_number.h \
+    data_aquisition_dll_system/data_aquisition_dll_worker.hpp \
+    tcp_box_system/tcp_box_worker.hpp
 
 
 win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../qcustomplot/release/ -lqcustomplot

@@ -5,6 +5,8 @@
 
 #include "tof_daq_specific/tof_daq_dll_tools.hpp"
 
+#include "core/event_manager.hpp"
+
 
 namespace talorion{
     data_aquisition_dll_wrapper::data_aquisition_dll_wrapper(QObject *par) :
@@ -35,6 +37,8 @@ namespace talorion{
         m_SetParameterDouble(NULL),
         m_data_aquisition_dll(NULL)
     {
+        connect(event_manager::get_instance(),SIGNAL(start_aquisition()),this, SLOT(start_aquisition()));
+        connect(event_manager::get_instance(),SIGNAL(stop_aquisition()),this, SLOT(stop_aquisition()));
 
     }
 

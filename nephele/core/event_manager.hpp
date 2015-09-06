@@ -32,6 +32,7 @@ namespace talorion {
         void newSystem(int);
         void newTcpBox(int);
         void newQtScriptEngine(int);
+        void newTofDaqDll(int);
 
         void application_aboutToQuit();
 
@@ -45,6 +46,9 @@ namespace talorion {
         void digitalSet_component_changed(int );
         void digitalAct_component_changed(int );
 
+        void data_aquistion_dll_component_changed(int );
+        void timeout_component_changed(int entity);
+
         void name_component_changed(int);
         void script_file_component_changed(int);
 
@@ -53,7 +57,8 @@ namespace talorion {
         void change_digitalAct_component(int, bool);
         void change_digitalSet_component(int, bool);
         void change_script_file_component(int , QString );
-
+        void change_data_aquistition_dll_component(int , QString );
+        void change_timeout_component(int , int );
 
         void send_custom_command(const QString&);
         void receivedCustomData(const QString &);

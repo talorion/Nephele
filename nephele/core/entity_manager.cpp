@@ -37,17 +37,22 @@ namespace talorion {
         connect(this, SIGNAL(digitalSet_component_changed(int)), event_manager::get_instance(), SIGNAL(digitalSet_component_changed(int)));
         connect(this,SIGNAL(name_component_changed(int)),event_manager::get_instance(),SIGNAL(name_component_changed(int)));
         connect(this,SIGNAL(script_file_component_changed(int)),event_manager::get_instance(),SIGNAL(script_file_component_changed(int)));
+        connect(this, SIGNAL(data_aquistion_dll_component_changed(int)),event_manager::get_instance(),SIGNAL(data_aquistion_dll_component_changed(int)));
+        connect(this, SIGNAL(timeout_component_changed(int)),event_manager::get_instance(),SIGNAL(timeout_component_changed(int)));
 
         connect(event_manager::get_instance(),SIGNAL(change_analogAct_component(int,double)),this,SLOT(slot_change_analogAct_component(int,double)));
         connect(event_manager::get_instance(),SIGNAL(change_analogSet_component(int,double)),this,SLOT(slot_change_analogSet_component(int,double)));
         connect(event_manager::get_instance(),SIGNAL(change_digitalAct_component(int,bool)),this,SLOT(slot_change_digitalAct_component(int,bool)));
         connect(event_manager::get_instance(),SIGNAL(change_digitalSet_component(int,bool)),this,SLOT(slot_change_digitalSet_component(int,bool)));
         connect(event_manager::get_instance(),SIGNAL(change_script_file_component(int,QString)),this,SLOT(slot_change_script_file_component(int,QString)));
+        connect(event_manager::get_instance(),SIGNAL(change_data_aquistition_dll_component(int,QString)),this,SLOT(slot_change_data_aquistion_dll_component(int,QString)));
+        connect(event_manager::get_instance(),SIGNAL(change_timeout_component(int,int)),this,SLOT(slot_change_timeout_component(int,int)));
 
         connect(this,SIGNAL(newAnalogValue(int)),event_manager::get_instance(),SIGNAL(newAnalogValue(int)));
         connect(this,SIGNAL(newDigitalValue(int)),event_manager::get_instance(),SIGNAL(newDigitalValue(int)));
         connect(this, SIGNAL(newTcpBox(int)),event_manager::get_instance(),SIGNAL(newTcpBox(int)));
         connect(this, SIGNAL(newQtScriptEngine(int)),event_manager::get_instance(),SIGNAL(newQtScriptEngine(int)));
+        connect(this, SIGNAL(newTofDaqDll(int)),event_manager::get_instance(),SIGNAL(newTofDaqDll(int)));
     }
 
     entity_manager::~entity_manager()
@@ -385,6 +390,23 @@ namespace talorion {
         return new_id;
     }
 
+    int entity_manager::createTofDaqDll(QString nameVal, QString pathVal, int timeout)
+    {
+        int new_id = createNewEntity();
+        createComponentAndAddTo( NAME_COMPONENT, new_id );
+        createComponentAndAddTo( DATA_AQUISITION_DLL_COMPONENT, new_id );
+        createComponentAndAddTo(SERIAL_VERSION_UID_COMPONENT, new_id);
+        createComponentAndAddTo(TIMEOUT_COMPONENT, new_id);
+
+        setComponentDataForEntity(NAME_COMPONENT,               new_id, nameVal);
+        setComponentDataForEntity(DATA_AQUISITION_DLL_COMPONENT,               new_id, pathVal);
+        setComponentDataForEntity(SERIAL_VERSION_UID_COMPONENT, new_id, get_TofDaqDll_uid());
+        setComponentDataForEntity(TIMEOUT_COMPONENT, new_id, timeout);
+
+        emit newTofDaqDll(new_id);
+        return new_id;
+    }
+
 
     abstract_configuration_widget *entity_manager::get_systemConfigurationWidget_component(int entity_id) const
     {
@@ -538,6 +560,9 @@ namespace talorion {
 
     void entity_manager::set_script_file_component(int entity, QString val){setComponentDataForEntity(SCRIPT_FILE_COMPONENT, entity, val);}
 
+    void entity_manager::set_data_aquistion_dll_component(int entity, QString val){setComponentDataForEntity(DATA_AQUISITION_DLL_COMPONENT, entity, val);}
+
+    void entity_manager::set_timeout_component(int entity, int val){setComponentDataForEntity(TIMEOUT_COMPONENT, entity, val);}
 
     QString entity_manager::get_name_component(int entity) const{return getComponentDataForEntity(NAME_COMPONENT, entity).toString();}
 
@@ -558,6 +583,10 @@ namespace talorion {
     int entity_manager::get_tcp_box_backend_component(int entity) const{return getComponentDataForEntity(TCP_BOX_BACKEND_COMPONENT, entity).toInt();}
 
     QString entity_manager::get_script_file_component(int entity) const{return getComponentDataForEntity(SCRIPT_FILE_COMPONENT, entity).toString();}
+
+    QString entity_manager::get_data_aquistion_dll_component(int entity) const{return getComponentDataForEntity(DATA_AQUISITION_DLL_COMPONENT, entity).toString();}
+
+    int entity_manager::get_timeout_component(int entity) const{return getComponentDataForEntity(TIMEOUT_COMPONENT, entity).toInt();}
 
     double entity_manager::get_analogActValue_component(int entity) const{return getComponentDataForEntity(ANALOG_ACT_VALUE_COMPONENT, entity).toDouble();}
 
@@ -615,6 +644,22 @@ namespace talorion {
         if( get_script_file_component(entity)!= value){
             set_script_file_component(entity, value);
             emit script_file_component_changed(entity);
+        }
+    }
+
+    void entity_manager::slot_change_data_aquistion_dll_component(int entity, QString value)
+    {
+        if( get_data_aquistion_dll_component(entity)!= value){
+            set_data_aquistion_dll_component(entity, value);
+            emit data_aquistion_dll_component_changed(entity);
+        }
+    }
+
+    void entity_manager::slot_change_timeout_component(int entity, int value)
+    {
+        if( get_timeout_component(entity)!= value){
+            set_timeout_component(entity, value);
+            emit timeout_component_changed(entity);
         }
     }
 
