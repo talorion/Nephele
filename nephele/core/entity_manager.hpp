@@ -9,6 +9,7 @@ QT_BEGIN_NAMESPACE
 class QMutex;
 class QSignalMapper;
 class QVariant;
+class QScriptEngine;
 QT_END_NAMESPACE
 
 
@@ -58,7 +59,10 @@ namespace talorion {
         IS_SYSTEM_COMPONENT,
         CONNECTION_STATE_COMPONENT,
         SERIAL_VERSION_UID_COMPONENT,
-        TCP_BOX_BACKEND_COMPONENT
+        TCP_BOX_BACKEND_COMPONENT,
+        SYSTEM_VERSION_UID_COMPONENT,
+        QT_SCRIPT_ENGINE_COMPONENT,
+        SCRIPT_FILE_COMPONENT
     } static_component_id;
 
     class entity_manager : public QObject
@@ -78,7 +82,7 @@ namespace talorion {
         void dispose();
 
         //=== DB Functions
-        int createNewEntity(QString human_readable_label=QString(), int entity=-1);
+        int createNewEntity(QString human_readable_label=QString(), int entity=-1, bool isSystem = false);
         void delete_entity(int entity_id);
         void createComponentAndAddTo(static_component_id comp_id, int entity_id);
         void createComponentAndAddTo(int comp_id, int entity_id);
@@ -92,15 +96,24 @@ namespace talorion {
         int createNewAnalogValue(QString nameVal, QString unitsVal, double smin, double smax, double amin, double amax, double setVal, int id, int box_id ) ;
         int createNewDigitalValue(QString nameVal, bool setVal, int id, int box_id ) ;
         int createNewTcpBox(QString nameVal="New Box", QString ip="localhost", quint16 port=2701);
+        int createQtScriptEngine(QString nameVal="Qt Script Engine", QScriptEngine* engine=NULL);
         //===
 
         //=== Factory constants
         QUuid get_AnalogValue_uid()const{return ("{6ddc030e-2001-4a38-a8ce-57b309f902ff}");}
         QUuid get_DigitalValue_uid()const{return ("{837c326e-e5fb-4271-97e8-8a3161cfc02c}");}
         QUuid get_TcpBox_uid()const{return ("{99060fb8-676f-47d8-b9f1-c9c492721009}");}
+        QUuid get_System_uid()const{return ("{b50224fa-8908-4503-8296-8b0c8531e1ce}");}
+        QUuid get_Qt_Script_Engine_uid()const{return ("{3a31ae25-c7f4-4e79-93c4-2a4f7b675298}");}
         //
 
-        abstract_configuration_widget* get_systemConfigurationWidget_component(int entity) const;
+        QList<int> get_all_tcpBoxes()const{return get_entity_by_serialVersionUID(get_TcpBox_uid());}
+        QList<int> get_all_AnalogValues()const{return get_entity_by_serialVersionUID(get_AnalogValue_uid());}
+        QList<int> get_all_Systems()const{return get_entity_by_serialVersionUID(get_System_uid());}
+        QList<int> get_all_Qt_Script_Engines()const{return get_entity_by_serialVersionUID(get_Qt_Script_Engine_uid());}
+
+        abstract_configuration_widget* get_systemConfigurationWidget_component(int entity_id) const;
+        QScriptEngine* get_qt_script_engine_component(int entity_id) const;
 
 
         double get_analogActValue_component(int entity)const;
@@ -119,15 +132,16 @@ namespace talorion {
         int get_box_id_component(int entity)const;
         bool get_connection_state_component(int entity)const;
         QUuid get_serialVersionUID_component(int entity)const;
+        QUuid get_systemVersionUID_component(int entity)const;
         int get_tcp_box_backend_component(int entity)const;
+        QString get_script_file_component(int entity)const;
 
 
-        QList<int> get_all_tcpBoxes()const{return get_entity_by_serialVersionUID(get_TcpBox_uid());}
-        QList<int> get_all_AnalogValues()const{return get_entity_by_serialVersionUID(get_AnalogValue_uid());}
 
         //QList<int> get_all_systems()const;
         int get_entity_by_name(const QString& name) const;
         QList<int> get_entity_by_serialVersionUID(const QUuid& uid) const;
+        QList<int> get_entity_by_systemVersionUID(const QUuid& uid) const;
 
         QList<int> get_all_entities()const;
         QList<int> get_all_components_of_entity(int entity)const;
@@ -154,9 +168,12 @@ namespace talorion {
 
         void name_component_changed(int entity);
 
+        void script_file_component_changed(int entity);
+
         void newAnalogValue(int);
         void newDigitalValue(int);
         void newTcpBox(int);
+        void newQtScriptEngine(int);
 
     private:
         void set_analogActValue_component(int entity, double val);
@@ -177,6 +194,8 @@ namespace talorion {
         void set_serialVersionUID_component(int entity, QUuid val);
         void set_tcp_box_backend_component(int entity, int val);
         void set_systemConfigurationWidget_component(int entity_id, abstract_configuration_widget *wdgt);
+        void set_qt_script_engine_component(int entity_id, QScriptEngine *engine);
+        void set_script_file_component(int entity, QString val);
 
         int calc_enity_component_hash(int entity_id, int comp_id)const{return (comp_id*P1 + entity_id)*P2;}
 
@@ -187,6 +206,8 @@ namespace talorion {
         void slot_change_digitalAct_component(int entity, bool value);
         void slot_change_digitalSet_component(int entity, bool value);
 
+        void slot_change_script_file_component(int entity, QString value);
+
     private:
 
         int current_identity_id;
@@ -196,6 +217,7 @@ namespace talorion {
         QMap<int, entity_components_t> entity_components;       //enity_component_hash | entity_id | component_id
         QMap<int, QVariant> component_data_table_N;             //enity_component_hash | [1..M columns, one column for each piece of data in your component]
         QMap<int, abstract_configuration_widget*> component_widget_table;
+        QMap<int, QScriptEngine*> component_script_engine_table;
 
     private:
         //static QAtomicPointer<entity_manager> _instance;

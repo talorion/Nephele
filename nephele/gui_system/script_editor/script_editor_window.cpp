@@ -6,8 +6,10 @@
 #include <QFileDialog>
 #include <QTextStream>
 #include <QApplication>
+#include <QScriptEngineDebugger>
 
 #include "core/event_manager.hpp"
+#include "core/entity_manager.hpp"
 
 namespace talorion
 {
@@ -32,8 +34,12 @@ namespace talorion
         debugAct(NULL),
         stopAct(NULL),
         aboutAct(NULL),
-        clsAct(NULL)
+        clsAct(NULL),
+        my_engine(-1),
+        m_debugger(NULL)
     {
+        m_debugger = new QScriptEngineDebugger(this);
+
         setMinimumSize(800,600);
 
         setupEditor();
@@ -55,6 +61,19 @@ namespace talorion
 
         //connect(this,SIGNAL(start_script(QString)),event_manager::get_instance(),SIGNAL(start_script(QString)));
         connect(this,SIGNAL(start_script_file(QString)),event_manager::get_instance(),SIGNAL(start_script_file(QString)));
+        connect(this,SIGNAL(debug_script_file(QString)),event_manager::get_instance(),SIGNAL(debug_script_file(QString)));
+
+        connect(this,SIGNAL(change_script_file_component(int,QString)),event_manager::get_instance(),SIGNAL(change_script_file_component(int,QString)));
+
+        connect(event_manager::get_instance(),SIGNAL(newQtScriptEngine(int)),this,SLOT(slot_newQtScriptEngine(int)));
+
+        //QScriptEngineDebugger *m_debugger = new QScriptEngineDebugger(this);
+
+        m_debugger = new QScriptEngineDebugger(this);
+
+        QList<int> script_engines = entity_manager::get_instance()->get_all_Qt_Script_Engines();
+        if(!script_engines.isEmpty())
+            init_engine(script_engines[0]);
 
     }
 
@@ -123,7 +142,19 @@ namespace talorion
 
     void script_editor_window::debug_script()
     {
+        if (maybeSave()) {
+            if(my_engine >= 0){
+                QScriptEngine* eng =  entity_manager::get_instance()->get_qt_script_engine_component(my_engine);
+                m_debugger->attachTo(eng);
+                m_debugger->action(QScriptEngineDebugger::InterruptAction)->trigger();
+            }
+            emit  debug_script_file(curFile);
+        }
+    }
 
+    void script_editor_window::slot_newQtScriptEngine(int entity)
+    {
+        init_engine(entity);
     }
 
 //    void script_editor_window::stop_script()
@@ -133,16 +164,14 @@ namespace talorion
 
     void script_editor_window::setupEditor()
     {
-        //        QFont fnt;
-        //        fnt.setFamily("Courier");
-        //        fnt.setFixedPitch(true);
-        //        fnt.setPointSize(10);
+
 
         editor = new QTextEdit(this);
-        //editor->setFont(fnt);
         setStyleSheet("QTextEdit { font-family: Courier; font-size: 12pt; background-color: 'white'; }");
 
         highlighter = new Highlighter(editor->document());
+
+        //editor =  m_debugger->widget(QScriptEngineDebugger::CodeWidget);
 
         newFile();
 
@@ -324,12 +353,26 @@ namespace talorion
         QString shownName = curFile;
         if (curFile.isEmpty())
             shownName = "untitled.js";
+        else if(my_engine>=0)
+            emit change_script_file_component(my_engine, fileName);
         setWindowFilePath(shownName);
     }
 
     QString script_editor_window::strippedName(const QString &fullFileName)
     {
         return QFileInfo(fullFileName).fileName();
+    }
+
+    void script_editor_window::init_engine(int entity)
+    {
+        if(entity<0)
+            return;
+
+        QString tmp= entity_manager::get_instance()->get_script_file_component(entity);
+        if(!tmp.isEmpty())
+            loadFile(tmp);
+
+        my_engine = entity;
     }
 
 }

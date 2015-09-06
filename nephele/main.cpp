@@ -1,6 +1,9 @@
+#ifndef BUILD
+#include "build_number.h"
+#endif
 
 #include <QApplication>
-
+#include <QDebug>
 
 #include "core/entity_manager.hpp"
 #include "core/event_manager.hpp"
@@ -12,40 +15,33 @@
 #include "tcp_box_system/tcp_box_system.hpp"
 
 
-
 using namespace talorion;
 
 int main(int argc, char *argv[])
 {
-    //Q_INIT_RESOURCE(application);
-
+    int ret = 0;
+    QString v = "0.1.0."+QString::number(BUILD);
+    qDebug()<<v;
 
     QApplication a(argc, argv);
-    QCoreApplication::setOrganizationName("Gregor Mayramhof");
+    QCoreApplication::setOrganizationName("Nephele");
     QCoreApplication::setOrganizationDomain("github.com/talorion");
     QCoreApplication::setApplicationName("Nephele");
+    QCoreApplication::setApplicationVersion(v);
 
     entity_manager::get_instance()->initialize();
 
     QObject::connect(&a,SIGNAL(aboutToQuit()), event_manager::get_instance(), SIGNAL(application_aboutToQuit()));
 
     system_manager::get_instance()->register_new_system<gui_system>();
-//    gui_system* gui_s = new gui_system();
-//    gui_s->start_system();
 
     system_manager::get_instance()->register_new_system<script_system>();
-//    script_system *script_s = new script_system();
-//    script_s->start_system();
 
     system_manager::get_instance()->register_new_system<tcp_box_system>();
-//    tcp_box_system *tcp_box_s = new tcp_box_system();
-//    tcp_box_s->start_system();
 
-    //system_manager::get_instance()->register_new_system<data_aquisition_dll_system>();
-    //data_aquisition_dll_system* data_aquisition_dll_s = new data_aquisition_dll_system();
-    //data_aquisition_dll_s->start_system();
+    system_manager::get_instance()->register_new_system<data_aquisition_dll_system>();
 
-    int ret = a.exec();
+    ret = a.exec();
 
     event_manager::destroy();
 

@@ -7,7 +7,7 @@
 #define VER_PRODUCTVERSION          0,1,0,0
 #define VER_PRODUCTVERSION_STR      "0.1\0"
 
-#define VER_COMPANYNAME_STR         "Gregor Mayramhof"
+#define VER_COMPANYNAME_STR         "Nephele"
 #define VER_FILEDESCRIPTION_STR     "Nephele"
 #define VER_INTERNALNAME_STR        "Nephele"
 #define VER_LEGALCOPYRIGHT_STR      "Copyright © 2015 Gregor Mayramhof"

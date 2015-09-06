@@ -5,6 +5,8 @@
 #include <QObject>
 #include <QScriptEngine>
 
+#include <QScriptEngineDebugger>
+
 #include "script_handler/script_set_handler.hpp"
 #include "script_handler/script_dialoges_handler.hpp"
 #include "script_handler/script_act_handler.hpp"
@@ -28,16 +30,21 @@ namespace talorion {
     signals:
         void script_finished();
 
+        void abort_all_dialoges();
+
     private slots:
         void slot_newAnalogValue(int entity);
         void slot_act_value_changed(int entity);
         void slot_set_value_changed(int entity);
-        void slot_start_script(const QString &script);
-        void slot_start_script_file(const QString &script);
+        void slot_start_script(const QString &script, bool debug=false);
+        void slot_start_script_file(const QString &script, bool debug=false);
+        void debug_script_file(const QString &script);
         void slot_abort_script();
 
     private:
         QScriptEngine m_script_engine;
+        //QScriptEngineDebugger* m_debugger;
+
         script_set_handler m_set_hdl;
         script_act_handler m_act_hdl;
         script_dialoges_handler m_diag_hdl;

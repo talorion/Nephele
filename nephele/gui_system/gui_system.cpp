@@ -86,7 +86,7 @@ namespace talorion{
         QSplashScreen splash(pixmapForSplash);
         splash.show();
 
-        QTime dieTime= QTime::currentTime().addSecs(5); //wait for 5 s
+        QTime dieTime= QTime::currentTime().addSecs(2); //wait for 5 s
         while( QTime::currentTime() < dieTime )
             QApplication::instance()->processEvents();
 

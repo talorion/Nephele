@@ -8,6 +8,8 @@
 
 namespace talorion {
 
+    class dad_config_widget;
+
     class data_aquisition_dll_system : public QThread, public abstract_system
     {
         Q_OBJECT
@@ -24,7 +26,10 @@ namespace talorion {
     private:
         virtual void do_start_system() Q_DECL_OVERRIDE;
         virtual QString do_get_system_name() Q_DECL_OVERRIDE {return "data_aquisition_dll_system";}
-        virtual abstract_configuration_widget* do_get_configuration_widget() Q_DECL_OVERRIDE{return NULL;}
+        virtual abstract_configuration_widget* do_get_configuration_widget() Q_DECL_OVERRIDE;
+
+    private:
+        dad_config_widget* config_wdg;
     };
 
 } // namespace talorion

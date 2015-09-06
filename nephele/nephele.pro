@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui script printsupport network
+QT       += core gui script printsupport network scripttools
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -31,6 +31,20 @@ unix: QMAKE_CXXFLAGS += -Wshadow
 unix: QMAKE_CXXFLAGS += -Weffc++
 unix: QMAKE_CXXFLAGS += -Wstrict-aliasing
 
+
+#==========BUILD NUMBER
+#unix: build_nr.commands = ../misc/build_number_generator.sh
+#unix: build_nr.depends = FORCE
+#unix: QMAKE_EXTRA_TARGETS += build_nr
+#unix: PRE_TARGETDEPS += build_nr
+unix: BUILDNO = $$system(../misc/build_number_generator.sh)
+
+#win32: build_nr.commands = ../misc/build_number_generator.bat
+#win32: build_nr.depends = FORCE
+#win32: QMAKE_EXTRA_TARGETS += build_nr
+#win32: PRE_TARGETDEPS += build_nr
+win32: BUILDNO = $$system(../misc/build_number_generator.bat)
+#==========
 
 
 CONFIG += c++11
@@ -86,7 +100,9 @@ SOURCES += main.cpp\
     gui_system/settings_dialog/settings_dialog.cpp \
     core/system_manager.cpp \
     tcp_box_system/tbs_config_widget/tbs_config_widget.cpp \
-    core/abstract_configuration_widget.cpp
+    core/abstract_configuration_widget.cpp \
+    data_aquisition_dll_system/tof_daq_specific/tof_daq_dll_tools.cpp \
+    data_aquisition_dll_system/dad_config_widget/dad_config_widget.cpp
 
 HEADERS  += version.hpp \
     nephele.rc \
@@ -123,7 +139,10 @@ HEADERS  += version.hpp \
     gui_system/settings_dialog/settings_dialog.hpp \
     core/system_manager.hpp \
     tcp_box_system/tbs_config_widget/tbs_config_widget.hpp \
-    core/abstract_configuration_widget.hpp
+    core/abstract_configuration_widget.hpp \
+    data_aquisition_dll_system/tof_daq_specific/tof_daq_dll_tools.hpp \
+    data_aquisition_dll_system/dad_config_widget/dad_config_widget.hpp \
+    build_number.h
 
 
 win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../qcustomplot/release/ -lqcustomplot
@@ -139,8 +158,12 @@ else:win32:!win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$OUT_PW
 else:win32:!win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../qcustomplot/debug/qcustomplot.lib
 else:unix: PRE_TARGETDEPS += $$OUT_PWD/../qcustomplot/libqcustomplot.a
 
+unix: INCLUDEPATH += $$PWD/../../../libs/TofDaq_1.97_API/include
+unix: DEPENDPATH += $$PWD/../../../libs/TofDaq_1.97_API/include
+
 DISTFILES += \
-    nephele.ico
+    nephele.ico \
+    build_number.txt
 
 
 

@@ -31,6 +31,7 @@ namespace talorion {
     signals:
         void newSystem(int);
         void newTcpBox(int);
+        void newQtScriptEngine(int);
 
         void application_aboutToQuit();
 
@@ -43,12 +44,15 @@ namespace talorion {
         void analogSet_component_changed(int);       
         void digitalSet_component_changed(int );
         void digitalAct_component_changed(int );
+
         void name_component_changed(int);
+        void script_file_component_changed(int);
 
         void change_analogAct_component(int, double);
         void change_analogSet_component(int, double);
         void change_digitalAct_component(int, bool);
         void change_digitalSet_component(int, bool);
+        void change_script_file_component(int , QString );
 
 
         void send_custom_command(const QString&);
@@ -70,6 +74,7 @@ namespace talorion {
 
         void start_script(const QString &);
         void start_script_file(const QString & );
+        void debug_script_file(const QString & );
         void abort_script();
         void script_finished();
         void script_message(const QString&, const QString&);

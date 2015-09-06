@@ -18,8 +18,6 @@ namespace talorion {
         mainLayout(NULL),
         list2entity()
     {
-        connect(event_manager::get_instance(),SIGNAL(newSystem(int)),this,SLOT(newSystem(int)));
-
         int list_width = 175;
 
         setMinimumSize(800,600);
@@ -49,10 +47,16 @@ namespace talorion {
         setLayout(mainLayout);
         setWindowTitle(tr("Settings"));
 
-        QList<int> systems =system_manager::get_instance()->get_all_systems();
-        foreach (int entity, systems) {
+//        QList<int> systems =system_manager::get_instance()->get_all_systems();
+//        foreach (int entity, systems) {
+//            newSystem(entity);
+//        }
+
+
+        foreach (int entity, entity_manager::get_instance()->get_all_Systems()) {
             newSystem(entity);
         }
+        connect(event_manager::get_instance(),SIGNAL(newSystem(int)),this,SLOT(newSystem(int)));
     }
 
     settings_dialog::~settings_dialog()

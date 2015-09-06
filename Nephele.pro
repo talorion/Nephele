@@ -1,16 +1,19 @@
 TEMPLATE = subdirs
 
-SUBDIRS += \
-    tcp_box_simulator \
-    nephele \
-    qcustomplot
-
-nephele.depends           += qcustomplot
+CONFIG += debug
 
 DISTFILES += \
     doc/ToDo.txt \
     doc/git.txt \
-    doc/testscript.js
+    doc/testscript.js \
+    misc/build_number_generator.sh \
+    misc/build_number_generator.bat
+
+SUBDIRS +=    tcp_box_simulator
+SUBDIRS +=    nephele
+SUBDIRS +=    qcustomplot
+
+nephele.depends           += qcustomplot
 
 # build must be last:
 CONFIG += ordered

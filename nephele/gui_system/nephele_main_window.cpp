@@ -32,7 +32,7 @@ namespace talorion {
         connect(event_manager::get_instance(),SIGNAL(analogSet_component_changed(int)),this,SLOT(slot_set_value_changed(int)));
         connect(event_manager::get_instance(),SIGNAL(error(QString)),statusBar(),SLOT(showMessage(QString)));
 
-        script_wnd = new script_editor_window();
+        //script_wnd = new script_editor_window();
 
         QLabel* lbl = new QLabel("&Custom Command");
         cmd = new QLineEdit();
@@ -120,7 +120,7 @@ namespace talorion {
     void nephele_main_window::open_script_window()
     {
         if(!script_wnd)
-            return;
+            script_wnd = new script_editor_window();
         script_wnd->show();
     }
 

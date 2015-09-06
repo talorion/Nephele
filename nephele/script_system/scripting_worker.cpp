@@ -2,6 +2,7 @@
 
 #include <QDebug>
 #include <QThread>
+#include <QAction>
 
 #include "core/event_manager.hpp"
 #include "core/entity_manager.hpp"
@@ -11,6 +12,7 @@ namespace talorion {
     scripting_worker::scripting_worker(QObject *par) :
         QObject(par),
         m_script_engine(),
+        //m_debugger(NULL),
         m_set_hdl(),
         m_act_hdl(),
         m_diag_hdl(),
@@ -32,13 +34,16 @@ namespace talorion {
 
     void scripting_worker::initialize()
     {
+        entity_manager::get_instance()->createQtScriptEngine("Qt Script Engine", &m_script_engine);
 
         connect(event_manager::get_instance(),SIGNAL(start_script(QString)),this,SLOT(slot_start_script(QString)));
         connect(event_manager::get_instance(),SIGNAL(start_script_file(QString)),this,SLOT(slot_start_script_file(QString)));
+        connect(event_manager::get_instance(),SIGNAL(debug_script_file(QString)),this,SLOT(debug_script_file(QString)));
         connect(event_manager::get_instance(),SIGNAL(analogAct_component_changed(int)),this,SLOT(slot_act_value_changed(int)));
         connect(event_manager::get_instance(),SIGNAL(analogSet_component_changed(int)),this,SLOT(slot_set_value_changed(int)));
         connect(event_manager::get_instance(),SIGNAL(newAnalogValue(int)),this,SLOT(slot_newAnalogValue(int)));
         connect(event_manager::get_instance(),SIGNAL(abort_script()),this,SLOT(slot_abort_script()));
+
 
         //m_script_engine = new QScriptEngine();
 
@@ -60,6 +65,7 @@ namespace talorion {
         m_diagHdl = m_script_engine.newQObject(&m_diag_hdl, QScriptEngine::QtOwnership, QScriptEngine::ExcludeSuperClassContents);
 //        m_diagHdl = m_script_engine.newQObject(&m_diag_hdl);
         m_script_engine.globalObject().setProperty("gui", m_diagHdl);
+        connect(this, SIGNAL(abort_all_dialoges()),&m_diag_hdl,SIGNAL(dialog_finished()));
 
         m_utilhdl= m_script_engine.newQObject(&m_util_hdl, QScriptEngine::QtOwnership, QScriptEngine::ExcludeSuperClassContents);
 //        m_utilhdl= m_script_engine.newQObject(&m_util_hdl);
@@ -94,8 +100,9 @@ namespace talorion {
         m_setHdl.setProperty(nme, val, QScriptValue::ReadOnly);
     }
 
-    void scripting_worker::slot_start_script(const QString &script)
+    void scripting_worker::slot_start_script(const QString &script, bool debug)
     {
+        Q_UNUSED(debug);
 
         if(m_script_engine.isEvaluating()){
             m_log_hdl.log_fatal("another script is already running");
@@ -106,6 +113,10 @@ namespace talorion {
              m_log_hdl.log_fatal("cannot evaluate script");
              return;
          }
+
+         //if(m_debugger!=NULL && !debug){
+         //    m_debugger->detach();
+         //}
 
         m_log_hdl.log_info("Starting script");
         QScriptValue ret = m_script_engine.evaluate(script).toNumber();
@@ -119,7 +130,7 @@ namespace talorion {
         emit script_finished();
     }
 
-    void scripting_worker::slot_start_script_file(const QString &script)
+    void scripting_worker::slot_start_script_file(const QString &script, bool debug)
     {
         QFile script_file(script);
 
@@ -135,14 +146,28 @@ namespace talorion {
         script_file.close();
 
         m_log_hdl.log_info("Starting "+script);
-        slot_start_script(sc);
+        slot_start_script(sc,debug);
+    }
+
+    void scripting_worker::debug_script_file(const QString &script)
+    {
+        //if(!m_debugger){
+            //m_debugger = new QScriptEngineDebugger();
+            //m_debugger->attachTo(&m_script_engine);
+            //m_debugger->action(QScriptEngineDebugger::InterruptAction)->trigger();
+        //}
+        slot_start_script_file(script, true);
+
     }
 
     void scripting_worker::slot_abort_script()
     {
         if(m_script_engine.isEvaluating()){
+
+            emit abort_all_dialoges();
+
             m_script_engine.abortEvaluation();
-            m_log_hdl.log_fatal("another script aborted");
+            m_log_hdl.log_fatal("script aborted");
             return;
         }
     }

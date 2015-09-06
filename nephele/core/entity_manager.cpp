@@ -24,7 +24,8 @@ namespace talorion {
         entities(),
         entity_components(),
         component_data_table_N(),
-        component_widget_table()
+        component_widget_table(),
+        component_script_engine_table()
     {
         connect(this,SIGNAL(newSystem(int)),event_manager::get_instance(),SIGNAL(newSystem(int)));
 
@@ -35,15 +36,18 @@ namespace talorion {
         connect(this, SIGNAL(digitalAct_component_changed(int)), event_manager::get_instance(), SIGNAL(digitalAct_component_changed(int)));
         connect(this, SIGNAL(digitalSet_component_changed(int)), event_manager::get_instance(), SIGNAL(digitalSet_component_changed(int)));
         connect(this,SIGNAL(name_component_changed(int)),event_manager::get_instance(),SIGNAL(name_component_changed(int)));
+        connect(this,SIGNAL(script_file_component_changed(int)),event_manager::get_instance(),SIGNAL(script_file_component_changed(int)));
 
         connect(event_manager::get_instance(),SIGNAL(change_analogAct_component(int,double)),this,SLOT(slot_change_analogAct_component(int,double)));
         connect(event_manager::get_instance(),SIGNAL(change_analogSet_component(int,double)),this,SLOT(slot_change_analogSet_component(int,double)));
         connect(event_manager::get_instance(),SIGNAL(change_digitalAct_component(int,bool)),this,SLOT(slot_change_digitalAct_component(int,bool)));
         connect(event_manager::get_instance(),SIGNAL(change_digitalSet_component(int,bool)),this,SLOT(slot_change_digitalSet_component(int,bool)));
+        connect(event_manager::get_instance(),SIGNAL(change_script_file_component(int,QString)),this,SLOT(slot_change_script_file_component(int,QString)));
 
         connect(this,SIGNAL(newAnalogValue(int)),event_manager::get_instance(),SIGNAL(newAnalogValue(int)));
         connect(this,SIGNAL(newDigitalValue(int)),event_manager::get_instance(),SIGNAL(newDigitalValue(int)));
         connect(this, SIGNAL(newTcpBox(int)),event_manager::get_instance(),SIGNAL(newTcpBox(int)));
+        connect(this, SIGNAL(newQtScriptEngine(int)),event_manager::get_instance(),SIGNAL(newQtScriptEngine(int)));
     }
 
     entity_manager::~entity_manager()
@@ -72,7 +76,7 @@ namespace talorion {
 
     void entity_manager::initialize()
     {
-        int zero_entity = createNewEntity();
+        int zero_entity = createNewEntity("", 0);
         createComponentAndAddTo(IP_ADDRESS_COMPONENT, zero_entity);
         createComponentAndAddTo(PORT_COMPONENT, zero_entity);
         createComponentAndAddTo( NAME_COMPONENT, zero_entity);
@@ -97,16 +101,17 @@ namespace talorion {
         //QStringList groups = settings.childGroups();
         foreach (QString entity, settings.childGroups()) {
             settings.beginGroup(entity);
+            int ent =  entity.toInt();
+            ent = createNewEntity("", ent);
             foreach (QString component, settings.childKeys()) {
-                int ent =  entity.toInt();
                 int comp= component.toInt();
-
                 QVariant value = settings.value(component);
-                qDebug()<<entity<<component<<value;
-                createNewEntity("",ent);
+                //qDebug()<<entity<<component<<value;
+                //ent = createNewEntity("",ent);
+
                 createComponentAndAddTo(comp, ent);
                 setComponentDataForEntity(comp,ent,value);
-                current_identity_id = qMax(current_identity_id+1, ent+1);
+                //current_identity_id = qMax(current_identity_id+1, ent+1);
 
             }
             settings.endGroup();
@@ -117,6 +122,10 @@ namespace talorion {
     void entity_manager::dispose()
     {
         foreach (int id, get_all_AnalogValues()) {
+            delete_entity(id);
+        }
+
+        foreach (int id, get_all_Systems()) {
             delete_entity(id);
         }
 
@@ -142,14 +151,25 @@ namespace talorion {
 
     }
 
-    int entity_manager::createNewEntity(QString human_readable_label, int entity)
+    int entity_manager::createNewEntity(QString human_readable_label, int entity, bool isSystem)
     {
+        int offset = 255;
+
+        if(isSystem)
+            offset = 0;
+
         //Q_UNUSED(human_readable_label);
         int entity_id;
-        if(entity<0)
-            entity_id= current_identity_id++;
+        if(entity<0){
+            do{
+                entity_id= offset + current_identity_id++;
+            }while (entities.constFind(entity_id) != entities.constEnd());
+        }
         else
-            entity_id= qMax(current_identity_id+1, entity+1);
+            entity_id= entity;
+            //entity_id= qMax(current_identity_id+1, entity+1);
+
+        //current_identity_id = entity_id;
 
         entity_t et;
         et.entity_id= entity_id;
@@ -226,31 +246,34 @@ namespace talorion {
 
     int entity_manager::createNewSystem(QUuid suid, QString nameVal, abstract_configuration_widget* sys_cfg_wdg)
     {
-        QList<int> list =get_entity_by_serialVersionUID(suid);
-        int entity = -1;
+        QList<int> list =get_entity_by_systemVersionUID(suid);
+        int new_id = -1;
         if(list.empty()){
-            entity = createNewEntity();
+            new_id = createNewEntity(nameVal,-1,true);
 
-            createComponentAndAddTo(SERIAL_VERSION_UID_COMPONENT, entity);
-            createComponentAndAddTo(NAME_COMPONENT, entity);
+            createComponentAndAddTo(SYSTEM_VERSION_UID_COMPONENT, new_id);
+            createComponentAndAddTo(NAME_COMPONENT, new_id);
 
-            createComponentAndAddTo(IS_SYSTEM_COMPONENT, entity);
+            createComponentAndAddTo(IS_SYSTEM_COMPONENT, new_id);
+            createComponentAndAddTo(SERIAL_VERSION_UID_COMPONENT, new_id);
+
+            if(sys_cfg_wdg)
+                createComponentAndAddTo(SYSTEM_CONFIGURAION_WIDGET_COMPONENT, new_id);
+
         }else{
-            entity = list[0];
+            new_id = list[0];
         }
 
+        setComponentDataForEntity(SYSTEM_VERSION_UID_COMPONENT,               new_id, suid);
+        setComponentDataForEntity(NAME_COMPONENT,               new_id, nameVal);
         if(sys_cfg_wdg)
-            createComponentAndAddTo(SYSTEM_CONFIGURAION_WIDGET_COMPONENT, entity);
+            set_systemConfigurationWidget_component(new_id, sys_cfg_wdg);
+        setComponentDataForEntity(IS_SYSTEM_COMPONENT,               new_id, true);
+        setComponentDataForEntity(SERIAL_VERSION_UID_COMPONENT, new_id, get_System_uid());
 
-        setComponentDataForEntity(SERIAL_VERSION_UID_COMPONENT,               entity, suid);
-        setComponentDataForEntity(NAME_COMPONENT,               entity, nameVal);
-        if(sys_cfg_wdg)
-            set_systemConfigurationWidget_component(entity, sys_cfg_wdg);
-        setComponentDataForEntity(IS_SYSTEM_COMPONENT,               entity, true);
+        emit newSystem(new_id);
 
-        emit newSystem(entity);
-
-        return entity;
+        return new_id;
 
     }
 
@@ -289,6 +312,7 @@ namespace talorion {
 
     int entity_manager::createNewDigitalValue(QString nameVal, bool setVal, int id, int box_id)
     {
+
         //QUuid uid("{837c326e-e5fb-4271-97e8-8a3161cfc02c}");
         int new_id = createNewEntity();
         createComponentAndAddTo( NAME_COMPONENT, new_id );
@@ -297,6 +321,7 @@ namespace talorion {
         createComponentAndAddTo( ID_COMPONENT, new_id );
         createComponentAndAddTo( BOX_ID_COMPONENT, new_id );
         createComponentAndAddTo(SERIAL_VERSION_UID_COMPONENT, new_id);
+
 
         setComponentDataForEntity(NAME_COMPONENT,               new_id, nameVal);
         setComponentDataForEntity(DIGITAL_SET_VALUE_COMPONENT,  new_id, setVal);
@@ -333,6 +358,33 @@ namespace talorion {
         return new_id;
     }
 
+    int entity_manager::createQtScriptEngine(QString nameVal, QScriptEngine *engine)
+    {
+        QList<int> list =get_all_Qt_Script_Engines(); // allow only one QtScriptEngine
+        int new_id = -1;
+        if(list.empty()){
+            new_id = createNewEntity();
+            createComponentAndAddTo( NAME_COMPONENT, new_id );
+            createComponentAndAddTo(SERIAL_VERSION_UID_COMPONENT, new_id);
+            if(engine)
+                createComponentAndAddTo(QT_SCRIPT_ENGINE_COMPONENT, new_id);
+            createComponentAndAddTo(SCRIPT_FILE_COMPONENT, new_id);
+
+            //keep the FILE
+            setComponentDataForEntity(SCRIPT_FILE_COMPONENT, new_id, QString(""));
+        }else{
+            new_id = list[0];
+        }
+
+        setComponentDataForEntity(NAME_COMPONENT,               new_id, nameVal);
+        setComponentDataForEntity(SERIAL_VERSION_UID_COMPONENT, new_id, get_Qt_Script_Engine_uid());
+        if(engine)
+            set_qt_script_engine_component(new_id, engine);
+
+        emit newQtScriptEngine(new_id);
+        return new_id;
+    }
+
 
     abstract_configuration_widget *entity_manager::get_systemConfigurationWidget_component(int entity_id) const
     {
@@ -340,6 +392,18 @@ namespace talorion {
         int component_data_id = calc_enity_component_hash(component_id, entity_id );
         QMap<int, abstract_configuration_widget*>::ConstIterator av = component_widget_table.constFind(component_data_id);
         if (av == component_widget_table.constEnd()){
+            return NULL;
+        }
+
+        return av.value();
+    }
+
+    QScriptEngine *entity_manager::get_qt_script_engine_component(int entity_id) const
+    {
+        int component_id = QT_SCRIPT_ENGINE_COMPONENT;
+        int component_data_id = calc_enity_component_hash(component_id, entity_id );
+        QMap<int, QScriptEngine*>::ConstIterator av = component_script_engine_table.constFind(component_data_id);
+        if (av == component_script_engine_table.constEnd()){
             return NULL;
         }
 
@@ -354,13 +418,31 @@ namespace talorion {
         int component_id = SYSTEM_CONFIGURAION_WIDGET_COMPONENT;
         QWidget* tmp = get_systemConfigurationWidget_component(entity_id);
 
-        if(tmp == wdgt )
+        if(wdgt == tmp)
             return;
 
         int component_data_id = calc_enity_component_hash(component_id, entity_id );
         component_widget_table.insert(component_data_id, wdgt);
         emit component_changed(entity_id, component_id);
     }
+
+    void entity_manager::set_qt_script_engine_component(int entity_id, QScriptEngine *engine)
+    {
+        if(!engine)
+            return;
+
+        int component_id = QT_SCRIPT_ENGINE_COMPONENT;
+        QScriptEngine* tmp = get_qt_script_engine_component(entity_id);
+
+        if(engine == tmp)
+            return;
+
+        int component_data_id = calc_enity_component_hash(component_id, entity_id );
+        component_script_engine_table.insert(component_data_id, engine);
+        emit component_changed(entity_id, component_id);
+    }
+
+
 
     int entity_manager::get_entity_by_name(const QString &name) const
     {
@@ -380,6 +462,18 @@ namespace talorion {
         QMap<int, entity_t>::const_iterator it= entities.constBegin();
         for(it = entities.constBegin(); it !=entities.constEnd(); ++it){
             if(get_serialVersionUID_component(it.key()) == uid){
+                ecs.append(it.key());
+            }
+        }
+        return ecs;
+    }
+
+    QList<int> entity_manager::get_entity_by_systemVersionUID(const QUuid &uid) const
+    {
+        QList<int> ecs;
+        QMap<int, entity_t>::const_iterator it= entities.constBegin();
+        for(it = entities.constBegin(); it !=entities.constEnd(); ++it){
+            if(get_systemVersionUID_component(it.key()) == uid){
                 ecs.append(it.key());
             }
         }
@@ -407,51 +501,6 @@ namespace talorion {
         return ecs;
     }
 
-    void entity_manager::slot_change_name_component(int entity, QString value)
-    {
-        if( get_name_component(entity)!= value){
-            set_name_component(entity, value);
-            emit name_component_changed(entity);
-        }
-    }
-
-    void entity_manager::slot_change_ip_address_component(int entity, QString value)
-    {
-        if( get_ip_address_component(entity)!= value){
-            set_ip_address_component(entity, value);
-            //emit analogAct_component_changed(entity);
-        }
-    }
-
-    void entity_manager::slot_change_port_component(int entity, quint16 value)
-    {
-        if( get_port_component(entity)!= value){
-            set_port_component(entity, value);
-            //emit analogAct_component_changed(entity);
-        }
-    }
-
-    void entity_manager::slot_connection_state_component(int entity, quint16 value)
-    {
-        if( get_connection_state_component(entity)!= value){
-            set_connection_state_component(entity, value);
-            emit connection_state_component_changed(entity);
-        }
-    }
-
-    void entity_manager::slot_change_tcp_box_backend_component(int entity, int value)
-    {
-        if( get_tcp_box_backend_component(entity)!= value){
-            set_tcp_box_backend_component(entity, value);
-            //emit connection_state_component_changed(entity);
-        }
-    }
-
-    //    QList<int> entity_manager::get_all_systems() const
-    //    {
-    //        QList<int> tmp;
-    //        return tmp;
-    //    }
 
     void entity_manager::set_analogActValue_component(int entity, double val){setComponentDataForEntity(ANALOG_ACT_VALUE_COMPONENT, entity, val);}
 
@@ -487,6 +536,9 @@ namespace talorion {
 
     void entity_manager::set_tcp_box_backend_component(int entity, int val){setComponentDataForEntity(TCP_BOX_BACKEND_COMPONENT, entity, val);}
 
+    void entity_manager::set_script_file_component(int entity, QString val){setComponentDataForEntity(SCRIPT_FILE_COMPONENT, entity, val);}
+
+
     QString entity_manager::get_name_component(int entity) const{return getComponentDataForEntity(NAME_COMPONENT, entity).toString();}
 
     QString entity_manager::get_units_component(int entity) const{return getComponentDataForEntity(UNITS_COMPONENT, entity).toString();}
@@ -501,7 +553,11 @@ namespace talorion {
 
     QUuid entity_manager::get_serialVersionUID_component(int entity) const{return getComponentDataForEntity(SERIAL_VERSION_UID_COMPONENT, entity).toUuid();}
 
+    QUuid entity_manager::get_systemVersionUID_component(int entity) const{return getComponentDataForEntity(SYSTEM_VERSION_UID_COMPONENT, entity).toUuid();}
+
     int entity_manager::get_tcp_box_backend_component(int entity) const{return getComponentDataForEntity(TCP_BOX_BACKEND_COMPONENT, entity).toInt();}
+
+    QString entity_manager::get_script_file_component(int entity) const{return getComponentDataForEntity(SCRIPT_FILE_COMPONENT, entity).toString();}
 
     double entity_manager::get_analogActValue_component(int entity) const{return getComponentDataForEntity(ANALOG_ACT_VALUE_COMPONENT, entity).toDouble();}
 
@@ -551,6 +607,54 @@ namespace talorion {
         if( get_digitalSetValue_component(entity)!= value){
             set_digitalSetValue_component(entity, value);
             emit digitalSet_component_changed(entity);
+        }
+    }
+
+    void entity_manager::slot_change_script_file_component(int entity, QString value)
+    {
+        if( get_script_file_component(entity)!= value){
+            set_script_file_component(entity, value);
+            emit script_file_component_changed(entity);
+        }
+    }
+
+    void entity_manager::slot_change_name_component(int entity, QString value)
+    {
+        if( get_name_component(entity)!= value){
+            set_name_component(entity, value);
+            emit name_component_changed(entity);
+        }
+    }
+
+    void entity_manager::slot_change_ip_address_component(int entity, QString value)
+    {
+        if( get_ip_address_component(entity)!= value){
+            set_ip_address_component(entity, value);
+            //emit analogAct_component_changed(entity);
+        }
+    }
+
+    void entity_manager::slot_change_port_component(int entity, quint16 value)
+    {
+        if( get_port_component(entity)!= value){
+            set_port_component(entity, value);
+            //emit analogAct_component_changed(entity);
+        }
+    }
+
+    void entity_manager::slot_connection_state_component(int entity, quint16 value)
+    {
+        if( get_connection_state_component(entity)!= value){
+            set_connection_state_component(entity, value);
+            emit connection_state_component_changed(entity);
+        }
+    }
+
+    void entity_manager::slot_change_tcp_box_backend_component(int entity, int value)
+    {
+        if( get_tcp_box_backend_component(entity)!= value){
+            set_tcp_box_backend_component(entity, value);
+            //emit connection_state_component_changed(entity);
         }
     }
 

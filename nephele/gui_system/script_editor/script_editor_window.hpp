@@ -9,6 +9,7 @@
 #include <QToolBar>
 #include <QMainWindow>
 #include <QVBoxLayout>
+#include <QScriptEngineDebugger>
 
 namespace talorion{
     class script_editor_window : public QMainWindow
@@ -23,6 +24,10 @@ namespace talorion{
         void start_script(const QString& script);
         void start_script_file(const QString& script);
 
+        void debug_script_file(const QString& script);
+
+        void change_script_file_component(int , QString );
+
     private slots:
         void newFile();
         void open();
@@ -34,6 +39,8 @@ namespace talorion{
         void start_script();
         void debug_script();
         //void stop_script();
+
+        void slot_newQtScriptEngine(int entity);
 
     private:
         void setupEditor();
@@ -49,6 +56,8 @@ namespace talorion{
         bool saveFile(const QString &fileName);
         void setCurrentFile(const QString &fileName);
         QString strippedName(const QString &fullFileName);
+
+        void init_engine(int entity);
 
     private:
         QTextEdit *editor;
@@ -76,6 +85,10 @@ namespace talorion{
         QAction *aboutAct;
 
         QAction *clsAct;
+
+        int my_engine;
+        QScriptEngineDebugger* m_debugger;
+
 
     };
 }
