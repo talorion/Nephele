@@ -15,7 +15,8 @@ namespace talorion {
         dll_name_field(NULL),
         timeout_field(NULL),
         browse_button(NULL),
-        current_entity(-1)
+        current_entity(-1),
+        horizontal_spacer(NULL)
     {
         name_label = new QLabel(tr("TofDaqDll Path"));
         dll_name_field =  new QLineEdit();
@@ -29,12 +30,16 @@ namespace talorion {
         timeout_field->setSuffix(tr(" ms"));
         connect(timeout_field,SIGNAL(valueChanged(int)),this,SLOT(timout_value_changed(int)));
 
+        //horizontal_spacer = new QSpacerItem(80,5);
+
+
         mainLayout = new QGridLayout();
         mainLayout->addWidget(name_label,0,0,1,1,Qt::AlignTop);
         mainLayout->addWidget(dll_name_field,0,1,7,1,Qt::AlignTop);
         mainLayout->addWidget(browse_button,0,8,1,1,Qt::AlignTop);
         mainLayout->addWidget(timeout_label,1,0,3,1,Qt::AlignTop);
         mainLayout->addWidget(timeout_field,1,1,1,1,Qt::AlignTop);
+        //mainLayout->addItem(horizontal_spacer,1,2,7,1,Qt::AlignTop);
         //mainLayout->setColumnStretch(4,5);
         mainLayout->setRowStretch(2,5);
 

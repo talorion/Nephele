@@ -36,6 +36,7 @@ namespace talorion {
         QSpinBox* timeout_field;
         QPushButton* browse_button;
         int current_entity;
+        QSpacerItem* horizontal_spacer;
     };
 
 } // namespace talorion

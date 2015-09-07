@@ -112,6 +112,7 @@ namespace talorion {
         SetParameterDouble_prototype m_SetParameterDouble;
 
         QLibrary* m_data_aquisition_dll;
+        QString m_dll_name;
     };
 
     template<typename T>

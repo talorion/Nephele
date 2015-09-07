@@ -1,6 +1,12 @@
 #include "data_aquisition_dll_wrapper.hpp"
 
+#if defined( Q_WS_WIN )
+#include <Windows.h>
+#endif
+
+#include <QApplication>
 #include <QDebug>
+#include <QDir>
 #include <QtGlobal>
 
 #include "tof_daq_specific/tof_daq_dll_tools.hpp"
@@ -35,7 +41,8 @@ namespace talorion{
         m_SetParameterFloat(NULL),
         m_SetParameterInt64(NULL),
         m_SetParameterDouble(NULL),
-        m_data_aquisition_dll(NULL)
+        m_data_aquisition_dll(NULL),
+        m_dll_name()
     {
         connect(event_manager::get_instance(),SIGNAL(start_aquisition()),this, SLOT(start_aquisition()));
         connect(event_manager::get_instance(),SIGNAL(stop_aquisition()),this, SLOT(stop_aquisition()));
@@ -49,11 +56,22 @@ namespace talorion{
 
     void data_aquisition_dll_wrapper::init(QString dll_name)
     {
-        m_data_aquisition_dll = new QLibrary(dll_name);
+        QFileInfo f(dll_name);
+        QString absolutePath = f.absoluteDir().absolutePath();
+        QString name = f.fileName();
+
+#if defined( Q_WS_WIN )
+        LPCSTR lstr = absolutePath.toStdString().c_str();
+        SetDllDirectory( lstr );
+        qDebug()<<"add Library path: "<<absolutePath;
+#endif
+
+        m_data_aquisition_dll = new QLibrary(name);
         if (!m_data_aquisition_dll->load()){
             qDebug()<<m_data_aquisition_dll->errorString();
             return;
         }
+        m_dll_name = dll_name;
 
         QString meth = "TwInitializeDll";
         m_InitializeDll = resolve_method<InitializeDll_prototype>(meth);

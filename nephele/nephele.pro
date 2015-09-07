@@ -31,6 +31,7 @@ unix: QMAKE_CXXFLAGS += -Wshadow
 unix: QMAKE_CXXFLAGS += -Weffc++
 unix: QMAKE_CXXFLAGS += -Wstrict-aliasing
 
+CONFIG += c++11
 
 #==========BUILD NUMBER
 #unix: build_nr.commands = ../misc/build_number_generator.sh
@@ -47,25 +48,25 @@ win32: BUILDNO = $$system(../misc/build_number_generator.bat)
 #==========
 
 
-CONFIG += c++11
+#==========Deploy
+win32: {
+    TARGET_CUSTOM_EXT = .exe
 
-win32: TARGET_EXT = .exe
+    CONFIG( debug, debug|release ) {
+        # debug
+        DEPLOY_TARGET = $$shell_quote($$shell_path($${OUT_PWD}/debug/$${TARGET}$${TARGET_CUSTOM_EXT}))
+        DLLDESTDIR  = $$shell_quote($$shell_path($${OUT_PWD}/out/debug/))
+    } else {
+        # release
+        DEPLOY_TARGET = $$shell_quote($$shell_path($${OUT_PWD}/release/$${TARGET}$${TARGET_CUSTOM_EXT}))
+        DLLDESTDIR  = $$shell_quote($$shell_path($${OUT_PWD}/out/release/))
+    }
 
-win32:CONFIG( debug, debug|release ) {
-    # debug
-    DEPLOY_TARGET = $$shell_quote($$shell_path($${OUT_PWD}/debug/$${TARGET}$${TARGET_EXT}))
-    # PKG_DESTINATION = $$shell_quote($$shell_path($${OUT_PWD}/debug/pkg/))
-} else {
-    # release
-    DEPLOY_TARGET = $$shell_quote($$shell_path($${OUT_PWD}/release/$${TARGET}$${TARGET_EXT}))
-    # PKG_DESTINATION = $$shell_quote($$shell_path($${OUT_PWD}/release/pkg/))
+    DEPLOY_COMMAND = windeployqt
+    QMAKE_POST_LINK = $${DEPLOY_COMMAND} --dir $${DLLDESTDIR} --no-translations $${DEPLOY_TARGET}
 }
+#==========================================
 
-win32: QMAKE_LFLAGS += -static-libgcc -static-libstdc++ -static # statically link libGCC, STDlib, winpthread, ...
-win32: DEPLOY_COMMAND = windeployqt # collects dll dependencies
-win32:DLLDESTDIR = $$OUT_PWD/../out/ # copy to destination after build
-win32:QMAKE_POST_LINK = $${DEPLOY_COMMAND} $${DEPLOY_TARGET} --dir $${DLLDESTDIR} --no-translations &&
-win32:QMAKE_POST_LINK += $${QMAKE_COPY} $${DEPLOY_TARGET} $${DLLDESTDIR}
 
 
 SOURCES += main.cpp\
@@ -103,7 +104,8 @@ SOURCES += main.cpp\
     data_aquisition_dll_system/tof_daq_specific/tof_daq_dll_tools.cpp \
     data_aquisition_dll_system/dad_config_widget/dad_config_widget.cpp \
     data_aquisition_dll_system/data_aquisition_dll_worker.cpp \
-    tcp_box_system/tcp_box_worker.cpp
+    tcp_box_system/tcp_box_worker.cpp \
+    core/abstract_scriptable_object.cpp
 
 HEADERS  += version.hpp \
     nephele.rc \
@@ -144,7 +146,8 @@ HEADERS  += version.hpp \
     data_aquisition_dll_system/dad_config_widget/dad_config_widget.hpp \
     build_number.h \
     data_aquisition_dll_system/data_aquisition_dll_worker.hpp \
-    tcp_box_system/tcp_box_worker.hpp
+    tcp_box_system/tcp_box_worker.hpp \
+    core/abstract_scriptable_object.hpp
 
 
 win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../qcustomplot/release/ -lqcustomplot
