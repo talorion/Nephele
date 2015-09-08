@@ -41,6 +41,9 @@ namespace talorion {
         void debug_script_file(const QString &script);
         void slot_abort_script();
 
+        void slot_register_scritable_component(int ent);
+        void slot_unregister_scritable_component(int);
+
     private:
         QScriptEngine m_script_engine;
         //QScriptEngineDebugger* m_debugger;
