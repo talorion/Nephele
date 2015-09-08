@@ -6,6 +6,7 @@
 
 #include "core/event_manager.hpp"
 #include "core/entity_manager.hpp"
+#include "core/abstract_scriptable_object.hpp"
 
 namespace talorion {
 
@@ -24,7 +25,8 @@ namespace talorion {
         m_diagHdl(),
         m_utilhdl(),
         m_loghdl(),
-        m_daqhdl()
+        m_daqhdl(),
+        script_values()
     {
     }
 
@@ -78,6 +80,18 @@ namespace talorion {
         m_daqhdl = m_script_engine.newQObject(&m_daq_hdl, QScriptEngine::QtOwnership, QScriptEngine::ExcludeSuperClassContents);
 //        m_daqhdl = m_script_engine.newQObject(&m_daq_hdl);
         m_script_engine.globalObject().setProperty("daq", m_daqhdl);
+
+        QScriptValue tmp;
+        foreach (int ent, entity_manager::get_instance()->get_entities_with_scriptable_components()) {
+            abstract_scriptable_object* obj = entity_manager::get_instance()->get_scriptable_object_component(ent);
+            if(!obj)
+                continue;
+            QString script_name = obj->script_name();
+
+            tmp = m_script_engine.newQObject(obj, QScriptEngine::QtOwnership, QScriptEngine::ExcludeSuperClassContents);
+            m_script_engine.globalObject().setProperty(script_name, tmp);
+            script_values.append(tmp);
+        }
     }
 
     void scripting_worker::slot_newAnalogValue(int entity)

@@ -87,6 +87,9 @@ namespace talorion {
         void start_aquisition();
         void stop_aquisition();
 
+        void register_scritable_component(int);
+        void unregister_scritable_component(int);
+
     private:
         //static QAtomicPointer<event_manager> _instance;
         static event_manager* _instance;

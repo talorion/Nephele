@@ -2,9 +2,9 @@
 
 namespace talorion {
 
-    abstract_scriptable_object::abstract_scriptable_object(QObject *par) :
+    abstract_scriptable_object::abstract_scriptable_object(QString scrpt_name, QObject *par) :
         QObject(par),
-        m_script_name()
+        m_script_name(scrpt_name)
     {
 
     }
@@ -14,7 +14,11 @@ namespace talorion {
 
     }
 
-
-
+    QString abstract_scriptable_object::script_name() const
+    {
+        return m_script_name;
+    }
+       
+    
 } // namespace talorion
 

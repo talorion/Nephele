@@ -9,16 +9,18 @@ namespace talorion {
     {
         Q_OBJECT
     public:
-        explicit abstract_scriptable_object(QObject *parent = 0);
+        explicit abstract_scriptable_object(QString scrpt_name, QObject *parent = 0);
         virtual ~abstract_scriptable_object();
         Q_DISABLE_COPY(abstract_scriptable_object)
+
+        QString script_name() const;
 
     signals:
 
     public slots:
 
     private:
-        QString m_script_name;
+        const QString m_script_name;
     };
 
 } // namespace talorion

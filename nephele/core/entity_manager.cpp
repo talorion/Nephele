@@ -25,7 +25,8 @@ namespace talorion {
         entity_components(),
         component_data_table_N(),
         component_widget_table(),
-        component_script_engine_table()
+        component_script_engine_table(),
+        component_scriptable_object_table()
     {
         connect(this,SIGNAL(newSystem(int)),event_manager::get_instance(),SIGNAL(newSystem(int)));
 
@@ -39,6 +40,8 @@ namespace talorion {
         connect(this,SIGNAL(script_file_component_changed(int)),event_manager::get_instance(),SIGNAL(script_file_component_changed(int)));
         connect(this, SIGNAL(data_aquistion_dll_component_changed(int)),event_manager::get_instance(),SIGNAL(data_aquistion_dll_component_changed(int)));
         connect(this, SIGNAL(timeout_component_changed(int)),event_manager::get_instance(),SIGNAL(timeout_component_changed(int)));
+        connect(this, SIGNAL(register_scritable_component(int)),event_manager::get_instance(),SIGNAL(register_scritable_component(int)));
+        connect(this, SIGNAL(unregister_scritable_component(int)),event_manager::get_instance(),SIGNAL(unregister_scritable_component(int)));
 
         connect(event_manager::get_instance(),SIGNAL(change_analogAct_component(int,double)),this,SLOT(slot_change_analogAct_component(int,double)));
         connect(event_manager::get_instance(),SIGNAL(change_analogSet_component(int,double)),this,SLOT(slot_change_analogSet_component(int,double)));
@@ -183,6 +186,11 @@ namespace talorion {
         return entity_id;
     }
 
+    bool entity_manager::entity_exists(int entity_id) const
+    {
+        return entities.contains(entity_id);
+    }
+
     void entity_manager::delete_entity(int entity_id)
     {
         entities.remove(entity_id);
@@ -212,6 +220,35 @@ namespace talorion {
         ect.component_id = comp_id;
         ect.entity_id = entity_id;
         entity_components.insert(component_data_id, ect);
+
+    }
+
+    void entity_manager::removeComponentFrom(int comp_id, int entity_id)
+    {
+        if(!hasComponent(comp_id,entity_id))
+            return;
+
+        int component_data_id = calc_enity_component_hash(comp_id, entity_id );
+
+        entity_components.remove(component_data_id);
+
+    }
+
+    bool entity_manager::component_exists(int comp_id) const
+    {
+        return (components.contains(comp_id));
+    }
+
+    bool entity_manager::hasComponent(int comp_id, int entity_id) const
+    {
+        if(!entity_exists(entity_id))
+            return false;
+
+        if(!component_exists(comp_id))
+            return false;
+
+        int component_data_id = calc_enity_component_hash(comp_id, entity_id );
+        return entity_components.contains(component_data_id);
 
     }
 
@@ -407,6 +444,35 @@ namespace talorion {
         return new_id;
     }
 
+    int entity_manager::add_scriptable_component(int entity, abstract_scriptable_object *comp)
+    {
+        if(!comp)
+            return -1;
+
+        if(!entity_exists(entity))
+            return -1;
+
+        if(hasComponent(SCRIPTABLE_OBJECT_COMPONENT, entity))
+            return -1;
+
+        createComponentAndAddTo( SCRIPTABLE_OBJECT_COMPONENT, entity );
+        set_scriptable_object_component(entity, comp);
+        return 0;
+    }
+
+    int entity_manager::remove_scriptable_component(int entity)
+    {
+        if(!entity_exists(entity))
+            return -1;
+
+        if(!hasComponent(SCRIPTABLE_OBJECT_COMPONENT, entity))
+            return -1;
+
+        removeComponentFrom(SCRIPTABLE_OBJECT_COMPONENT, entity);
+        return 0;
+
+    }
+
 
     abstract_configuration_widget *entity_manager::get_systemConfigurationWidget_component(int entity_id) const
     {
@@ -426,6 +492,18 @@ namespace talorion {
         int component_data_id = calc_enity_component_hash(component_id, entity_id );
         QMap<int, QScriptEngine*>::ConstIterator av = component_script_engine_table.constFind(component_data_id);
         if (av == component_script_engine_table.constEnd()){
+            return NULL;
+        }
+
+        return av.value();
+    }
+
+    abstract_scriptable_object *entity_manager::get_scriptable_object_component(int entity_id) const
+    {
+        int component_id = SCRIPTABLE_OBJECT_COMPONENT;
+        int component_data_id = calc_enity_component_hash(component_id, entity_id );
+        QMap<int, abstract_scriptable_object*>::ConstIterator av = component_scriptable_object_table.constFind(component_data_id);
+        if (av == component_scriptable_object_table.constEnd()){
             return NULL;
         }
 
@@ -464,6 +542,22 @@ namespace talorion {
         emit component_changed(entity_id, component_id);
     }
 
+    void entity_manager::set_scriptable_object_component(int entity_id, abstract_scriptable_object *engine)
+    {
+        if(!engine)
+            return;
+
+        int component_id = SCRIPTABLE_OBJECT_COMPONENT;
+        abstract_scriptable_object* tmp = get_scriptable_object_component(entity_id);
+
+        if(engine == tmp)
+            return;
+
+        int component_data_id = calc_enity_component_hash(component_id, entity_id );
+        component_scriptable_object_table.insert(component_data_id, engine);
+        emit component_changed(entity_id, component_id);
+    }
+
 
 
     int entity_manager::get_entity_by_name(const QString &name) const
@@ -496,6 +590,18 @@ namespace talorion {
         QMap<int, entity_t>::const_iterator it= entities.constBegin();
         for(it = entities.constBegin(); it !=entities.constEnd(); ++it){
             if(get_systemVersionUID_component(it.key()) == uid){
+                ecs.append(it.key());
+            }
+        }
+        return ecs;
+    }
+
+    QList<int> entity_manager::get_entity_by_component(int comp_id) const
+    {
+        QList<int> ecs;
+        QMap<int, entity_t>::const_iterator it= entities.constBegin();
+        for(it = entities.constBegin(); it !=entities.constEnd(); ++it){
+            if(hasComponent(it.key(),comp_id)){
                 ecs.append(it.key());
             }
         }
@@ -702,6 +808,8 @@ namespace talorion {
             //emit connection_state_component_changed(entity);
         }
     }
+
+
 
 
 } // namespace talorion

@@ -8,7 +8,7 @@
 namespace talorion {
 
     data_aquisition_dll_worker::data_aquisition_dll_worker(QObject *par) :
-        QObject(par),
+        QObject( par),
         dlls()
     {
         connect(event_manager::get_instance(),SIGNAL(data_aquistion_dll_component_changed(int)),this,SLOT(slot_data_aquistion_dll_component_changed(int)),Qt::QueuedConnection);
@@ -38,12 +38,19 @@ namespace talorion {
             dlls.insert(entity, wr);
         }else{
             wr = it.value();
-            if(wr)
+            if(wr){
                 wr->dispose();
+            }
         }
 
-        if(wr)
-            wr->init(dynll);
+        if(wr){
+            //connect(event_manager::get_instance(),SIGNAL(start_aquisition()),wr, SLOT(start_aquisition()));
+            //connect(event_manager::get_instance(),SIGNAL(stop_aquisition()),wr, SLOT(stop_aquisition()));
+            if(wr->init(dynll)){
+                entity_manager::get_instance()->add_scriptable_component(entity, wr);
+            }
+
+        }
 
     }
 

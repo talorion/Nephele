@@ -17,6 +17,12 @@ namespace talorion {
         Q_DISABLE_COPY(data_aquisition_dll_worker)
 
     signals:
+        void data_aquisition_dll_answer(int, int);
+        void data_aquisition_dll_answer(int, bool);
+        void data_aquisition_dll_answer(int, const QString&);
+        void data_aquisition_dll_answer(int, qint64);
+        void data_aquisition_dll_answer(int, float);
+        void data_aquisition_dll_answer(int, double);
 
     public slots:
 

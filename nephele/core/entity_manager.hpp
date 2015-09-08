@@ -13,11 +13,10 @@ class QScriptEngine;
 QT_END_NAMESPACE
 
 
-
-
 namespace talorion {
 
     class abstract_configuration_widget;
+    class abstract_scriptable_object;
 
     typedef struct comonent_t_{
         comonent_t_():component_id(0),official_name(), human_readable_description(), table_name(){}
@@ -64,7 +63,8 @@ namespace talorion {
         QT_SCRIPT_ENGINE_COMPONENT,
         SCRIPT_FILE_COMPONENT,
         DATA_AQUISITION_DLL_COMPONENT,
-        TIMEOUT_COMPONENT
+        TIMEOUT_COMPONENT,
+        SCRIPTABLE_OBJECT_COMPONENT
     } static_component_id;
 
     class entity_manager : public QObject
@@ -85,9 +85,13 @@ namespace talorion {
 
         //=== DB Functions
         int createNewEntity(QString human_readable_label=QString(), int entity=-1, bool isSystem = false);
+        bool entity_exists(int entity_id) const;
         void delete_entity(int entity_id);
         void createComponentAndAddTo(static_component_id comp_id, int entity_id);
         void createComponentAndAddTo(int comp_id, int entity_id);
+        void removeComponentFrom(int comp_id, int entity_id);
+        bool component_exists(int comp_id) const;
+        bool hasComponent(int comp_id, int entity_id) const;
         QVariant getComponentDataForEntity(int component_id, int entity_id) const;
         void setComponentDataForEntity(int component_id, int entity_id,  const QVariant &component_data);
 
@@ -101,6 +105,9 @@ namespace talorion {
         int createQtScriptEngine(QString nameVal="Qt Script Engine", QScriptEngine* engine=NULL);
         int createTofDaqDll(QString nameVal="TofDaqDll", QString pathVal="C:\\Tofwerk\\TofDaq_1.97_noHW\\TofDaqDll.dll", int timeout = 5000);
         //===
+
+        int add_scriptable_component(int entity, abstract_scriptable_object* comp);
+        int remove_scriptable_component(int entity);
 
         //=== Factory constants
         QUuid get_AnalogValue_uid()const{return ("{6ddc030e-2001-4a38-a8ce-57b309f902ff}");}
@@ -117,8 +124,11 @@ namespace talorion {
         QList<int> get_all_Qt_Script_Engines()const{return get_entity_by_serialVersionUID(get_Qt_Script_Engine_uid());}
         QList<int> get_all_TofDaqDlls()const{return get_entity_by_serialVersionUID(get_TofDaqDll_uid());}
 
+        QList<int> get_entities_with_scriptable_components()const{return get_entity_by_component(SCRIPTABLE_OBJECT_COMPONENT);}
+
         abstract_configuration_widget* get_systemConfigurationWidget_component(int entity_id) const;
         QScriptEngine* get_qt_script_engine_component(int entity_id) const;
+        abstract_scriptable_object* get_scriptable_object_component(int entity_id) const;
 
 
         double get_analogActValue_component(int entity)const;
@@ -148,6 +158,7 @@ namespace talorion {
         int get_entity_by_name(const QString& name) const;
         QList<int> get_entity_by_serialVersionUID(const QUuid& uid) const;
         QList<int> get_entity_by_systemVersionUID(const QUuid& uid) const;
+        QList<int> get_entity_by_component(int comp_id) const;
 
         QList<int> get_all_entities()const;
         QList<int> get_all_components_of_entity(int entity)const;
@@ -186,6 +197,9 @@ namespace talorion {
         void newQtScriptEngine(int);
         void newTofDaqDll(int);
 
+        void register_scritable_component(int);
+        void unregister_scritable_component(int);
+
     private:
         void set_analogActValue_component(int entity, double val);
         void set_analogSetValue_component(int entity, double val);
@@ -206,6 +220,7 @@ namespace talorion {
         void set_tcp_box_backend_component(int entity, int val);
         void set_systemConfigurationWidget_component(int entity_id, abstract_configuration_widget *wdgt);
         void set_qt_script_engine_component(int entity_id, QScriptEngine *engine);
+        void set_scriptable_object_component(int entity_id, abstract_scriptable_object *engine);
         void set_script_file_component(int entity, QString val);
         void set_data_aquistion_dll_component(int entity, QString val);
         void set_timeout_component(int entity, int val);
@@ -235,6 +250,7 @@ namespace talorion {
         QMap<int, QVariant> component_data_table_N;             //enity_component_hash | [1..M columns, one column for each piece of data in your component]
         QMap<int, abstract_configuration_widget*> component_widget_table;
         QMap<int, QScriptEngine*> component_script_engine_table;
+        QMap<int, abstract_scriptable_object*> component_scriptable_object_table;
 
     private:
         //static QAtomicPointer<entity_manager> _instance;
@@ -244,6 +260,8 @@ namespace talorion {
         static const int P1=997;
         static const int P2=1009;
     };
+
+
 
 } // namespace talorion
 

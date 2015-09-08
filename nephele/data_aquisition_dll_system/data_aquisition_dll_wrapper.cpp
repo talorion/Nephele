@@ -16,7 +16,7 @@
 
 namespace talorion{
     data_aquisition_dll_wrapper::data_aquisition_dll_wrapper(QObject *par) :
-        QObject(par),
+        abstract_scriptable_object("direct_daq", par),
         m_InitializeDll(NULL),
         m_CleanupDll(NULL),
         m_StartAcquisition(NULL),
@@ -44,8 +44,7 @@ namespace talorion{
         m_data_aquisition_dll(NULL),
         m_dll_name()
     {
-        connect(event_manager::get_instance(),SIGNAL(start_aquisition()),this, SLOT(start_aquisition()));
-        connect(event_manager::get_instance(),SIGNAL(stop_aquisition()),this, SLOT(stop_aquisition()));
+
 
     }
 
@@ -54,7 +53,7 @@ namespace talorion{
 
     }
 
-    void data_aquisition_dll_wrapper::init(QString dll_name)
+    int data_aquisition_dll_wrapper::init(QString dll_name)
     {
         QFileInfo f(dll_name);
         QString absolutePath = f.absoluteDir().absolutePath();
@@ -69,7 +68,7 @@ namespace talorion{
         m_data_aquisition_dll = new QLibrary(name);
         if (!m_data_aquisition_dll->load()){
             qDebug()<<m_data_aquisition_dll->errorString();
-            return;
+            return -1;
         }
         m_dll_name = dll_name;
 
@@ -145,7 +144,11 @@ namespace talorion{
         meth = "TwSetDaqParameterDouble";
         m_SetParameterDouble = resolve_method<SetParameterDouble_prototype>(meth);
 
-        initialize_dll();
+        int in = initialize_dll();
+        if( in == 4)
+            return 0;
+        else
+            return -1;
 
     }
 
@@ -188,7 +191,7 @@ namespace talorion{
         }
     }
 
-    int data_aquisition_dll_wrapper::initialize_dll()
+    int data_aquisition_dll_wrapper::initialize_dll() const
     {
         if(m_InitializeDll){
             return twErrChk(m_InitializeDll());
@@ -196,22 +199,23 @@ namespace talorion{
         return -1;
     }
 
-    void data_aquisition_dll_wrapper::cleanup_dll()
+    void data_aquisition_dll_wrapper::cleanup_dll() const
     {
         if(m_CleanupDll){
             m_CleanupDll();
         }
     }
 
-    int data_aquisition_dll_wrapper::start_aquisition()
+    int data_aquisition_dll_wrapper::start_aquisition() const
     {
+        qDebug()<<"start_aquisition";
         if(m_StartAcquisition){
             return twErrChk(m_StartAcquisition());
         }
         return -1;
     }
 
-    int data_aquisition_dll_wrapper::stop_aquisition()
+    int data_aquisition_dll_wrapper::stop_aquisition() const
     {
         if(m_StopAcquisition){
             return twErrChk(m_StopAcquisition());
@@ -219,7 +223,7 @@ namespace talorion{
         return -1;
     }
 
-    bool data_aquisition_dll_wrapper::aquisition_active()
+    bool data_aquisition_dll_wrapper::aquisition_active() const
     {
         if(m_AquisitionActive){
             return m_AquisitionActive();
@@ -227,7 +231,7 @@ namespace talorion{
         return false;
     }
 
-    int  data_aquisition_dll_wrapper::register_user_data(const QStringList& value_names, const QString& path , int cmp_lvl)
+    int  data_aquisition_dll_wrapper::register_user_data(const QStringList& value_names, const QString& path , int cmp_lvl) const
     {
         if(m_RegisterUserDat){
             int NbrElements = value_names.size();
@@ -248,7 +252,7 @@ namespace talorion{
         return -1;
     }
 
-    int data_aquisition_dll_wrapper::UpdateUserData( QVector<double> &Data, const QString &path)
+    int data_aquisition_dll_wrapper::UpdateUserData( QVector<double> &Data, const QString &path) const
     {
         if(m_UpdateUserData){
             QByteArray path_ba = path.toLocal8Bit();
@@ -259,7 +263,7 @@ namespace talorion{
         return -1;
     }
 
-    int data_aquisition_dll_wrapper::unregister_user_data(const QString& path)
+    int data_aquisition_dll_wrapper::unregister_user_data(const QString& path) const
     {
         QByteArray path_ba = path.toLocal8Bit();
 
@@ -270,7 +274,7 @@ namespace talorion{
         return -1;
     }
 
-    int data_aquisition_dll_wrapper::read_spectrum(QVector<float>& buffer_Spectrum, int BufIndex , int SegmentIndex, int SegmentEndIndex, bool Normalize)
+    int data_aquisition_dll_wrapper::read_spectrum(QVector<float>& buffer_Spectrum, int BufIndex , int SegmentIndex, int SegmentEndIndex, bool Normalize) const
     {
         if(m_GetSpectrum){
             return twErrChk(m_GetSpectrum(buffer_Spectrum.data(), SegmentIndex, SegmentEndIndex, BufIndex, Normalize));
@@ -278,7 +282,7 @@ namespace talorion{
         return -1;
     }
 
-    int data_aquisition_dll_wrapper::read_average_spectrum(QVector<double> &buffer_avg_spectrum, bool Normalize)
+    int data_aquisition_dll_wrapper::read_average_spectrum(QVector<double> &buffer_avg_spectrum, bool Normalize) const
     {
         if(m_GetAverageSpectrum){
             return twErrChk(m_GetAverageSpectrum(buffer_avg_spectrum.data(), Normalize));
@@ -286,7 +290,7 @@ namespace talorion{
         return -1;
     }
 
-    int data_aquisition_dll_wrapper::read_traces(QVector<float>& buffer_Spectrum, QVector<float> buffer_Masses, int BufIndex, int SegmentIndex, int SegmentEndIndex)
+    int data_aquisition_dll_wrapper::read_traces(QVector<float>& buffer_Spectrum, QVector<float> buffer_Masses, int BufIndex, int SegmentIndex, int SegmentEndIndex) const
     {
         if(m_GetTraces){
             return twErrChk(m_GetTraces(buffer_Spectrum.data(), buffer_Masses.data(), SegmentIndex, SegmentEndIndex, BufIndex));
@@ -302,7 +306,7 @@ namespace talorion{
     //        return -1;
     //    }
 
-    QString data_aquisition_dll_wrapper::read_parameter(const QString& para)
+    QString data_aquisition_dll_wrapper::read_parameter(const QString& para) const
     {
         if(m_GetParameter){
             QByteArray para_ba = para.toLocal8Bit();
@@ -313,7 +317,7 @@ namespace talorion{
         return "";
     }
 
-    int data_aquisition_dll_wrapper::read_int_parameter(const QString& para)
+    int data_aquisition_dll_wrapper::read_int_parameter(const QString& para) const
     {
         if(m_GetParameterInt){
             QByteArray para_ba = para.toLocal8Bit();
@@ -323,7 +327,7 @@ namespace talorion{
         return -1;
     }
 
-    bool data_aquisition_dll_wrapper::read_bool_parameter(const QString& para)
+    bool data_aquisition_dll_wrapper::read_bool_parameter(const QString& para) const
     {
         if(m_GetParameterBool){
             QByteArray para_ba = para.toLocal8Bit();
@@ -333,7 +337,7 @@ namespace talorion{
         return false;
     }
 
-    float data_aquisition_dll_wrapper::read_float_parameter(const QString& para)
+    float data_aquisition_dll_wrapper::read_float_parameter(const QString& para) const
     {
         if(m_GetParameterFloat){
             QByteArray para_ba = para.toLocal8Bit();
@@ -343,7 +347,7 @@ namespace talorion{
         return -1;
     }
 
-    qint64 data_aquisition_dll_wrapper::read_int64_parameter(const QString& para)
+    qint64 data_aquisition_dll_wrapper::read_int64_parameter(const QString& para) const
     {
         if(m_GetParameterInt64){
             QByteArray para_ba = para.toLocal8Bit();
@@ -353,7 +357,7 @@ namespace talorion{
         return -1;
     }
 
-    double data_aquisition_dll_wrapper::read_double_parameter(const QString& para)
+    double data_aquisition_dll_wrapper::read_double_parameter(const QString& para) const
     {
         if(m_GetParameterDouble){
             QByteArray para_ba = para.toLocal8Bit();
@@ -363,7 +367,7 @@ namespace talorion{
         return -1;
     }
 
-    int data_aquisition_dll_wrapper::write_parameter(const QString &para, QString value)
+    int data_aquisition_dll_wrapper::write_parameter(const QString &para, QString value) const
     {
         if(m_SetParameter){
             QByteArray para_ba = para.toLocal8Bit();
@@ -374,7 +378,7 @@ namespace talorion{
         return -1;
     }
 
-    int data_aquisition_dll_wrapper::write_int_parameter(const QString &para, int value)
+    int data_aquisition_dll_wrapper::write_int_parameter(const QString &para, int value) const
     {
         if(m_SetParameterInt){
             QByteArray para_ba = para.toLocal8Bit();
@@ -384,7 +388,7 @@ namespace talorion{
         return -1;
     }
 
-    int data_aquisition_dll_wrapper::write_bool_parameter(const QString &para, bool value)
+    int data_aquisition_dll_wrapper::write_bool_parameter(const QString &para, bool value) const
     {
         if(m_SetParameterBool){
             QByteArray para_ba = para.toLocal8Bit();
@@ -394,7 +398,7 @@ namespace talorion{
         return -1;
     }
 
-    int data_aquisition_dll_wrapper::write_float_parameter(const QString &para, float value)
+    int data_aquisition_dll_wrapper::write_float_parameter(const QString &para, float value) const
     {
         if(m_SetParameterFloat){
             QByteArray para_ba = para.toLocal8Bit();
@@ -404,7 +408,7 @@ namespace talorion{
         return -1;
     }
 
-    int data_aquisition_dll_wrapper::write_int64_parameter(const QString &para, qint64 value)
+    int data_aquisition_dll_wrapper::write_int64_parameter(const QString &para, qint64 value) const
     {
         if(m_SetParameterInt64){
             QByteArray para_ba = para.toLocal8Bit();
@@ -414,7 +418,7 @@ namespace talorion{
         return -1;
     }
 
-    int data_aquisition_dll_wrapper::write_double_parameter(const QString &para, double value)
+    int data_aquisition_dll_wrapper::write_double_parameter(const QString &para, double value) const
     {
         if(m_SetParameterDouble){
             QByteArray para_ba = para.toLocal8Bit();
