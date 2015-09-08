@@ -46,6 +46,8 @@ namespace talorion {
         connect(event_manager::get_instance(),SIGNAL(newAnalogValue(int)),this,SLOT(slot_newAnalogValue(int)));
         connect(event_manager::get_instance(),SIGNAL(abort_script()),this,SLOT(slot_abort_script()));
 
+        connect(event_manager::get_instance(),SIGNAL(register_scritable_component(int)),this,SLOT(slot_register_scritable_component(int)));
+        connect(event_manager::get_instance(),SIGNAL(unregister_scritable_component(int)),this,SLOT(slot_unregister_scritable_component(int)));
 
         //m_script_engine = new QScriptEngine();
 
@@ -81,16 +83,9 @@ namespace talorion {
 //        m_daqhdl = m_script_engine.newQObject(&m_daq_hdl);
         m_script_engine.globalObject().setProperty("daq", m_daqhdl);
 
-        QScriptValue tmp;
-        foreach (int ent, entity_manager::get_instance()->get_entities_with_scriptable_components()) {
-            abstract_scriptable_object* obj = entity_manager::get_instance()->get_scriptable_object_component(ent);
-            if(!obj)
-                continue;
-            QString script_name = obj->script_name();
 
-            tmp = m_script_engine.newQObject(obj, QScriptEngine::QtOwnership, QScriptEngine::ExcludeSuperClassContents);
-            m_script_engine.globalObject().setProperty(script_name, tmp);
-            script_values.append(tmp);
+        foreach (int ent, entity_manager::get_instance()->get_entities_with_scriptable_components()) {
+            slot_register_scritable_component(ent);
         }
     }
 
@@ -184,5 +179,22 @@ namespace talorion {
             m_log_hdl.log_fatal("script aborted");
             return;
         }
+    }
+
+    void scripting_worker::slot_register_scritable_component(int ent)
+    {
+        abstract_scriptable_object* obj = entity_manager::get_instance()->get_scriptable_object_component(ent);
+        if(!obj)
+            return;
+        QString script_name = obj->script_name();
+
+        QScriptValue tmp = m_script_engine.newQObject(obj, QScriptEngine::QtOwnership, QScriptEngine::ExcludeSuperClassContents);
+        m_script_engine.globalObject().setProperty(script_name, tmp);
+        script_values.append(tmp);
+    }
+
+    void scripting_worker::slot_unregister_scritable_component(int)
+    {
+
     }
 }

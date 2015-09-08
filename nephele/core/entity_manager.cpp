@@ -457,6 +457,7 @@ namespace talorion {
 
         createComponentAndAddTo( SCRIPTABLE_OBJECT_COMPONENT, entity );
         set_scriptable_object_component(entity, comp);
+        emit register_scritable_component(entity);
         return 0;
     }
 
@@ -469,6 +470,7 @@ namespace talorion {
             return -1;
 
         removeComponentFrom(SCRIPTABLE_OBJECT_COMPONENT, entity);
+        emit unregister_scritable_component(entity);
         return 0;
 
     }
