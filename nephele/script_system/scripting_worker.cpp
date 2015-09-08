@@ -183,6 +183,8 @@ namespace talorion {
 
     void scripting_worker::slot_register_scritable_component(int ent)
     {
+
+
         abstract_scriptable_object* obj = entity_manager::get_instance()->get_scriptable_object_component(ent);
         if(!obj)
             return;
@@ -191,6 +193,7 @@ namespace talorion {
         QScriptValue tmp = m_script_engine.newQObject(obj, QScriptEngine::QtOwnership, QScriptEngine::ExcludeSuperClassContents);
         m_script_engine.globalObject().setProperty(script_name, tmp);
         script_values.append(tmp);
+        qDebug()<< "slot_register_scritable_component";
     }
 
     void scripting_worker::slot_unregister_scritable_component(int)

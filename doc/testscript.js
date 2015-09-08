@@ -20,5 +20,20 @@ var fc0=act.FC_0
 set.val("FC_1", fc0)
 set.val("FC_2", set.FC_2 + 10)
 
+direct_daq.stop_aquisition();
+util.sleep(2000);
+
+direct_daq.write_parameter("DataPath","c:\\temp\\");
+util.sleep(2000);
+
+direct_daq.write_parameter("DataFileName","newfile.h5");
+util.sleep(2000);
+
+direct_daq.start_aquisition();
+util.sleep(2000);
+
+direct_daq.stop_aquisition();
+util.sleep(2000);
+
 //util.sleep(10000)
 0

@@ -25,6 +25,8 @@ namespace talorion {
 
     void data_aquisition_dll_worker::slot_data_aquistion_dll_component_changed(int entity)
     {
+        qDebug()<< "slot_data_aquistion_dll_component_changed";
+
         QString dynll=entity_manager::get_instance()->get_data_aquistion_dll_component(entity);
 
         if(dynll.isNull() || dynll.isEmpty())
@@ -46,7 +48,7 @@ namespace talorion {
         if(wr){
             //connect(event_manager::get_instance(),SIGNAL(start_aquisition()),wr, SLOT(start_aquisition()));
             //connect(event_manager::get_instance(),SIGNAL(stop_aquisition()),wr, SLOT(stop_aquisition()));
-            if(wr->init(dynll)){
+            if(wr->init(dynll) == 0){
                 entity_manager::get_instance()->add_scriptable_component(entity, wr);
             }
 
