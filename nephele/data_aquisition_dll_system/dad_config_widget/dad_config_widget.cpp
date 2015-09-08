@@ -27,6 +27,7 @@ namespace talorion {
         timeout_field = new QSpinBox();
         timeout_field->setMinimum(0);
         timeout_field->setMaximum(INT32_MAX);
+        timeout_field->setMaximum(0xFFFF);
         timeout_field->setSuffix(tr(" ms"));
         connect(timeout_field,SIGNAL(valueChanged(int)),this,SLOT(timout_value_changed(int)));
 

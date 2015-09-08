@@ -45,6 +45,7 @@ unix: BUILDNO = $$system(../misc/build_number_generator.sh)
 #win32: QMAKE_EXTRA_TARGETS += build_nr
 #win32: PRE_TARGETDEPS += build_nr
 win32: BUILDNO = $$system(../misc/build_number_generator.bat)
+win32: BUILDNO = $$system(..\misc\build_number_generator.bat)
 #==========
 
 

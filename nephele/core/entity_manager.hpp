@@ -168,6 +168,7 @@ namespace talorion {
         void slot_change_ip_address_component(int entity, QString value);
         void slot_change_port_component(int entity, quint16 value);
         void slot_connection_state_component(int entity, quint16 value);
+        void slot_connection_state_component(int entity, bool value);
         void slot_change_tcp_box_backend_component(int entity, int value);
 
     signals:

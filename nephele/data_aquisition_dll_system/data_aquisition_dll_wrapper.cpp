@@ -1,6 +1,7 @@
 #include "data_aquisition_dll_wrapper.hpp"
 
 #if defined( Q_WS_WIN )
+#if defined( Q_OS_WIN )
 #include <Windows.h>
 #endif
 
@@ -62,6 +63,12 @@ namespace talorion{
 #if defined( Q_WS_WIN )
         LPCSTR lstr = absolutePath.toStdString().c_str();
         SetDllDirectory( lstr );
+
+#if defined( Q_OS_WIN )
+        //LPCSTR lstr = absolutePath.toStdString().c_str();
+        //LPCWSTR lstr = absolutePath.toUtf8();
+        LPCWSTR str = (const wchar_t*)absolutePath.utf16();
+        SetDllDirectory( str );
         qDebug()<<"add Library path: "<<absolutePath;
 #endif
 
