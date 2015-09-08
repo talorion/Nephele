@@ -1,6 +1,5 @@
 #include "data_aquisition_dll_wrapper.hpp"
 
-#if defined( Q_WS_WIN )
 #if defined( Q_OS_WIN )
 #include <Windows.h>
 #endif
@@ -60,9 +59,6 @@ namespace talorion{
         QString absolutePath = f.absoluteDir().absolutePath();
         QString name = f.fileName();
 
-#if defined( Q_WS_WIN )
-        LPCSTR lstr = absolutePath.toStdString().c_str();
-        SetDllDirectory( lstr );
 
 #if defined( Q_OS_WIN )
         //LPCSTR lstr = absolutePath.toStdString().c_str();

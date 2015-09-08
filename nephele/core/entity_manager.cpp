@@ -793,7 +793,6 @@ namespace talorion {
         }
     }
 
-    void entity_manager::slot_connection_state_component(int entity, quint16 value)
     void entity_manager::slot_connection_state_component(int entity, bool value)
     {
         if( get_connection_state_component(entity)!= value){
