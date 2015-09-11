@@ -1,5 +1,7 @@
 #include "simulated_av_box.hpp"
 
+#include <QStringList>
+
 simulated_av_box::simulated_av_box(QObject *par) :
     abstract_simulated_box(par),
     all_avs(),

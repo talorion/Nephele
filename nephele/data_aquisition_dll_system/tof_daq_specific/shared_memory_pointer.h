@@ -4,12 +4,14 @@
 #include <QObject>
 #include <QtCore>
 
+#ifndef Q_OS_WIN
 typedef qint64 __int64;
 //typedef quint64 __int64;
 #ifdef TOFDAQDLL_EXPORTS
 #define TOFWERK_DAQ_API Q_DECL_EXPORT
 #else
 #define TOFWERK_DAQ_API Q_DECL_IMPORT
+#endif
 #endif
 #include <TofDaqDll.h>
 
