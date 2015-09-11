@@ -26,10 +26,16 @@ SOURCES += main.cpp\
     tcp_box_server.cpp \
     tcp_box_connection.cpp \
     simulated_fc.cpp \
-    simulated_fc_box.cpp
+    simulated_fc_box.cpp \
+    simulated_av_box.cpp \
+    simulated_av.cpp \
+    abstract_simulated_box.cpp
 
 HEADERS  += tcp_box_simulator.hpp \
     tcp_box_server.h \
     tcp_box_connection.h \
     simulated_fc.h \
-    simulated_fc_box.h
+    simulated_fc_box.h \
+    simulated_av_box.hpp \
+    simulated_av.hpp \
+    abstract_simulated_box.hpp

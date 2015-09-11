@@ -1,11 +1,11 @@
 #ifndef SCRIPT_HANDLER_H
 #define SCRIPT_HANDLER_H
 
-#include <QObject>
+#include "core/abstract_scriptable_object.hpp"
 
 namespace talorion {
 
-    class script_set_handler : public QObject
+    class script_set_handler : public abstract_scriptable_object
     {
         Q_OBJECT
     public:
@@ -18,6 +18,9 @@ namespace talorion {
     signals:
         void set_value_changed(int entity, double set_val);
 
+    private slots:
+        void slot_set_value_changed(int entity);
+        void slot_newAnalogValue(int entity);
     };
 }
 

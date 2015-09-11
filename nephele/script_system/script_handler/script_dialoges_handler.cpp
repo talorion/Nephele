@@ -9,7 +9,7 @@
 namespace talorion {
 
     script_dialoges_handler::script_dialoges_handler(QObject *par) :
-        QObject(par),
+        abstract_scriptable_object("gui", par),
         m_tmp_num(NAN),
         m_tmp_str()
     {
@@ -25,7 +25,7 @@ namespace talorion {
 
         connect(event_manager::get_instance(), SIGNAL(application_aboutToQuit()),this,SIGNAL(dialog_finished()));
 
-   }
+    }
 
     script_dialoges_handler::~script_dialoges_handler()
     {
@@ -50,6 +50,7 @@ namespace talorion {
 
         QEventLoop loop;
         connect(this,SIGNAL(dialog_finished()),&loop, SLOT(quit()));
+        connect(this,SIGNAL(script_finished()),&loop, SLOT(quit()));
         emit open_string_dialog();
         loop.exec();
 

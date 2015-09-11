@@ -7,6 +7,7 @@
 namespace talorion {
 
     class data_aquisition_dll_wrapper;
+    class tof_daq_dll_worker;
 
     class data_aquisition_dll_worker : public QObject
     {
@@ -16,21 +17,16 @@ namespace talorion {
         ~data_aquisition_dll_worker();
         Q_DISABLE_COPY(data_aquisition_dll_worker)
 
-    signals:
-        void data_aquisition_dll_answer(int, int);
-        void data_aquisition_dll_answer(int, bool);
-        void data_aquisition_dll_answer(int, const QString&);
-        void data_aquisition_dll_answer(int, qint64);
-        void data_aquisition_dll_answer(int, float);
-        void data_aquisition_dll_answer(int, double);
-
-    public slots:
+    private:
+        data_aquisition_dll_wrapper *get_wrapper(int entity) const;
 
     private slots:
         void slot_data_aquistion_dll_component_changed(int entity);
 
     private:
         QMap<int, data_aquisition_dll_wrapper*> dlls;
+        QMap<int, tof_daq_dll_worker*> worker;
+
     };
 
 } // namespace talorion

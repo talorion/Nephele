@@ -64,7 +64,7 @@ namespace talorion {
         int read_average_spectrum(QVector<double>& buffer_avg_spectrum, bool Normalize = false) const;
         int read_traces( QVector<float>& buffer_Spectrum, QVector<float> buffer_Masses, int BufIndex, int SegmentIndex = -1, int SegmentEndIndex = -1) const;
 
-        //int wait_for_new_data(int Timeout,shared_memory_descriptor& pBufDesc,shared_memory_pointer& pShMem,bool WaitForEventReset);
+        int wait_for_new_data(int Timeout,shared_memory_descriptor& pBufDesc,shared_memory_pointer& pShMem,bool WaitForEventReset);
         QString read_parameter(const QString& para) const;
         int read_int_parameter(const QString& para) const;
         bool read_bool_parameter(const QString& para) const;

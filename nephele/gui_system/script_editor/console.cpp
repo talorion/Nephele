@@ -22,6 +22,11 @@ namespace talorion{
 
     }
 
+    Console::~Console()
+    {
+
+    }
+
     void Console::write(QString string)
     {
         write(string, "black");

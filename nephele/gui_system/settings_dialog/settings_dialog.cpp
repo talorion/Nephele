@@ -5,6 +5,7 @@
 #include "core/system_manager.hpp"
 
 #include "core/abstract_configuration_widget.hpp"
+#include "empty_config_widget.hpp"
 
 namespace talorion {
 
@@ -94,9 +95,10 @@ namespace talorion {
         settings_widget = entity_manager::get_instance()->get_systemConfigurationWidget_component(entity);
 
         if(!settings_widget)
-            settings_widget = new QWidget();
+            settings_widget = new empty_config_widget();
 
         settings_widget->show();
+        settings_widget->refresh_data();
         mainLayout->addWidget(settings_widget,1,1,1,1);
     }
 

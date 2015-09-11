@@ -29,13 +29,15 @@ namespace talorion {
         QLineEdit* serach_field;
         QListWidget* settings_group_list;
         QLabel* settings_widget_label;
-        QWidget* settings_widget;
+        abstract_configuration_widget* settings_widget;
 
         QStringListModel* lst_mdl;
 
         QGridLayout* mainLayout;
 
         QMap<QListWidgetItem*,int> list2entity;
+
+
     };
 
 } // namespace talorion

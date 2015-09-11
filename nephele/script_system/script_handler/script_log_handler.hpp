@@ -1,13 +1,11 @@
 #ifndef SCRIPT_LOG_HANDLER_HPP
 #define SCRIPT_LOG_HANDLER_HPP
 
-#include <QObject>
+#include "core/abstract_scriptable_object.hpp"
 
 namespace talorion{
 
-
-
-    class script_log_handler : public QObject
+    class script_log_handler : public abstract_scriptable_object
     {
         Q_OBJECT
     private:

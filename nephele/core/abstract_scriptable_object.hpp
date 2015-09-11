@@ -3,6 +3,11 @@
 
 #include <QObject>
 
+QT_BEGIN_NAMESPACE
+class QScriptValue;
+QT_END_NAMESPACE
+
+
 namespace talorion {
 
     class abstract_scriptable_object : public QObject
@@ -15,12 +20,17 @@ namespace talorion {
 
         QString script_name() const;
 
+        QScriptValue *getScrip_value() const;
+        void setScrip_value(QScriptValue *value);
+
     signals:
+        void script_finished();
 
     public slots:
 
     private:
         const QString m_script_name;
+        QScriptValue* scrip_value;
     };
 
 } // namespace talorion

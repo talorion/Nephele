@@ -109,7 +109,7 @@ namespace talorion {
     {
         double value =entity_manager::get_instance()->get_analogSetValue_component(entity);
         int id = entity_manager::get_instance()->get_id_component(entity);
-        if(id >= 0)
+        if(id >= 0 && analog.contains(entity))
             fcSetChangeProxy(value, id);
     }
 

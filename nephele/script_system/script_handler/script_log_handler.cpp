@@ -5,7 +5,8 @@
 #include "core/event_manager.hpp"
 
 namespace talorion{
-    script_log_handler::script_log_handler(QObject *par) : QObject(par)
+    script_log_handler::script_log_handler(QObject *par) :
+        abstract_scriptable_object("console", par)
     {
         connect(this,SIGNAL(script_message(QString,QString)),event_manager::get_instance(),SIGNAL(script_message(QString,QString)));
     }

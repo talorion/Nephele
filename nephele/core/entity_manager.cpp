@@ -11,6 +11,8 @@
 #include "abstract_configuration_widget.hpp"
 //#include "analogvalue.hpp"
 
+#include "version.hpp"
+
 namespace talorion {
 
     //QAtomicPointer<entity_manager> entity_manager::_instance;
@@ -40,8 +42,9 @@ namespace talorion {
         connect(this,SIGNAL(script_file_component_changed(int)),event_manager::get_instance(),SIGNAL(script_file_component_changed(int)));
         connect(this, SIGNAL(data_aquistion_dll_component_changed(int)),event_manager::get_instance(),SIGNAL(data_aquistion_dll_component_changed(int)));
         connect(this, SIGNAL(timeout_component_changed(int)),event_manager::get_instance(),SIGNAL(timeout_component_changed(int)));
-        connect(this, SIGNAL(register_scritable_component(int)),event_manager::get_instance(),SIGNAL(register_scritable_component(int)));
-        connect(this, SIGNAL(unregister_scritable_component(int)),event_manager::get_instance(),SIGNAL(unregister_scritable_component(int)));
+        //connect(this, SIGNAL(register_scritable_component(int)),event_manager::get_instance(),SIGNAL(register_scritable_component(int)));
+        //connect(this, SIGNAL(unregister_scritable_component(int)),event_manager::get_instance(),SIGNAL(unregister_scritable_component(int)));
+        connect(this, SIGNAL(newScriptableObject(int)),event_manager::get_instance(),SIGNAL(newScriptableObject(int)));
 
         connect(event_manager::get_instance(),SIGNAL(change_analogAct_component(int,double)),this,SLOT(slot_change_analogAct_component(int,double)));
         connect(event_manager::get_instance(),SIGNAL(change_analogSet_component(int,double)),this,SLOT(slot_change_analogSet_component(int,double)));
@@ -134,6 +137,10 @@ namespace talorion {
         }
 
         foreach (int id, get_all_Systems()) {
+            delete_entity(id);
+        }
+
+        foreach (int id, get_all_ScriptableObjects()) {
             delete_entity(id);
         }
 
@@ -352,6 +359,14 @@ namespace talorion {
         return new_id;
     }
 
+    int entity_manager::createNewVersionInformation()
+    {
+        int new_id = createNewEntity();
+
+        return new_id;
+
+    }
+
     int entity_manager::createNewDigitalValue(QString nameVal, bool setVal, int id, int box_id)
     {
 
@@ -444,36 +459,54 @@ namespace talorion {
         return new_id;
     }
 
-    int entity_manager::add_scriptable_component(int entity, abstract_scriptable_object *comp)
+    int entity_manager::createScriptableObject(QString nameVal, abstract_scriptable_object *comp)
     {
-        if(!comp)
-            return -1;
+        int new_id = createNewEntity();
+        createComponentAndAddTo( NAME_COMPONENT, new_id );
+        createComponentAndAddTo( SCRIPTABLE_OBJECT_COMPONENT, new_id );
+        createComponentAndAddTo(SERIAL_VERSION_UID_COMPONENT, new_id);
 
-        if(!entity_exists(entity))
-            return -1;
+        //if(nameVal.isEmpty())
+        //    nameVal = comp
 
-        if(hasComponent(SCRIPTABLE_OBJECT_COMPONENT, entity))
-            return -1;
+        setComponentDataForEntity(NAME_COMPONENT,               new_id, nameVal);
+        set_scriptable_object_component(new_id, comp);
+        setComponentDataForEntity(SERIAL_VERSION_UID_COMPONENT, new_id, get_ScriptableObject_uid());
 
-        createComponentAndAddTo( SCRIPTABLE_OBJECT_COMPONENT, entity );
-        set_scriptable_object_component(entity, comp);
-        emit register_scritable_component(entity);
-        return 0;
+        emit newScriptableObject(new_id);
+        return new_id;
     }
 
-    int entity_manager::remove_scriptable_component(int entity)
-    {
-        if(!entity_exists(entity))
-            return -1;
+//    int entity_manager::add_scriptable_component(int entity, abstract_scriptable_object *comp)
+//    {
+//        if(!comp)
+//            return -1;
 
-        if(!hasComponent(SCRIPTABLE_OBJECT_COMPONENT, entity))
-            return -1;
+//        if(!entity_exists(entity))
+//            return -1;
 
-        removeComponentFrom(SCRIPTABLE_OBJECT_COMPONENT, entity);
-        emit unregister_scritable_component(entity);
-        return 0;
+//        if(hasComponent(SCRIPTABLE_OBJECT_COMPONENT, entity))
+//            return -1;
 
-    }
+//        createComponentAndAddTo( SCRIPTABLE_OBJECT_COMPONENT, entity );
+//        set_scriptable_object_component(entity, comp);
+//        emit register_scritable_component(entity);
+//        return 0;
+//    }
+
+//    int entity_manager::remove_scriptable_component(int entity)
+//    {
+//        if(!entity_exists(entity))
+//            return -1;
+
+//        if(!hasComponent(SCRIPTABLE_OBJECT_COMPONENT, entity))
+//            return -1;
+
+//        removeComponentFrom(SCRIPTABLE_OBJECT_COMPONENT, entity);
+//        emit unregister_scritable_component(entity);
+//        return 0;
+
+//    }
 
 
     abstract_configuration_widget *entity_manager::get_systemConfigurationWidget_component(int entity_id) const
@@ -810,6 +843,8 @@ namespace talorion {
             //emit connection_state_component_changed(entity);
         }
     }
+
+
 
 
 

@@ -13,6 +13,9 @@ namespace talorion{
 
     public:
         explicit Console(QWidget *par = 0);
+        ~Console(void);
+        Q_DISABLE_COPY(Console)
+
     signals:
 
     public slots:

@@ -2,7 +2,7 @@
 #include <QDebug>
 
 simulated_fc_box::simulated_fc_box(QObject *par)
-    : QObject(par),
+    : abstract_simulated_box(par),
       all_fcs(),
       random_id(0)
 {

@@ -64,6 +64,8 @@ namespace talorion{
 
     public:
         Highlighter(QTextDocument *parent = 0);
+        ~Highlighter(void);
+        Q_DISABLE_COPY(Highlighter)
 
     protected:
         void highlightBlock(const QString &text) Q_DECL_OVERRIDE;

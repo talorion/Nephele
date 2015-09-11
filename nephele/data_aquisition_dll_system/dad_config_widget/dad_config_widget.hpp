@@ -24,6 +24,9 @@ namespace talorion {
         void change_data_aquistition_dll_component(int , QString );
         void change_timeout_component(int , int );
 
+    private:
+        virtual void do_refresh_data() Q_DECL_OVERRIDE;
+
     private slots:
         void browse_button_pressed();
         void timout_value_changed(int val);

@@ -7,6 +7,11 @@
 #include <QTextStream>
 #include <QApplication>
 #include <QScriptEngineDebugger>
+#include <QTreeWidget>
+#include <QScriptValue>
+#include <QStandardItemModel>
+#include <QScriptEngine>
+#include <QScriptValueIterator>
 
 #include "core/event_manager.hpp"
 #include "core/entity_manager.hpp"
@@ -33,10 +38,13 @@ namespace talorion
         runAct(NULL),
         debugAct(NULL),
         stopAct(NULL),
+        skipSleepAct(NULL),
         aboutAct(NULL),
         clsAct(NULL),
         my_engine(-1),
-        m_debugger(NULL)
+        m_debugger(NULL),
+        completer(NULL),
+        itemModel(NULL)
     {
         m_debugger = new QScriptEngineDebugger(this);
 
@@ -81,6 +89,8 @@ namespace talorion
     {
 
     }
+
+
 
     void script_editor_window::newFile()
     {
@@ -157,24 +167,98 @@ namespace talorion
         init_engine(entity);
     }
 
-//    void script_editor_window::stop_script()
-//    {
+    //    void script_editor_window::stop_script()
+    //    {
 
-//    }
+    //    }
 
     void script_editor_window::setupEditor()
     {
-
-
-        editor = new QTextEdit(this);
+        editor = new TextEdit(this);
         setStyleSheet("QTextEdit { font-family: Courier; font-size: 12pt; background-color: 'white'; }");
 
         highlighter = new Highlighter(editor->document());
 
         //editor =  m_debugger->widget(QScriptEngineDebugger::CodeWidget);
 
+        completer = new TreeModelCompleter(this);
+        updateModel();
+        //completer->setMaxVisibleItems(5);
+        //completer->setModelSorting(QCompleter::CaseInsensitivelySortedModel);
+        completer->setSeparator(".");
+        //completer->setWrapAround(true);
+        //completer->setCompletionMode(QCompleter::InlineCompletion);
+        //completer->setCompletionMode(QCompleter::PopupCompletion);
+        editor->setCompleter(completer);
+
         newFile();
 
+    }
+
+    void script_editor_window::updateModel()
+    {
+        //completer->setModel(NULL);
+
+        if(itemModel)
+            delete itemModel;
+
+        itemModel =  modelFromEngine();
+        completer->setModel(itemModel);
+    }
+
+    QAbstractItemModel *script_editor_window::modelFromEngine()
+    {
+
+        QStandardItemModel* model = new QStandardItemModel(completer);
+
+        if(my_engine >= 0){
+            QScriptEngine* eng =  entity_manager::get_instance()->get_qt_script_engine_component(my_engine);
+
+            QStandardItem * rt = model->invisibleRootItem();
+            QScriptValue object =eng->globalObject();
+            rt->appendColumn(rec_get_values(object));
+        }
+
+        return model;
+    }
+
+    QList<QStandardItem *> script_editor_window::rec_get_values(QScriptValue object)
+    {
+        QList<QStandardItem *> items;
+
+        QScriptValueIterator it(object);
+        while (it.hasNext()) {
+            it.next();
+            //qDebug() << it.name() << ": " << it.value().toString();
+            QScriptValue v = it.value();
+            QStandardItem* qtwi = new QStandardItem();
+
+            qtwi->setIcon(QIcon(":/images/images/new.png"));
+            qtwi->setText(it.name());
+
+            if(v.isFunction())
+                qtwi->setIcon(QIcon(":/images/images/func.png"));
+
+            if(v.isQObject()){
+                qtwi->setIcon(QIcon(":/images/images/class.png"));
+                qtwi->appendColumn(rec_get_values(v));
+                //qtwi->addChildren(rec_get_values(v));
+            }
+
+            //if(v.isObject()){
+            //    qtwi->setIcon(0,QIcon(":/images/images/class.png"));
+            //qtwi->addChildren(rec_get_values(v));
+            //}
+
+            if(v.isArray() || v.isBool() || v.isBoolean() || v.isDate() || v.isNumber() || v.isString() || v.isVariant()){
+                qtwi->setIcon(QIcon(":/images/images/var.png"));
+                //qtwi->setText(v.toString());
+            }
+
+
+            items.append(qtwi);
+        }
+        return items;
     }
 
     void script_editor_window::setupConsole()
@@ -225,6 +309,10 @@ namespace talorion
         //connect(stopAct, SIGNAL(triggered()), this, SLOT(stop_script()));
         connect(stopAct, SIGNAL(triggered()), event_manager::get_instance(),SIGNAL(abort_script()));
 
+        skipSleepAct = new QAction(QIcon(":/images/images/skip.png"), tr("Skip Sleep"), this);
+        skipSleepAct->setStatusTip(tr("Skip Sleep"));
+        connect(skipSleepAct, SIGNAL(triggered()), event_manager::get_instance(),SIGNAL(script_skip_sleep()));
+
         aboutAct = new QAction(tr("&About"), this);
         aboutAct->setStatusTip(tr("Show the application's About box"));
         connect(aboutAct, SIGNAL(triggered()), this, SLOT(about()));
@@ -251,6 +339,8 @@ namespace talorion
         runMenu->addAction(debugAct);
         runMenu->addAction(stopAct);
         runMenu->addSeparator();
+        runMenu->addAction(skipSleepAct);
+        runMenu->addSeparator();
         runMenu->addAction(clsAct);
 
         menuBar()->addSeparator();
@@ -270,6 +360,8 @@ namespace talorion
         runToolBar->addAction(runAct);
         runToolBar->addAction(debugAct);
         runToolBar->addAction(stopAct);
+        runToolBar->addSeparator();
+        runToolBar->addAction(skipSleepAct);
         runToolBar->addSeparator();
         runToolBar->addAction(clsAct);
     }
@@ -374,5 +466,6 @@ namespace talorion
 
         my_engine = entity;
     }
+
 
 }

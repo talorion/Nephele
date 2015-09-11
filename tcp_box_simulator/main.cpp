@@ -5,16 +5,22 @@
 
 #include "tcp_box_simulator.hpp"
 
+#include "simulated_av_box.hpp"
+#include "simulated_fc_box.h"
+
 int main(int argc, char *argv[])
 {
     QTime time = QTime::currentTime();
     qsrand((uint)time.msec());
 
     QApplication a(argc, argv);
-    tcp_box_simulator w;
+
+    simulated_fc_box* fc_box = new simulated_fc_box();
+    tcp_box_simulator w(fc_box);
     w.show();
 
-    tcp_box_simulator t(4414);
+    simulated_av_box* av_box = new simulated_av_box();
+    tcp_box_simulator t(av_box, 4414);
     t.show();
 
     return a.exec();

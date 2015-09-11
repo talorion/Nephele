@@ -99,7 +99,7 @@ namespace talorion {
         quint16 port = entity_manager::get_instance()->get_port_component(box_id);
 
         tcpDriver* dev1;
-        dev1 = new tcpDriver(new_box_id(), "uibkav getAll","uibkav getAll", back); // for AFC Board
+        dev1 = new tcpDriver(box_id, "uibkav getAll","uibkav getAll", back); // for AFC Board
         bool co = dev1->connectDevice(ip, port);
 
         entity_manager::get_instance()->slot_connection_state_component(box_id, co);

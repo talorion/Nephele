@@ -6,13 +6,14 @@
 #include <QTcpServer>
 
 #include "tcp_box_connection.h"
+#include "abstract_simulated_box.hpp"
 
 class tcp_box_server : public QTcpServer
 {
     Q_OBJECT
 
 public:
-    tcp_box_server(simulated_fc_box* box,QObject *par = 0);
+    tcp_box_server(abstract_simulated_box *box, QObject *par = 0);
     ~tcp_box_server();
     Q_DISABLE_COPY(tcp_box_server)
 
@@ -23,7 +24,7 @@ protected:
     virtual void incomingConnection(qintptr socketDesc) Q_DECL_OVERRIDE;
 
 private:
-    simulated_fc_box *const m_box;
+    abstract_simulated_box *const m_box;
 };
 
 #endif // TCP_BOX_SERVER_H

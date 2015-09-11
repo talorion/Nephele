@@ -82,13 +82,15 @@ namespace talorion {
         void debug_script_file(const QString & );
         void abort_script();
         void script_finished();
+        void script_skip_sleep();
         void script_message(const QString&, const QString&);
 
         void start_aquisition();
         void stop_aquisition();
 
-        void register_scritable_component(int);
-        void unregister_scritable_component(int);
+        //void register_scritable_component(int);
+        //void unregister_scritable_component(int);
+        void newScriptableObject(int);
 
     private:
         //static QAtomicPointer<event_manager> _instance;

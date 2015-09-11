@@ -3,9 +3,7 @@
 #include <QHostAddress>
 #include <QThread>
 
-#include "simulated_fc_box.h"
-
-tcp_box_connection::tcp_box_connection(simulated_fc_box *box, QObject *par) :
+tcp_box_connection::tcp_box_connection(abstract_simulated_box *box, QObject *par) :
     QTcpSocket(par),
     buffer(),
     m_box(box)
@@ -82,6 +80,8 @@ bool tcp_box_connection::readCommand()
     bool ret=false;
     if(buffer == "uibkafc "){
         ret = parseSubCommand();
+    }else if(buffer == "uibkav "){
+        ret = parseSubCommand();
         //    } else if (buffer == "mac"){
         //    } else if (buffer == "netmask"){
         //    } else if (buffer == "ip"){
@@ -104,7 +104,7 @@ bool tcp_box_connection::parseSubCommand()
         return false;
     }
 
-    if(buffer == "uibkafc getAll\r\n"){        
+    if(buffer == "uibkafc getAll\r\n"){
         fc_sendAll();
     } else if(buffer == "uibkafc getActSet\r\n"){
         fc_sendActSet();
@@ -113,6 +113,18 @@ bool tcp_box_connection::parseSubCommand()
         //write("OK\r\n");
         //    } else if (buffer == "uibkafc setById"){
     } else if (buffer == "uibkafc setByModule "){
+        parseArguments();
+    } else if(buffer == "uibkav getAll\r\n"){
+        fc_sendAll();
+    } else if(buffer == "uibkav getActSet\r\n"){
+        fc_sendActSet();
+    } else if(buffer == "uibkav set "){
+        parseArguments();
+        //write("OK\r\n");
+        //    } else if (buffer == "uibkafc setById"){
+    } else if (buffer == "uibkav setByModule "){
+        parseArguments();
+    } else if (buffer == "uibkav setById "){
         parseArguments();
         //    } else if (buffer == "uibkafc saveChannelInfos"){
         //    } else if (buffer == "uibkafc setDefaultChannelInfos"){
@@ -135,7 +147,7 @@ bool tcp_box_connection::parseSubCommand()
 
 bool tcp_box_connection::parseArguments()
 {
-//assume a set command
+    //assume a set command
     int i=0;
     buffer.clear();
     QStringList args;

@@ -1,10 +1,11 @@
 #ifndef SCRIPT_ACT_HANDLER_H
 #define SCRIPT_ACT_HANDLER_H
 
-#include <QObject>
+#include "core/abstract_scriptable_object.hpp"
+
 namespace talorion {
 
-    class script_act_handler : public QObject
+    class script_act_handler : public abstract_scriptable_object
     {
         Q_OBJECT
     public:
@@ -13,6 +14,9 @@ namespace talorion {
         Q_DISABLE_COPY(script_act_handler)
 
         //Q_INVOKABLE void sleep(unsigned long millisecs);
+    private slots:
+        void slot_act_value_changed(int entity);
+        void slot_newAnalogValue(int entity);
     };
 
 }

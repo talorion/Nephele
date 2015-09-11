@@ -1,11 +1,11 @@
 #ifndef SCRIPT_UTIL_HANDLER_H
 #define SCRIPT_UTIL_HANDLER_H
 
-#include <QObject>
+#include "core/abstract_scriptable_object.hpp"
 
 namespace talorion {
 
-    class script_util_handler : public QObject
+    class script_util_handler : public abstract_scriptable_object
     {
         Q_OBJECT
     public:
@@ -17,6 +17,8 @@ namespace talorion {
         Q_INVOKABLE int get_entity_by_name(QString name);
 
     signals:
+        void skip_sleep();
+        //void dialog_finished();
 
     public slots:
     };

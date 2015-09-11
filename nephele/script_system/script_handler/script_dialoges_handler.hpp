@@ -1,11 +1,11 @@
 #ifndef SCRIPT_DIALOGES_HANDLER_H
 #define SCRIPT_DIALOGES_HANDLER_H
 
-#include <QObject>
+#include "core/abstract_scriptable_object.hpp"
 
 namespace talorion {
 
-    class script_dialoges_handler : public QObject
+    class script_dialoges_handler : public abstract_scriptable_object
     {
         Q_OBJECT
     public:

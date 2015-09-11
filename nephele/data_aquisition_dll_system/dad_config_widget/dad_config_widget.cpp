@@ -50,6 +50,28 @@ namespace talorion {
         //        foreach (int box, entity_manager::get_instance()->get_all_TofDaqDlls()) {
         //            slot_newTcpBox(box);
         //        }
+//        QList<int> dlls = entity_manager::get_instance()->get_all_TofDaqDlls();
+//        if(!dlls.isEmpty())
+//            current_entity =  dlls[0];
+//        else
+//            current_entity = entity_manager::get_instance()->createTofDaqDll();
+
+//        QString tmp = entity_manager::get_instance()->get_data_aquistion_dll_component(current_entity);
+//        dll_name_field->setText(tmp);
+
+//        int  to =  entity_manager::get_instance()->get_timeout_component(current_entity);
+//        timeout_field->setValue(to);
+
+        refresh_data();
+    }
+
+    dad_config_widget::~dad_config_widget()
+    {
+
+    }
+
+    void dad_config_widget::do_refresh_data()
+    {
         QList<int> dlls = entity_manager::get_instance()->get_all_TofDaqDlls();
         if(!dlls.isEmpty())
             current_entity =  dlls[0];
@@ -61,11 +83,6 @@ namespace talorion {
 
         int  to =  entity_manager::get_instance()->get_timeout_component(current_entity);
         timeout_field->setValue(to);
-    }
-
-    dad_config_widget::~dad_config_widget()
-    {
-
     }
 
     void dad_config_widget::browse_button_pressed()

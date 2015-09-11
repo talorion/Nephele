@@ -4,12 +4,14 @@
 #include "core/entity_manager.hpp"
 
 #include "data_aquisition_dll_wrapper.hpp"
+#include "tof_daq_specific/tof_daq_dll_worker.hpp"
 
 namespace talorion {
 
     data_aquisition_dll_worker::data_aquisition_dll_worker(QObject *par) :
         QObject( par),
-        dlls()
+        dlls(),
+        worker()
     {
         connect(event_manager::get_instance(),SIGNAL(data_aquistion_dll_component_changed(int)),this,SLOT(slot_data_aquistion_dll_component_changed(int)),Qt::QueuedConnection);
 
@@ -22,6 +24,8 @@ namespace talorion {
     {
 
     }
+
+
 
     void data_aquisition_dll_worker::slot_data_aquistion_dll_component_changed(int entity)
     {
@@ -46,15 +50,27 @@ namespace talorion {
         }
 
         if(wr){
-            //connect(event_manager::get_instance(),SIGNAL(start_aquisition()),wr, SLOT(start_aquisition()));
-            //connect(event_manager::get_instance(),SIGNAL(stop_aquisition()),wr, SLOT(stop_aquisition()));
             if(wr->init(dynll) == 0){
-                entity_manager::get_instance()->add_scriptable_component(entity, wr);
+                entity_manager::get_instance()->createScriptableObject(wr->script_name(), wr);
+
+                tof_daq_dll_worker* wrk =  new tof_daq_dll_worker(wr, entity);
+                worker.insert(entity, wrk);
             }
 
         }
 
     }
+
+    data_aquisition_dll_wrapper* data_aquisition_dll_worker::get_wrapper(int entity) const
+    {
+        QMap<int, data_aquisition_dll_wrapper*>::const_iterator cit =  dlls.constFind(entity);
+        if(cit == dlls.constEnd())
+            return NULL;
+
+        return cit.value();
+    }
+
+
 
 } // namespace talorion
 

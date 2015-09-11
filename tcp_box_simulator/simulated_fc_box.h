@@ -1,12 +1,12 @@
 #ifndef SIMULATED_FC_BOX_H
 #define SIMULATED_FC_BOX_H
 
-#include <QObject>
+#include "abstract_simulated_box.hpp"
 #include <QList>
 
 #include "simulated_fc.h"
 
-class simulated_fc_box : public QObject
+class simulated_fc_box : public abstract_simulated_box
 {
     Q_OBJECT
 public:
@@ -14,11 +14,11 @@ public:
     ~simulated_fc_box();
     Q_DISABLE_COPY(simulated_fc_box)
 
-    void set(int id, double val);
+    virtual void set(int id, double val) Q_DECL_OVERRIDE;
 
     void init_all_fcs();
 
-    QString getAll_json();
+    virtual QString getAll_json() Q_DECL_OVERRIDE;
 
 private:
     QList<simulated_fc*> all_fcs;

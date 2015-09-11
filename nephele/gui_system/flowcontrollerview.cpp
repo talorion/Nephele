@@ -49,6 +49,7 @@ namespace talorion {
         m_layout->addWidget(lblName,0,0,1,1);
         m_layout->addWidget(editSet,0,1,1,1);
         m_layout->addWidget(editAct,0,2,1,1);
+        m_layout->setMargin(0);
         this->setLayout(m_layout);
 
         plot = new QCustomPlot();

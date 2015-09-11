@@ -1,10 +1,10 @@
 #ifndef SCRIPT_DAQ_HANDLER_HPP
 #define SCRIPT_DAQ_HANDLER_HPP
 
-#include <QObject>
+#include "core/abstract_scriptable_object.hpp"
 
 namespace talorion{
-    class script_daq_handler : public QObject
+    class script_daq_handler : public abstract_scriptable_object
     {
         Q_OBJECT
     public:

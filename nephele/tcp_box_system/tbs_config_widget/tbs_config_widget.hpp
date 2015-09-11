@@ -26,6 +26,9 @@ namespace talorion {
         void disconnect_tcp_box(int entity);
         void change_name_component(int, QString);
 
+    private:
+        virtual void do_refresh_data() Q_DECL_OVERRIDE;
+
     private slots:
         void slot_newTcpBox(int entity);
         void slot_add_button_clicked(bool);

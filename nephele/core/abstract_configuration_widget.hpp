@@ -14,11 +14,14 @@ namespace talorion {
         virtual ~abstract_configuration_widget();
         Q_DISABLE_COPY(abstract_configuration_widget)
 
+        void refresh_data(){return do_refresh_data();}
+
     signals:
 
     public slots:
 
     private:
+        virtual void do_refresh_data()=0;
     };
 
 } // namespace talorion

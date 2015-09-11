@@ -42,7 +42,7 @@ namespace talorion {
         ip_address_field =new QLineEdit();
         backend_field =new QLineEdit();
         portField = new  QSpinBox();
-        portField->setRange(0,0xFFFFFFFF);
+        portField->setRange(0,65535);
         portField->setSingleStep(1);
         portField->setButtonSymbols( QSpinBox::NoButtons);
         portField->setMinimumWidth(100);
@@ -91,6 +91,11 @@ namespace talorion {
     }
 
     tbs_config_widget::~tbs_config_widget()
+    {
+
+    }
+
+    void tbs_config_widget::do_refresh_data()
     {
 
     }

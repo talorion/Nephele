@@ -105,7 +105,14 @@ SOURCES += main.cpp\
     data_aquisition_dll_system/dad_config_widget/dad_config_widget.cpp \
     data_aquisition_dll_system/data_aquisition_dll_worker.cpp \
     tcp_box_system/tcp_box_worker.cpp \
-    core/abstract_scriptable_object.cpp
+    core/abstract_scriptable_object.cpp \
+    data_aquisition_dll_system/tof_daq_specific/shared_memory_descriptor.cpp \
+    data_aquisition_dll_system/tof_daq_specific/shared_memory_pointer.cpp \
+    data_aquisition_dll_system/tof_daq_specific/tof_daq_dll_worker.cpp \
+    script_system/script_config_widget/script_config_widget.cpp \
+    gui_system/settings_dialog/empty_config_widget.cpp \
+    gui_system/script_editor/treemodelcompleter.cpp \
+    gui_system/script_editor/textedit.cpp
 
 HEADERS  += version.hpp \
     nephele.rc \
@@ -147,7 +154,14 @@ HEADERS  += version.hpp \
     build_number.h \
     data_aquisition_dll_system/data_aquisition_dll_worker.hpp \
     tcp_box_system/tcp_box_worker.hpp \
-    core/abstract_scriptable_object.hpp
+    core/abstract_scriptable_object.hpp \
+    data_aquisition_dll_system/tof_daq_specific/shared_memory_descriptor.h \
+    data_aquisition_dll_system/tof_daq_specific/shared_memory_pointer.h \
+    data_aquisition_dll_system/tof_daq_specific/tof_daq_dll_worker.hpp \
+    script_system/script_config_widget/script_config_widget.hpp \
+    gui_system/settings_dialog/empty_config_widget.hpp \
+    gui_system/script_editor/treemodelcompleter.h \
+    gui_system/script_editor/textedit.h
 
 
 win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../qcustomplot/release/ -lqcustomplot

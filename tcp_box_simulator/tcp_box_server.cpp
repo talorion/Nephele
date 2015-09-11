@@ -1,7 +1,7 @@
 #include "tcp_box_server.h"
 #include "QDebug"
 
-tcp_box_server::tcp_box_server(simulated_fc_box *box, QObject *par)
+tcp_box_server::tcp_box_server(abstract_simulated_box *box, QObject *par)
     : QTcpServer(par),
     m_box(box)
 {

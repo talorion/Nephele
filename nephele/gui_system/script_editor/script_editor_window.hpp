@@ -3,6 +3,9 @@
 
 #include "console.h"
 #include "highlighter.h"
+#include "treemodelcompleter.h"
+#include "textedit.h"
+
 
 #include <QMenu>
 #include <QPlainTextEdit>
@@ -10,6 +13,10 @@
 #include <QMainWindow>
 #include <QVBoxLayout>
 #include <QScriptEngineDebugger>
+#include <QCompleter>
+#include <QTreeWidget>
+#include <QStandardItemModel>
+#include <QScriptValue>
 
 namespace talorion{
     class script_editor_window : public QMainWindow
@@ -19,6 +26,8 @@ namespace talorion{
         explicit script_editor_window(QWidget *parent = 0);
         ~script_editor_window();
         Q_DISABLE_COPY(script_editor_window)
+
+        void updateModel();
 
     signals:
         void start_script(const QString& script);
@@ -59,8 +68,11 @@ namespace talorion{
 
         void init_engine(int entity);
 
+        QAbstractItemModel *modelFromEngine();
+        QList<QStandardItem *> rec_get_values(QScriptValue object);
+
     private:
-        QTextEdit *editor;
+        TextEdit *editor;
         Console *console;
         QVBoxLayout * layout;
         Highlighter *highlighter;
@@ -81,6 +93,7 @@ namespace talorion{
         QAction *runAct;
         QAction *debugAct;
         QAction *stopAct;
+        QAction *skipSleepAct;
 
         QAction *aboutAct;
 
@@ -88,6 +101,8 @@ namespace talorion{
 
         int my_engine;
         QScriptEngineDebugger* m_debugger;
+        TreeModelCompleter *completer;
+        QAbstractItemModel * itemModel;
 
 
     };

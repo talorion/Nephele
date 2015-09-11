@@ -64,7 +64,10 @@ namespace talorion {
         SCRIPT_FILE_COMPONENT,
         DATA_AQUISITION_DLL_COMPONENT,
         TIMEOUT_COMPONENT,
-        SCRIPTABLE_OBJECT_COMPONENT
+        SCRIPTABLE_OBJECT_COMPONENT,
+        FILEVERSION_COMPONENT,
+        PRODUCTVERSION_COMPONENT,
+        COMPANYNAME_COMPONENT
     } static_component_id;
 
     class entity_manager : public QObject
@@ -104,10 +107,12 @@ namespace talorion {
         int createNewTcpBox(QString nameVal="New Box", QString ip="localhost", quint16 port=2701);
         int createQtScriptEngine(QString nameVal="Qt Script Engine", QScriptEngine* engine=NULL);
         int createTofDaqDll(QString nameVal="TofDaqDll", QString pathVal="C:\\Tofwerk\\TofDaq_1.97_noHW\\TofDaqDll.dll", int timeout = 5000);
+
+        int createScriptableObject(QString nameVal, abstract_scriptable_object* comp);
         //===
 
-        int add_scriptable_component(int entity, abstract_scriptable_object* comp);
-        int remove_scriptable_component(int entity);
+//        int add_scriptable_component(int entity, abstract_scriptable_object* comp);
+//        int remove_scriptable_component(int entity);
 
         //=== Factory constants
         QUuid get_AnalogValue_uid()const{return ("{6ddc030e-2001-4a38-a8ce-57b309f902ff}");}
@@ -116,6 +121,7 @@ namespace talorion {
         QUuid get_System_uid()const{return ("{b50224fa-8908-4503-8296-8b0c8531e1ce}");}
         QUuid get_Qt_Script_Engine_uid()const{return ("{3a31ae25-c7f4-4e79-93c4-2a4f7b675298}");}
         QUuid get_TofDaqDll_uid()const{return ("{e16e6a36-4f76-4746-995d-62996c86f74a}");}
+        QUuid get_ScriptableObject_uid()const{return ("{592400d5-7684-4c31-9bfa-7cd806c40589}");}
         //
 
         QList<int> get_all_tcpBoxes()const{return get_entity_by_serialVersionUID(get_TcpBox_uid());}
@@ -123,6 +129,7 @@ namespace talorion {
         QList<int> get_all_Systems()const{return get_entity_by_serialVersionUID(get_System_uid());}
         QList<int> get_all_Qt_Script_Engines()const{return get_entity_by_serialVersionUID(get_Qt_Script_Engine_uid());}
         QList<int> get_all_TofDaqDlls()const{return get_entity_by_serialVersionUID(get_TofDaqDll_uid());}
+        QList<int> get_all_ScriptableObjects()const{return get_entity_by_serialVersionUID(get_ScriptableObject_uid());}
 
         QList<int> get_entities_with_scriptable_components()const{return get_entity_by_component(SCRIPTABLE_OBJECT_COMPONENT);}
 
@@ -197,10 +204,15 @@ namespace talorion {
         void newQtScriptEngine(int);
         void newTofDaqDll(int);
 
-        void register_scritable_component(int);
-        void unregister_scritable_component(int);
+        void newScriptableObject(int);
+
+        //void register_scritable_component(int);
+        //void unregister_scritable_component(int);
 
     private:
+        int createNewVersionInformation();
+
+
         void set_analogActValue_component(int entity, double val);
         void set_analogSetValue_component(int entity, double val);
         void set_digitalActValue_component(int entity, bool val);

@@ -10,6 +10,8 @@
 #include <QtGlobal>
 
 #include "tof_daq_specific/tof_daq_dll_tools.hpp"
+#include "tof_daq_specific/shared_memory_descriptor.h"
+#include "tof_daq_specific/shared_memory_pointer.h"
 
 #include "core/event_manager.hpp"
 
@@ -197,7 +199,7 @@ namespace talorion{
     int data_aquisition_dll_wrapper::initialize_dll() const
     {
         if(m_InitializeDll){
-            return twErrChk(m_InitializeDll());
+            return (m_InitializeDll());
         }
         return -1;
     }
@@ -213,7 +215,7 @@ namespace talorion{
     {
         qDebug()<<"start_aquisition";
         if(m_StartAcquisition){
-            return twErrChk(m_StartAcquisition());
+            return (m_StartAcquisition());
         }
         return -1;
     }
@@ -221,7 +223,7 @@ namespace talorion{
     int data_aquisition_dll_wrapper::stop_aquisition() const
     {
         if(m_StopAcquisition){
-            return twErrChk(m_StopAcquisition());
+            return (m_StopAcquisition());
         }
         return -1;
     }
@@ -248,7 +250,7 @@ namespace talorion{
                 desc_elem_ba.clear();
             }
 
-            int ret = twErrChk(m_RegisterUserDat(path_ba.data(), NbrElements, desc_ba.data(), cmp_lvl));
+            int ret = (m_RegisterUserDat(path_ba.data(), NbrElements, desc_ba.data(), cmp_lvl));
 
             return ret;
         }
@@ -261,7 +263,7 @@ namespace talorion{
             QByteArray path_ba = path.toLocal8Bit();
             int NbrElements = Data.size();
 
-            return twErrChk(m_UpdateUserData(path_ba.data(),NbrElements, Data.data()));
+            return (m_UpdateUserData(path_ba.data(),NbrElements, Data.data()));
         }
         return -1;
     }
@@ -271,7 +273,7 @@ namespace talorion{
         QByteArray path_ba = path.toLocal8Bit();
 
         if(m_UnregisterUserData){
-            int ret = twErrChk(m_UnregisterUserData(path_ba.data()));
+            int ret = (m_UnregisterUserData(path_ba.data()));
             return ret;
         }
         return -1;
@@ -280,7 +282,7 @@ namespace talorion{
     int data_aquisition_dll_wrapper::read_spectrum(QVector<float>& buffer_Spectrum, int BufIndex , int SegmentIndex, int SegmentEndIndex, bool Normalize) const
     {
         if(m_GetSpectrum){
-            return twErrChk(m_GetSpectrum(buffer_Spectrum.data(), SegmentIndex, SegmentEndIndex, BufIndex, Normalize));
+            return (m_GetSpectrum(buffer_Spectrum.data(), SegmentIndex, SegmentEndIndex, BufIndex, Normalize));
         }
         return -1;
     }
@@ -288,7 +290,7 @@ namespace talorion{
     int data_aquisition_dll_wrapper::read_average_spectrum(QVector<double> &buffer_avg_spectrum, bool Normalize) const
     {
         if(m_GetAverageSpectrum){
-            return twErrChk(m_GetAverageSpectrum(buffer_avg_spectrum.data(), Normalize));
+            return (m_GetAverageSpectrum(buffer_avg_spectrum.data(), Normalize));
         }
         return -1;
     }
@@ -296,18 +298,18 @@ namespace talorion{
     int data_aquisition_dll_wrapper::read_traces(QVector<float>& buffer_Spectrum, QVector<float> buffer_Masses, int BufIndex, int SegmentIndex, int SegmentEndIndex) const
     {
         if(m_GetTraces){
-            return twErrChk(m_GetTraces(buffer_Spectrum.data(), buffer_Masses.data(), SegmentIndex, SegmentEndIndex, BufIndex));
+            return (m_GetTraces(buffer_Spectrum.data(), buffer_Masses.data(), SegmentIndex, SegmentEndIndex, BufIndex));
         }
         return -1;
     }
 
-    //    int data_aquisition_dll_wrapper::wait_for_new_data(int Timeout, shared_memory_descriptor &pBufDesc, shared_memory_pointer &pShMem, bool WaitForEventReset)
-    //    {
-    //        if(m_WaitForNewData){
-    //            return twErrChk(m_WaitForNewData(Timeout, pBufDesc.data(), pShMem.data(), WaitForEventReset));
-    //        }
-    //        return -1;
-    //    }
+    int data_aquisition_dll_wrapper::wait_for_new_data(int Timeout, shared_memory_descriptor &pBufDesc, shared_memory_pointer &pShMem, bool WaitForEventReset)
+    {
+        if(m_WaitForNewData){
+            return (m_WaitForNewData(Timeout, pBufDesc.next_data(), pShMem.next_data(), WaitForEventReset));
+        }
+        return -1;
+    }
 
     QString data_aquisition_dll_wrapper::read_parameter(const QString& para) const
     {
@@ -376,7 +378,7 @@ namespace talorion{
             QByteArray para_ba = para.toLocal8Bit();
             QByteArray value_ba = value.toLocal8Bit();
 
-            return twErrChk(m_SetParameter(para_ba.data(),value_ba.data()));
+            return (m_SetParameter(para_ba.data(),value_ba.data()));
         }
         return -1;
     }
@@ -386,7 +388,7 @@ namespace talorion{
         if(m_SetParameterInt){
             QByteArray para_ba = para.toLocal8Bit();
 
-            return twErrChk(m_SetParameterInt(para_ba.data(),value));
+            return (m_SetParameterInt(para_ba.data(),value));
         }
         return -1;
     }
@@ -396,7 +398,7 @@ namespace talorion{
         if(m_SetParameterBool){
             QByteArray para_ba = para.toLocal8Bit();
 
-            return twErrChk(m_SetParameterBool(para_ba.data(),value));
+            return (m_SetParameterBool(para_ba.data(),value));
         }
         return -1;
     }
@@ -406,7 +408,7 @@ namespace talorion{
         if(m_SetParameterFloat){
             QByteArray para_ba = para.toLocal8Bit();
 
-            return twErrChk(m_SetParameterFloat(para_ba.data(),value));
+            return (m_SetParameterFloat(para_ba.data(),value));
         }
         return -1;
     }
@@ -416,7 +418,7 @@ namespace talorion{
         if(m_SetParameterInt64){
             QByteArray para_ba = para.toLocal8Bit();
 
-            return twErrChk(m_SetParameterInt64(para_ba.data(),value));
+            return (m_SetParameterInt64(para_ba.data(),value));
         }
         return -1;
     }
@@ -426,7 +428,7 @@ namespace talorion{
         if(m_SetParameterDouble){
             QByteArray para_ba = para.toLocal8Bit();
 
-            return twErrChk(m_SetParameterDouble(para_ba.data(),value));
+            return (m_SetParameterDouble(para_ba.data(),value));
         }
         return -1;
     }

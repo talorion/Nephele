@@ -123,5 +123,6 @@ namespace talorion {
         command.append(" ");
         command.append(QByteArray::number(value));
         emit fcSetChangeCommand(command);
+        //setbuffer[id] =value;
     }
 }

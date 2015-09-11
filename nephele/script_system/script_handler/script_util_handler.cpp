@@ -4,11 +4,15 @@
 #include <QEventLoop>
 #include <QTimer>
 
+#include "core/event_manager.hpp"
+#include "core/entity_manager.hpp"
+
 namespace talorion {
 
-    script_util_handler::script_util_handler(QObject *par) : QObject(par)
+    script_util_handler::script_util_handler(QObject *par) :
+        abstract_scriptable_object("util", par)
     {
-
+        connect(event_manager::get_instance(), SIGNAL(script_skip_sleep()),this,SIGNAL(skip_sleep()));
     }
 
     script_util_handler::~script_util_handler()
@@ -19,8 +23,12 @@ namespace talorion {
     void script_util_handler::sleep(unsigned long millisecs)
     {
         QEventLoop loop;
+        //connect(this,SIGNAL(dialog_finished()),&loop,SLOT(quit()));
+        connect(this,SIGNAL(script_finished()),&loop,SLOT(quit()));
+        connect(this,SIGNAL(skip_sleep()),&loop,SLOT(quit()));
         QTimer::singleShot(millisecs,&loop,SLOT(quit()));
         loop.exec();
+        disconnect(this,SIGNAL(dialog_finished()),&loop,SLOT(quit()));
     }
 
     int script_util_handler::get_entity_by_name(QString name)

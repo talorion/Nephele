@@ -6,16 +6,16 @@
 #include <QTcpSocket>
 
 
-tcp_box_simulator::tcp_box_simulator(qint16 port, QWidget *par) :
+tcp_box_simulator::tcp_box_simulator(abstract_simulated_box* b, qint16 port, QWidget *par) :
     QDialog(par),
     statusLabel(),
     quitButton(),
     tcpServer(0),
     networkSession(0),
-    box(NULL),
+    box(b),
     m_port(port)
 {
-    box = new simulated_fc_box();
+    //box = new simulated_fc_box();
 
     statusLabel = new QLabel;
     quitButton = new QPushButton(tr("Quit"));
@@ -85,6 +85,8 @@ void tcp_box_simulator::sessionOpened()
         settings.endGroup();
     }
 
+    if(!box)
+        return;
 
     tcpServer = new tcp_box_server(box, this);
 //    if (!tcpServer->listen(QHostAddress::Any,2701)) {
