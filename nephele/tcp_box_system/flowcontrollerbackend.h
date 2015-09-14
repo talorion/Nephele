@@ -37,8 +37,10 @@ namespace talorion {
         //QList<analogValue*> flowcontroller;
         QList<int> flowcontroller;
         QList<double> actbuffer;
-        QList<double> setbuffer;
+        QMap<int, double> setbuffer;
+        //QList<double> setbuffer;
         //const tcpDriver* drv;
+        bool block_next_read;
     };
 }
 

@@ -15,7 +15,7 @@ namespace talorion {
         connect(event_manager::get_instance(),SIGNAL(analogSet_component_changed(int)), this, SLOT(fcSetChangeProxy(int)));
 
         connect(this,SIGNAL(change_act_value(int,double)),event_manager::get_instance(),SIGNAL(change_analogAct_component(int,double)));
-        connect(this,SIGNAL(change_set_value(int,double)),event_manager::get_instance(),SIGNAL(change_analogSet_component(int,double)));
+        connect(this,SIGNAL(change_set_value(int,double)),event_manager::get_instance(),SIGNAL(change_analogSet_component(int,double)),Qt::UniqueConnection);
 
     }
 

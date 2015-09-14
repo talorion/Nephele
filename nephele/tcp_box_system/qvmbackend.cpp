@@ -9,7 +9,8 @@ namespace talorion {
         abstract_backend(par),
         analog(),
         actbuffer(),
-        setbuffer()
+        setbuffer(),
+        block_next_read(false)
     {
 //        connect(this,SIGNAL(avSetChangeCommand(QByteArray)),event_manager::get_instance(),SIGNAL(avSetChangeCommand(QByteArray)));
 //        connect(this,SIGNAL(newAnalogValue(int)),event_manager::get_instance(),SIGNAL(newAnalogValue(int)));
@@ -35,6 +36,11 @@ namespace talorion {
 
     void qvmbackend::processData(QVariantMap desc, tcpDriverDataTypes::dataType type, int box_id)
     {
+        if(block_next_read){
+            block_next_read = false;
+            return;
+        }
+
         switch (type)
         {
         case tcpDriverDataTypes::ALLDATA:
@@ -61,7 +67,10 @@ namespace talorion {
                                                                                       box_id
                                                                                       );
                         analog.append(av);
-                        setbuffer.append(tmp.find("set").value().toDouble());
+                        //setbuffer.append(tmp.find("set").value().toDouble());
+                        int tmp_id = tmp.find("id").value().toInt();
+                        double tmp_set = tmp.find("set").value().toDouble();
+                        setbuffer.insert(tmp_id, tmp_set);
                         actbuffer.append(0);
                     }
                 }
@@ -85,9 +94,10 @@ namespace talorion {
                             }
                         }
                         if (tmp.contains("set")){
+                            int tmp_id = tmp.find("id").value().toInt();
                             double val = tmp.find("set").value().toDouble();
-                            if(setbuffer[i] != val){
-                                setbuffer[i] =val;
+                            if(setbuffer[tmp_id] != val){
+                                setbuffer[tmp_id] =val;
                                 emit change_set_value(entity,val);
                             }
                         }
@@ -109,8 +119,11 @@ namespace talorion {
     {
         double value =entity_manager::get_instance()->get_analogSetValue_component(entity);
         int id = entity_manager::get_instance()->get_id_component(entity);
-        if(id >= 0 && analog.contains(entity))
+        if(id >= 0 && analog.contains(entity)){
+            setbuffer[id] =value;
+            block_next_read = true;
             fcSetChangeProxy(value, id);
+        }
     }
 
     void qvmbackend::fcSetChangeProxy(double value, int id)

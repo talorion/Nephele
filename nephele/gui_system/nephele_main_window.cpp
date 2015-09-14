@@ -130,7 +130,6 @@ namespace talorion {
         QMap<int, flowControllerView*>::ConstIterator fcv = fc_views.constFind(entity);
         if (fcv == fc_views.constEnd()){
             flowControllerView* tmp = new flowControllerView(entity, this);
-            connect(tmp, SIGNAL(change_set_value(int,double)),event_manager::get_instance(),SIGNAL(change_analogSet_component(int,double)));
             fc_views.insert(entity,tmp);
             mainLayout->addWidget(tmp);
         }

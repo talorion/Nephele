@@ -12,6 +12,7 @@
 
 #include "math.h"
 #include "core/entity_manager.hpp"
+#include "core/event_manager.hpp"
 
 
 namespace talorion {
@@ -24,6 +25,8 @@ namespace talorion {
         graphTimer(NULL),
         lblName(NULL)
     {
+
+        connect(this, SIGNAL(change_set_value(int,double)),event_manager::get_instance(),SIGNAL(change_analogSet_component(int,double)),Qt::UniqueConnection);
         this->setMouseTracking(true);
         editSet = new QDoubleSpinBox(this);
         editSet->setRange(
@@ -101,9 +104,9 @@ namespace talorion {
     {
         if (!editSet->hasFocus())
         {
-            editSet->blockSignals(true);
+            bool oldState = editSet->blockSignals(true);
             editSet->setValue(setValue);
-            editSet->blockSignals(false);
+            editSet->blockSignals(oldState);
         }
     }
 
@@ -115,8 +118,10 @@ namespace talorion {
     void flowControllerView::slot_set_value_changed(double val)
     {
         //entity_manager::get_instance()->set_setValue_component(entity, val);
-        //SqDebug()<<"flowControllerView::slot_set_value_changed"<<val;
+        qDebug()<<"flowControllerView::slot_set_value_changed"<<val;
+        //bool oldState = editSet->blockSignals(true);
         emit change_set_value(m_entity, val);
+        //editSet->blockSignals(oldState);
     }
 
     void flowControllerView::updatePlot(double value)

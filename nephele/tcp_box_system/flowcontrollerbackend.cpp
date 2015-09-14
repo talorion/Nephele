@@ -10,21 +10,9 @@ namespace talorion {
         abstract_backend(par),
         flowcontroller(),
         actbuffer(),
-        setbuffer()
-      //drv(driver)
+        setbuffer(),
+        block_next_read(false)
     {
-
-        //connect(this,SIGNAL(fcSetChangeCommand(QByteArray)),drv,SLOT(setDataCommand(QByteArray)));
-        //connect(this,SIGNAL(fcSetChangeCommand(QByteArray)),event_manager::get_instance(),SIGNAL(avSetChangeCommand(QByteArray)));
-        //connect(this,SIGNAL(newFlowcontroller(int)),event_manager::get_instance(),SIGNAL(newAnalogValue(int)));
-
-        //connect(event_manager::get_instance(),SIGNAL(receivedData(QVariantMap,tcpDriverDataTypes::dataType, int)), this, SLOT(processData(QVariantMap,tcpDriverDataTypes::dataType, int)));
-        //        connect(event_manager::get_instance(),SIGNAL(error(QString)), this, SLOT(logError(QString)));
-        //        connect(event_manager::get_instance(),SIGNAL(analogSet_component_changed(int)), this, SLOT(fcSetChangeProxy(int)));
-
-        //        connect(this,SIGNAL(change_act_value(int,double)),event_manager::get_instance(),SIGNAL(change_analogAct_component(int,double)));
-        //        connect(this,SIGNAL(change_set_value(int,double)),event_manager::get_instance(),SIGNAL(change_analogSet_component(int,double)));
-
     }
 
     flowControllerBackend::~flowControllerBackend()
@@ -39,6 +27,11 @@ namespace talorion {
 
     void flowControllerBackend::processData(QVariantMap desc, tcpDriverDataTypes::dataType type, int box_id)
     {
+        if(block_next_read){
+            block_next_read = false;
+            return;
+        }
+
         switch (type)
         {
         case tcpDriverDataTypes::ALLDATA:
@@ -64,7 +57,10 @@ namespace talorion {
                                                                                       box_id
                                                                                       );
                         flowcontroller.append(fc);
-                        setbuffer.append(tmp.find("set").value().toDouble());
+                        //setbuffer.append(tmp.find("set").value().toDouble());
+                        int tmp_id = tmp.find("id").value().toInt();
+                        double tmp_set = tmp.find("set").value().toDouble();
+                        setbuffer.insert(tmp_id, tmp_set);
                         actbuffer.append(0);
                     }
                 }
@@ -77,7 +73,8 @@ namespace talorion {
                 for(int i=0; i < desc.find("FC").value().toList().length(); i++)
                 {
                     QVariantMap tmp = desc.find("FC").value().toList()[i].toMap();
-                    if (i<flowcontroller.length())
+                    //int tmp_id = tmp.find("id").value().toInt();
+                    if ( i<flowcontroller.length())
                     {
                         int entity= flowcontroller[i];
                         if (tmp.contains("act")){
@@ -88,9 +85,11 @@ namespace talorion {
                             }
                         }
                         if (tmp.contains("set")){
+                            int tmp_id = tmp.find("id").value().toInt();
                             double val = tmp.find("set").value().toDouble();
-                            if(setbuffer[i] != val){
-                                setbuffer[i] =val;
+                            if(setbuffer[tmp_id] != val){
+                                //qDebug()<<"flowControllerBackend::processData"<<setbuffer[tmp_id]<<val;
+                                setbuffer[tmp_id] =val;
                                 emit change_set_value(entity,val);
                             }
                         }
@@ -111,8 +110,11 @@ namespace talorion {
     {
         double value =entity_manager::get_instance()->get_analogSetValue_component(entity);
         int id = entity_manager::get_instance()->get_id_component(entity);
-        if(id >= 0 && flowcontroller.contains(entity))
+        if(id >= 0 && flowcontroller.contains(entity)){
+            setbuffer[id] =value;
+            block_next_read = true;
             fcSetChangeProxy(value, id);
+        }
     }
 
     void flowControllerBackend::fcSetChangeProxy(double value, int id)

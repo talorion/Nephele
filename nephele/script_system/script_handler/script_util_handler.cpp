@@ -28,7 +28,7 @@ namespace talorion {
         connect(this,SIGNAL(skip_sleep()),&loop,SLOT(quit()));
         QTimer::singleShot(millisecs,&loop,SLOT(quit()));
         loop.exec();
-        disconnect(this,SIGNAL(dialog_finished()),&loop,SLOT(quit()));
+        disconnect(this,SIGNAL(script_finished()),&loop,SLOT(quit()));
     }
 
     int script_util_handler::get_entity_by_name(QString name)

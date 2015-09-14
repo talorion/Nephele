@@ -46,10 +46,10 @@ namespace talorion {
         //connect(this, SIGNAL(unregister_scritable_component(int)),event_manager::get_instance(),SIGNAL(unregister_scritable_component(int)));
         connect(this, SIGNAL(newScriptableObject(int)),event_manager::get_instance(),SIGNAL(newScriptableObject(int)));
 
-        connect(event_manager::get_instance(),SIGNAL(change_analogAct_component(int,double)),this,SLOT(slot_change_analogAct_component(int,double)));
-        connect(event_manager::get_instance(),SIGNAL(change_analogSet_component(int,double)),this,SLOT(slot_change_analogSet_component(int,double)));
-        connect(event_manager::get_instance(),SIGNAL(change_digitalAct_component(int,bool)),this,SLOT(slot_change_digitalAct_component(int,bool)));
-        connect(event_manager::get_instance(),SIGNAL(change_digitalSet_component(int,bool)),this,SLOT(slot_change_digitalSet_component(int,bool)));
+        connect(event_manager::get_instance(),SIGNAL(change_analogAct_component(int,double)),this,SLOT(slot_change_analogAct_component(int,double)),Qt::UniqueConnection);
+        connect(event_manager::get_instance(),SIGNAL(change_analogSet_component(int,double)),this,SLOT(slot_change_analogSet_component(int,double)),Qt::UniqueConnection);
+        connect(event_manager::get_instance(),SIGNAL(change_digitalAct_component(int,bool)),this,SLOT(slot_change_digitalAct_component(int,bool)),Qt::UniqueConnection);
+        connect(event_manager::get_instance(),SIGNAL(change_digitalSet_component(int,bool)),this,SLOT(slot_change_digitalSet_component(int,bool)),Qt::UniqueConnection);
         connect(event_manager::get_instance(),SIGNAL(change_script_file_component(int,QString)),this,SLOT(slot_change_script_file_component(int,QString)));
         connect(event_manager::get_instance(),SIGNAL(change_data_aquistition_dll_component(int,QString)),this,SLOT(slot_change_data_aquistion_dll_component(int,QString)));
         connect(event_manager::get_instance(),SIGNAL(change_timeout_component(int,int)),this,SLOT(slot_change_timeout_component(int,int)));
@@ -757,7 +757,8 @@ namespace talorion {
 
     void entity_manager::slot_change_analogSet_component(int entity, double value)
     {
-        qDebug()<<"entity_manager::slot_change_analogSet_component"<<"set "<<value;
+        //QObject* snd = sender();
+        //qDebug()<<"entity_manager::slot_change_analogSet_component"<<snd<<value;
         if( get_analogSetValue_component(entity)!= value){
 
             set_analogSetValue_component(entity, value);

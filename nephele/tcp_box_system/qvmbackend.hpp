@@ -37,7 +37,9 @@ namespace talorion {
         //QList<int> analog;
         QList<int> analog;
         QList<double> actbuffer;
-        QList<double> setbuffer;
+        QMap<int, double> setbuffer;
+        //QList<double> setbuffer;
+        bool block_next_read;
     };
 }
 
