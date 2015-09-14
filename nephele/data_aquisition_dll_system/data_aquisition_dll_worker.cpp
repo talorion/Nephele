@@ -22,7 +22,14 @@ namespace talorion {
 
     data_aquisition_dll_worker::~data_aquisition_dll_worker()
     {
-
+        QMap<int, data_aquisition_dll_wrapper*>::iterator it;
+        for(it = dlls.begin(); it != dlls.end(); it++){
+            data_aquisition_dll_wrapper* tmp = it.value();
+            if(tmp)
+                delete tmp;
+            it.value() = NULL;
+        }
+        dlls.clear();
     }
 
 

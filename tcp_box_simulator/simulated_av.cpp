@@ -1,7 +1,7 @@
 #include "simulated_av.hpp"
 
-simulated_av::simulated_av(QObject *parent) :
-    QObject(parent),
+simulated_av::simulated_av(QObject *par) :
+    QObject(par),
     id_(0),
     smin_(0),
     smax_(0),

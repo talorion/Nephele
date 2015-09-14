@@ -16,7 +16,11 @@ namespace talorion {
 
     system_manager::~system_manager()
     {
-
+        foreach (abstract_system* sys, m_systems) {
+            delete sys;
+            sys = NULL;
+        }
+        m_systems.clear();
     }
 
     system_manager* system_manager::get_instance()

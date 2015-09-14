@@ -19,7 +19,7 @@ namespace talorion {
 
     data_aquisition_dll_system::~data_aquisition_dll_system()
     {
-
+        delete config_wdg;
     }
 
     void data_aquisition_dll_system::run()

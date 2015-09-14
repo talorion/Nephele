@@ -53,6 +53,8 @@ namespace talorion{
     data_aquisition_dll_wrapper::~data_aquisition_dll_wrapper()
     {
 
+        if(m_data_aquisition_dll)
+            delete m_data_aquisition_dll;
     }
 
     int data_aquisition_dll_wrapper::init(QString dll_name)

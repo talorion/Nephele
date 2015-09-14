@@ -7,7 +7,7 @@ class simulated_av : public QObject
 {
     Q_OBJECT
 public:
-    explicit simulated_av(QObject *parent = 0);
+    explicit simulated_av(QObject *par = 0);
     ~simulated_av();
     Q_DISABLE_COPY(simulated_av)
 

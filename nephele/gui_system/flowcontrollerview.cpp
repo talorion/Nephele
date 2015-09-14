@@ -21,7 +21,8 @@ namespace talorion {
         editSet(NULL),
         editAct(NULL),
         plot(NULL),
-        graphTimer(NULL)
+        graphTimer(NULL),
+        lblName(NULL)
     {
         this->setMouseTracking(true);
         editSet = new QDoubleSpinBox(this);
@@ -44,7 +45,7 @@ namespace talorion {
         editAct->setMinimumWidth(100);
         editAct->setStyleSheet("QDoubleSpinBox { background-color :  lightGray;}");
 
-        QLabel* lblName = new QLabel(entity_manager::get_instance()->get_name_component(entity),this);
+        lblName = new QLabel(entity_manager::get_instance()->get_name_component(entity),this);
         QGridLayout* m_layout = new QGridLayout;
         m_layout->addWidget(lblName,0,0,1,1);
         m_layout->addWidget(editSet,0,1,1,1);
@@ -80,6 +81,11 @@ namespace talorion {
 
     flowControllerView::~flowControllerView()
     {
+        delete editSet;
+        delete editAct;
+        delete lblName;
+        delete plot;
+        delete graphTimer;
 
     }
 
@@ -109,13 +115,15 @@ namespace talorion {
     void flowControllerView::slot_set_value_changed(double val)
     {
         //entity_manager::get_instance()->set_setValue_component(entity, val);
+        //SqDebug()<<"flowControllerView::slot_set_value_changed"<<val;
         emit change_set_value(m_entity, val);
     }
 
     void flowControllerView::updatePlot(double value)
     {
-        QDateTime* t = new QDateTime();
-        double time = t->currentMSecsSinceEpoch()/1000.0;
+        //QDateTime* t = new QDateTime();
+        QDateTime t;
+        double time = t.currentMSecsSinceEpoch()/1000.0;
         plot->graph(0)->addData(time, value);
         plot->xAxis->setRangeUpper(time);
         plot->xAxis->setRangeLower(time - 20.0);

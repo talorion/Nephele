@@ -12,7 +12,11 @@ simulated_fc_box::simulated_fc_box(QObject *par)
 
 simulated_fc_box::~simulated_fc_box()
 {
-
+    foreach (simulated_fc* var, all_fcs) {
+        if(var)
+            delete var;
+    }
+    all_fcs.clear();
 }
 
 void simulated_fc_box::set(int id, double val)
@@ -21,6 +25,7 @@ void simulated_fc_box::set(int id, double val)
     foreach (simulated_fc* fc, all_fcs) {
         if(fc->get_Id()==id){
             fc->set_Set(val);
+            qDebug()<<"simulated_fc_box::set"<<val;
         }
     }
 

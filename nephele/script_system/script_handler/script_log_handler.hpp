@@ -13,6 +13,8 @@ namespace talorion{
 
     public:
         explicit script_log_handler(QObject *parent = 0);
+        ~script_log_handler();
+        Q_DISABLE_COPY(script_log_handler)
 
         Q_INVOKABLE void write(const QString& string, const QString& color);
 

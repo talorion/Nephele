@@ -31,7 +31,23 @@ namespace talorion {
     }
 
     scripting_worker::~scripting_worker(){
+        if(m_set_hdl)
+            delete m_set_hdl;
+        if(m_act_hdl)
+            delete m_act_hdl;
+        if(m_diag_hdl)
+            delete m_diag_hdl;
+        if(m_util_hdl)
+            delete m_util_hdl;
+        if(m_log_hdl)
+            delete m_log_hdl;
+        if(m_daq_hdl)
+            delete m_daq_hdl;
 
+        foreach (QScriptValue* var, script_values) {
+            if(var)
+                delete var;
+        }
     }
 
     void scripting_worker::initialize()
@@ -83,57 +99,57 @@ namespace talorion {
         //connect(&m_set_hdl,SIGNAL(pcu_value(QString,double)),this,SIGNAL(value_changed(QString,double)));
         //connect(&m_set_hdl,SIGNAL(val(QString,double)),event_manager::get_instance(),SIGNAL(set_value_changed(QString,double)));
         //m_setHdl = m_script_engine.newQObject(&m_set_hdl, QScriptEngine::QtOwnership, QScriptEngine::ExcludeSuperClassContents);
-//        m_setHdl = m_script_engine.newQObject(&m_set_hdl);
-       //m_script_engine.globalObject().setProperty("set", m_setHdl);
+        //        m_setHdl = m_script_engine.newQObject(&m_set_hdl);
+        //m_script_engine.globalObject().setProperty("set", m_setHdl);
 
         //connect(this,SIGNAL(set_act(QString,double)),&m_act_hdl,SLOT(slot_set_act(QString,double)));
         //m_actHdl = m_script_engine.newQObject(&m_act_hdl, QScriptEngine::QtOwnership, QScriptEngine::ExcludeSuperClassContents);
-//        m_actHdl = m_script_engine.newQObject(&m_act_hdl);
-       // m_script_engine.globalObject().setProperty("act", m_actHdl);
+        //        m_actHdl = m_script_engine.newQObject(&m_act_hdl);
+        // m_script_engine.globalObject().setProperty("act", m_actHdl);
 
         //diag = new script_dialoges_handler();
         //connect(&m_diag_hdl, SIGNAL(open_dialog()),this,SIGNAL(open_dialog()));
         //connect(this,SIGNAL(dialog_finished(double)),&m_diag_hdl,SLOT(slot_dialog_finished(double)));
         //m_diagHdl = m_script_engine.newQObject(&m_diag_hdl, QScriptEngine::QtOwnership, QScriptEngine::ExcludeSuperClassContents);
-//        m_diagHdl = m_script_engine.newQObject(&m_diag_hdl);
+        //        m_diagHdl = m_script_engine.newQObject(&m_diag_hdl);
         //m_script_engine.globalObject().setProperty("gui", m_diagHdl);
         //connect(this, SIGNAL(abort_all_dialoges()),&m_diag_hdl,SIGNAL(dialog_finished()));
 
         //m_utilhdl= m_script_engine.newQObject(&m_util_hdl, QScriptEngine::QtOwnership, QScriptEngine::ExcludeSuperClassContents);
-//        m_utilhdl= m_script_engine.newQObject(&m_util_hdl);
-       // m_script_engine.globalObject().setProperty("util", m_utilhdl);
+        //        m_utilhdl= m_script_engine.newQObject(&m_util_hdl);
+        // m_script_engine.globalObject().setProperty("util", m_utilhdl);
 
         //m_loghdl = m_script_engine.newQObject(&m_log_hdl, QScriptEngine::QtOwnership, QScriptEngine::ExcludeSuperClassContents);
-//        m_loghdl = m_script_engine.newQObject(&m_log_hdl);
+        //        m_loghdl = m_script_engine.newQObject(&m_log_hdl);
         //m_script_engine.globalObject().setProperty("console", m_loghdl);
 
         //m_daqhdl = m_script_engine.newQObject(&m_daq_hdl, QScriptEngine::QtOwnership, QScriptEngine::ExcludeSuperClassContents);
-//        m_daqhdl = m_script_engine.newQObject(&m_daq_hdl);
+        //        m_daqhdl = m_script_engine.newQObject(&m_daq_hdl);
         //m_script_engine.globalObject().setProperty("daq", m_daqhdl);
 
 
 
     }
 
-//    void scripting_worker::slot_newAnalogValue(int entity)
-//    {
-//        slot_act_value_changed(entity);
-//        slot_set_value_changed(entity);
-//    }
+    //    void scripting_worker::slot_newAnalogValue(int entity)
+    //    {
+    //        slot_act_value_changed(entity);
+    //        slot_set_value_changed(entity);
+    //    }
 
-//    void scripting_worker::slot_act_value_changed(int entity)
-//    {
-//        QString nme = entity_manager::get_instance()->get_name_component(entity);
-//        double val = entity_manager::get_instance()->get_analogActValue_component(entity);
-//        m_actHdl.setProperty(nme, val,QScriptValue::ReadOnly);
-//    }
+    //    void scripting_worker::slot_act_value_changed(int entity)
+    //    {
+    //        QString nme = entity_manager::get_instance()->get_name_component(entity);
+    //        double val = entity_manager::get_instance()->get_analogActValue_component(entity);
+    //        m_actHdl.setProperty(nme, val,QScriptValue::ReadOnly);
+    //    }
 
-//    void scripting_worker::slot_set_value_changed(int entity)
-//    {
-//        QString nme = entity_manager::get_instance()->get_name_component(entity);
-//        double val = entity_manager::get_instance()->get_analogSetValue_component(entity);
-//        m_setHdl.setProperty(nme, val, QScriptValue::ReadOnly);
-//    }
+    //    void scripting_worker::slot_set_value_changed(int entity)
+    //    {
+    //        QString nme = entity_manager::get_instance()->get_name_component(entity);
+    //        double val = entity_manager::get_instance()->get_analogSetValue_component(entity);
+    //        m_setHdl.setProperty(nme, val, QScriptValue::ReadOnly);
+    //    }
 
     void scripting_worker::slot_start_script(const QString &script, bool debug)
     {
@@ -144,14 +160,14 @@ namespace talorion {
             return;
         }
 
-         if (!m_script_engine.canEvaluate(script)){
-             m_log_hdl->log_fatal("cannot evaluate script");
-             return;
-         }
+        if (!m_script_engine.canEvaluate(script)){
+            m_log_hdl->log_fatal("cannot evaluate script");
+            return;
+        }
 
-         //if(m_debugger!=NULL && !debug){
-         //    m_debugger->detach();
-         //}
+        //if(m_debugger!=NULL && !debug){
+        //    m_debugger->detach();
+        //}
 
         m_log_hdl->log_info("Starting script");
         QScriptValue ret = m_script_engine.evaluate(script).toNumber();
@@ -175,8 +191,8 @@ namespace talorion {
         QTextStream in(&script_file);
         QString sc;
         while(!in.atEnd()) {
-             sc += in.readLine();
-             sc += "\n";
+            sc += in.readLine();
+            sc += "\n";
         }
         script_file.close();
 
@@ -187,9 +203,9 @@ namespace talorion {
     void scripting_worker::debug_script_file(const QString &script)
     {
         //if(!m_debugger){
-            //m_debugger = new QScriptEngineDebugger();
-            //m_debugger->attachTo(&m_script_engine);
-            //m_debugger->action(QScriptEngineDebugger::InterruptAction)->trigger();
+        //m_debugger = new QScriptEngineDebugger();
+        //m_debugger->attachTo(&m_script_engine);
+        //m_debugger->action(QScriptEngineDebugger::InterruptAction)->trigger();
         //}
         slot_start_script_file(script, true);
 
@@ -222,12 +238,12 @@ namespace talorion {
         //QScriptValue* ptmp = new QScriptValue(tmp);
         obj->setScrip_value(ptmp);
         m_script_engine.globalObject().setProperty(script_name, *ptmp);
-        script_values.append(*ptmp);
+        script_values.append(ptmp);
         //qDebug()<< "slot_register_scritable_component";
     }
 
-//    void scripting_worker::slot_unregister_scritable_component(int)
-//    {
+    //    void scripting_worker::slot_unregister_scritable_component(int)
+    //    {
 
-//    }
+    //    }
 }

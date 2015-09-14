@@ -44,9 +44,12 @@ namespace talorion
         my_engine(-1),
         m_debugger(NULL),
         completer(NULL),
-        itemModel(NULL)
+        itemModel(NULL),
+        wnd(NULL),
+        model(NULL),
+        std_items()
     {
-        m_debugger = new QScriptEngineDebugger(this);
+        //m_debugger = new QScriptEngineDebugger(this);
 
         setMinimumSize(800,600);
 
@@ -60,7 +63,7 @@ namespace talorion
 
 
         layout = new QVBoxLayout();
-        QWidget *wnd = new QWidget();
+        wnd = new QWidget();
         layout->addWidget(editor,3);
         layout->addWidget(console,1);
         wnd->setLayout(layout);
@@ -87,7 +90,60 @@ namespace talorion
 
     script_editor_window::~script_editor_window()
     {
+        delete m_debugger;
+        delete layout;
+        delete wnd;
 
+        if(editor)
+            delete editor;
+
+        if(highlighter)
+            delete highlighter;
+
+        if(completer)
+            delete completer;
+
+        delete model;
+
+        foreach (QStandardItem* var, std_items) {
+            if(var)
+                delete var;
+            var=NULL;
+        }
+        std_items.clear();
+
+        if(console)
+            delete console;
+
+        if(openAct)
+            delete openAct;
+
+        if(saveAct)
+            delete saveAct;
+
+        if(saveAsAct)
+            delete saveAsAct;
+
+        if(exitAct)
+            delete exitAct;
+
+        if(runAct)
+            delete runAct;
+
+        if(debugAct)
+            delete debugAct;
+
+        if(stopAct)
+            delete stopAct;
+
+        if(skipSleepAct)
+            delete skipSleepAct;
+
+        if(aboutAct)
+            delete aboutAct;
+
+        if(clsAct)
+            delete clsAct;
     }
 
 
@@ -209,7 +265,7 @@ namespace talorion
     QAbstractItemModel *script_editor_window::modelFromEngine()
     {
 
-        QStandardItemModel* model = new QStandardItemModel(completer);
+        model = new QStandardItemModel(completer);
 
         if(my_engine >= 0){
             QScriptEngine* eng =  entity_manager::get_instance()->get_qt_script_engine_component(my_engine);
@@ -232,6 +288,7 @@ namespace talorion
             //qDebug() << it.name() << ": " << it.value().toString();
             QScriptValue v = it.value();
             QStandardItem* qtwi = new QStandardItem();
+            std_items.append(qtwi);
 
             qtwi->setIcon(QIcon(":/images/images/new.png"));
             qtwi->setText(it.name());

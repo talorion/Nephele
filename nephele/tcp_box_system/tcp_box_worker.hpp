@@ -4,6 +4,7 @@
 #include <QObject>
 #include <QMap>
 
+#include "abstract_backend.hpp"
 
 namespace talorion {
 
@@ -33,6 +34,7 @@ namespace talorion {
     private:
         int curr_box_id;
         QMap<int, tcpDriver*> boxes;
+        QList<abstract_backend*> bkends;
         //QList<tcpDriver*> drivers;
 
     };

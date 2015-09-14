@@ -92,6 +92,30 @@ namespace talorion {
 
     tbs_config_widget::~tbs_config_widget()
     {
+        delete boxes_list;
+        delete box_name_label;
+        delete ip_address_label;
+        delete backend_label;
+        delete port_label;
+        delete box_name_field;
+        delete ip_address_field;
+        delete backend_field;
+        delete portField;
+        delete add_button;
+        delete remove_button;
+        delete connect_button;
+        delete disconnect_button;
+        delete mainLayout;
+        delete editLayout;
+
+        QMap<QListWidgetItem*,int> ::iterator it;
+        for(it=list2entity.begin(); it!=list2entity.end(); it++)
+        {
+            QListWidgetItem* tmp = it.key();
+            if(tmp)
+                delete tmp;
+        }
+        list2entity.clear();
 
     }
 

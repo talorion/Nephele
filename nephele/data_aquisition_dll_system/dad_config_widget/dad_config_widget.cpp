@@ -67,6 +67,12 @@ namespace talorion {
 
     dad_config_widget::~dad_config_widget()
     {
+        delete name_label;
+        delete dll_name_field;
+        delete browse_button;
+        delete timeout_label;
+        delete timeout_field;
+        delete mainLayout;
 
     }
 

@@ -35,7 +35,8 @@ namespace talorion {
         scriptToolBar(NULL),
         scriptEditAct(NULL),
         optionsEditAct(NULL),
-        aboutAct(NULL)
+        aboutAct(NULL),
+        central_wdgt(NULL)
     {
 
 
@@ -71,7 +72,7 @@ namespace talorion {
         //mainLayout->addWidget(cmd,1,1,1,1);
         //mainLayout->addWidget(response,2,0,1,2);
 
-        QWidget *central_wdgt = new QWidget();
+        central_wdgt = new QWidget();
         central_wdgt->setLayout(mainLayout);
 
         setWindowTitle("Nephele");
@@ -86,7 +87,24 @@ namespace talorion {
 
     nephele_main_window::~nephele_main_window()
     {
+        delete sett_dlg;
+        delete mainLayout;
+        delete centralWidget();
+        QMap<int, flowControllerView*>::iterator it;
+        for (it=fc_views.begin(); it != fc_views.end(); it++){
+             flowControllerView* tmp = it.value();
+             if(tmp)
+                 delete tmp;
+              it.value() = NULL;
+        }
+        fc_views.clear();
 
+        if(script_wnd)
+            delete script_wnd;
+
+        delete scriptEditAct;
+        delete optionsEditAct;
+        delete aboutAct;
     }
 
     void nephele_main_window::displayCustomResponse(const QString &cm)
@@ -98,13 +116,13 @@ namespace talorion {
     QString lastcmd = "";
     void nephele_main_window::dispatchCommand()
     {
-//        if (lastcmd != cmd->text())// workaround for Qt bug
-//        {
-//            lastcmd = cmd->text();// workaround for Qt bug
-//            cmd->blockSignals(true); // workaround for Qt bug
-//            emit send_custom_command(cmd->text());
-//            cmd->blockSignals(false); // workaround for Qt bug
-//        }
+        //        if (lastcmd != cmd->text())// workaround for Qt bug
+        //        {
+        //            lastcmd = cmd->text();// workaround for Qt bug
+        //            cmd->blockSignals(true); // workaround for Qt bug
+        //            emit send_custom_command(cmd->text());
+        //            cmd->blockSignals(false); // workaround for Qt bug
+        //        }
     }
 
     void nephele_main_window::addAV(int entity)
@@ -149,7 +167,7 @@ namespace talorion {
         QMessageBox::about(this, tr("About Nephele"),
                            tr("<b>Nephele</b> provides a script functionality "
                               "\nBuild: "
-                               )+QString::number(BUILD));
+                              )+QString::number(BUILD));
     }
 
 

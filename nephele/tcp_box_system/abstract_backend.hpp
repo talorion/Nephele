@@ -15,6 +15,7 @@ namespace talorion {
     public:
         explicit abstract_backend(QObject *par = 0);
         virtual ~abstract_backend();
+        Q_DISABLE_COPY(abstract_backend)
 
     signals:
         void fcSetChangeCommand(QByteArray command);

@@ -20,7 +20,8 @@ namespace talorion {
 
     script_system::~script_system()
     {
-
+        if(config_wdg)
+            delete config_wdg;
     }
 
 

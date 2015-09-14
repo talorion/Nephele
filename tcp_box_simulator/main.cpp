@@ -23,5 +23,10 @@ int main(int argc, char *argv[])
     tcp_box_simulator t(av_box, 4414);
     t.show();
 
-    return a.exec();
+    int ret = a.exec();
+
+    delete fc_box;
+    delete av_box;
+
+    return ret;
 }

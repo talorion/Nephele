@@ -62,7 +62,7 @@ namespace talorion {
 //        QScriptValue m_loghdl;
 //        QScriptValue m_daqhdl;
 
-        QList<QScriptValue> script_values;
+        QList<QScriptValue*> script_values;
 
     };
 }

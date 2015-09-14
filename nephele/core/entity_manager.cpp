@@ -750,7 +750,6 @@ namespace talorion {
     void entity_manager::slot_change_analogAct_component(int entity, double value)
     {
         if( get_analogActValue_component(entity)!= value){
-
             set_analogActValue_component(entity, value);
             emit analogAct_component_changed(entity);
         }
@@ -758,7 +757,9 @@ namespace talorion {
 
     void entity_manager::slot_change_analogSet_component(int entity, double value)
     {
+        qDebug()<<"entity_manager::slot_change_analogSet_component"<<"set "<<value;
         if( get_analogSetValue_component(entity)!= value){
+
             set_analogSetValue_component(entity, value);
             emit analogSet_component_changed(entity);
         }
@@ -767,6 +768,7 @@ namespace talorion {
     void entity_manager::slot_change_digitalAct_component(int entity, bool value)
     {
         if( get_digitalActValue_component(entity)!= value){
+
             set_digitalActValue_component(entity, value);
             emit digitalAct_component_changed(entity);
         }

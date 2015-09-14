@@ -4,6 +4,7 @@
 #include <QMutex>
 #include <QObject>
 #include <QtCore>
+#include <QList>
 
 #include "abstract_system.hpp"
 
@@ -30,7 +31,7 @@ namespace talorion {
         void load_system(abstract_system* sys);
 
     private:
-        QSet<abstract_system*> m_systems;
+        QList<abstract_system*> m_systems;
 
     private:
         static system_manager* _instance;
@@ -44,6 +45,7 @@ namespace talorion {
         //std::is_base_of<base, derived>::value;
         T* tmp = new T();
         load_system(tmp);
+        m_systems.append(tmp);
     }
 
 //    template <typename T>

@@ -48,10 +48,10 @@ namespace talorion {
         setLayout(mainLayout);
         setWindowTitle(tr("Settings"));
 
-//        QList<int> systems =system_manager::get_instance()->get_all_systems();
-//        foreach (int entity, systems) {
-//            newSystem(entity);
-//        }
+        //        QList<int> systems =system_manager::get_instance()->get_all_systems();
+        //        foreach (int entity, systems) {
+        //            newSystem(entity);
+        //        }
 
 
         foreach (int entity, entity_manager::get_instance()->get_all_Systems()) {
@@ -62,7 +62,27 @@ namespace talorion {
 
     settings_dialog::~settings_dialog()
     {
+        if(serach_field)
+            delete serach_field;
 
+        if(settings_group_list)
+            delete settings_group_list;
+
+        if(settings_widget_label)
+            delete settings_widget_label;
+
+        if(mainLayout)
+            delete mainLayout;
+
+         QMap<QListWidgetItem*,int>::iterator it;
+         for(it=list2entity.begin(); it !=list2entity.end();it++){
+             QListWidgetItem* tmp = it.key();
+             if(tmp)
+                 delete tmp;
+         }
+
+         if(settings_widget)
+             delete settings_widget;
     }
 
     void settings_dialog::newSystem(int entity)

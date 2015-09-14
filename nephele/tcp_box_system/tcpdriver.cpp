@@ -154,6 +154,7 @@ namespace talorion {
         if (cmd != NULL)
         {
             sendCommand(cmd->getCmd(),cmd->getCmdType());
+            delete cmd;
         }
         else
         {

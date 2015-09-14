@@ -11,7 +11,8 @@ namespace talorion {
         abstract_configuration_widget(par),
         mainLayout(NULL),
         script_object_tree(NULL),
-        my_engine(-1)
+        my_engine(-1),
+        treeitems()
     {
 
         script_object_tree = new QTreeWidget();
@@ -26,7 +27,13 @@ namespace talorion {
 
     script_config_widget::~script_config_widget()
     {
+        delete script_object_tree;
+        delete mainLayout;
 
+        foreach (QTreeWidgetItem* var, treeitems) {
+            if(var)
+                delete var;
+        }
     }
 
     void script_config_widget::update_script_tree(){
@@ -58,6 +65,7 @@ namespace talorion {
             //qDebug() << it.name() << ": " << it.value().toString();
             QScriptValue v = it.value();
             QTreeWidgetItem* qtwi = new QTreeWidgetItem((QTreeWidget*)0, QStringList(it.name()));
+            treeitems.append(qtwi);
 
             qtwi->setIcon(0,QIcon(":/images/images/new.png"));
 
@@ -71,7 +79,7 @@ namespace talorion {
 
             //if(v.isObject()){
             //    qtwi->setIcon(0,QIcon(":/images/images/class.png"));
-                //qtwi->addChildren(rec_get_values(v));
+            //qtwi->addChildren(rec_get_values(v));
             //}
 
             if(v.isArray() || v.isBool() || v.isBoolean() || v.isDate() || v.isNumber() || v.isString() || v.isVariant()){
@@ -90,9 +98,9 @@ namespace talorion {
         if(entity<0)
             return;
 
-//        QString tmp= entity_manager::get_instance()->get_script_file_component(entity);
-//        if(!tmp.isEmpty())
-//            loadFile(tmp);
+        //        QString tmp= entity_manager::get_instance()->get_script_file_component(entity);
+        //        if(!tmp.isEmpty())
+        //            loadFile(tmp);
 
         my_engine = entity;
     }

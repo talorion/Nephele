@@ -103,6 +103,9 @@ namespace talorion{
         QScriptEngineDebugger* m_debugger;
         TreeModelCompleter *completer;
         QAbstractItemModel * itemModel;
+        QWidget *wnd;
+        QStandardItemModel* model;
+        QList<QStandardItem*> std_items;
 
 
     };

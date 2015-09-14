@@ -55,6 +55,7 @@ namespace talorion {
         QAction *optionsEditAct;
 
         QAction *aboutAct;
+        QWidget *central_wdgt;
 
     private slots:
         void displayCustomResponse(const QString& cm);

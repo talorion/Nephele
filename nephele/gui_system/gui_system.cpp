@@ -25,7 +25,8 @@ namespace talorion{
 
     gui_system::~gui_system()
     {
-
+        if(window)
+            delete window;
     }
 
     void gui_system::slot_open_numeric_dialog()

@@ -48,6 +48,7 @@ namespace talorion {
         QDoubleSpinBox* editAct;
         QCustomPlot* plot;
         QTimer* graphTimer;
+        QLabel* lblName;
 
     protected:
         void enterEvent(QEvent* e);

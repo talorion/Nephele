@@ -12,7 +12,8 @@ namespace talorion {
     tcp_box_worker::tcp_box_worker(QObject *par) :
         QObject(par),
         curr_box_id(0),
-        boxes()
+        boxes(),
+        bkends()
     {
         connect(event_manager::get_instance(),SIGNAL(connect_tcp_box(int)),this,SLOT(slot_connect_tcp_box(int)), Qt::QueuedConnection);
         connect(event_manager::get_instance(),SIGNAL(disconnect_tcp_box(int)),this,SLOT(slot_disconnect_tcp_box(int)), Qt::QueuedConnection);
@@ -24,7 +25,19 @@ namespace talorion {
 
     tcp_box_worker::~tcp_box_worker()
     {
+        QMap<int, tcpDriver*>::iterator it;
+        for(it=boxes.begin();it !=boxes.end();it++){
+            tcpDriver* tmp= it.value();
+            if(tmp)
+                delete tmp;
+        }
+        boxes.clear();
 
+        foreach (abstract_backend* var, bkends) {
+            if(var)
+                delete var;
+        }
+        bkends.clear();
     }
 
     void tcp_box_worker::slot_connect_tcp_box(int entity)

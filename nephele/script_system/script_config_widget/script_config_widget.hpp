@@ -33,6 +33,7 @@ namespace talorion {
         QGridLayout* mainLayout;
         QTreeWidget* script_object_tree;
         int my_engine;
+        QList<QTreeWidgetItem*> treeitems;
 
     };
 

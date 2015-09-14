@@ -22,6 +22,10 @@ namespace talorion{
 
     tof_daq_dll_worker::~tof_daq_dll_worker()
     {
+        if(m_shmdesc)
+            delete m_shmdesc;
+        if(m_shmptr)
+            delete m_shmptr;
 
     }
 

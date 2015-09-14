@@ -11,6 +11,11 @@ namespace talorion{
         connect(this,SIGNAL(script_message(QString,QString)),event_manager::get_instance(),SIGNAL(script_message(QString,QString)));
     }
 
+    script_log_handler::~script_log_handler()
+    {
+
+    }
+
     void script_log_handler::write(const QString &string, const QString &color)
     {
         emit script_message(string, color);

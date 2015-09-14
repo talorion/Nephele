@@ -13,7 +13,10 @@ simulated_av_box::simulated_av_box(QObject *par) :
 
 simulated_av_box::~simulated_av_box()
 {
-
+    foreach (simulated_av* var, all_avs) {
+        if(var)
+            delete var;
+    }
 }
 
 void simulated_av_box::set(int id, double val)
@@ -24,6 +27,7 @@ void simulated_av_box::set(int id, double val)
             av->set_Set(val);
         }
     }
+    all_avs.clear();
 
 }
 
