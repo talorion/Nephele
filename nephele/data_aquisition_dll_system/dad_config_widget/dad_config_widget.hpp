@@ -24,6 +24,8 @@ namespace talorion {
         void change_data_aquistition_dll_component(int , QString );
         void change_timeout_component(int , int );
         void change_user_data_updaterate_component(int , int );
+        void change_user_data_path_component(int , QString );
+
 
     private:
         virtual void do_refresh_data() Q_DECL_OVERRIDE;
@@ -32,6 +34,7 @@ namespace talorion {
         void browse_button_pressed();
         void timout_value_changed(int val);
         void user_data_updaterate_changed(int val);
+        void user_data_path_changed(QString val);
 
     private:
         QGridLayout* mainLayout;
@@ -42,6 +45,8 @@ namespace talorion {
         QSpinBox* user_data_updaterate_field;
         QSpinBox* timeout_field;
         QPushButton* browse_button;
+        QLabel* userDataPath_label;
+        QLineEdit* userDataPath_field;
         int current_entity;
         QSpacerItem* horizontal_spacer;
     };

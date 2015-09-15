@@ -45,6 +45,7 @@ namespace talorion {
         void analogSet_component_changed(int);       
         void digitalSet_component_changed(int );
         void digitalAct_component_changed(int );
+        void user_data_path_component_changed(int );
 
         void data_aquistion_dll_component_changed(int );
         void timeout_component_changed(int entity);
@@ -58,6 +59,7 @@ namespace talorion {
         void change_digitalAct_component(int, bool);
         void change_digitalSet_component(int, bool);
         void change_script_file_component(int , QString );
+        void change_user_data_path_component(int , QString );
         void change_data_aquistition_dll_component(int , QString );
         void change_timeout_component(int , int );
         void change_updaterate_component(int , int );

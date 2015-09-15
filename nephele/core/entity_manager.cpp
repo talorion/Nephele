@@ -34,6 +34,7 @@ namespace talorion {
 
         connect(this,SIGNAL(connection_state_component_changed(int)),event_manager::get_instance(),SIGNAL(connection_state_component_changed(int)));
 
+        connect(this, SIGNAL(user_data_path_changed(int)), event_manager::get_instance(), SIGNAL(user_data_path_component_changed(int)));
         connect(this, SIGNAL(analogAct_component_changed(int)), event_manager::get_instance(), SIGNAL(analogAct_component_changed(int)));
         connect(this, SIGNAL(analogSet_component_changed(int)), event_manager::get_instance(), SIGNAL(analogSet_component_changed(int)));
         connect(this, SIGNAL(digitalAct_component_changed(int)), event_manager::get_instance(), SIGNAL(digitalAct_component_changed(int)));
@@ -53,6 +54,7 @@ namespace talorion {
         connect(event_manager::get_instance(),SIGNAL(change_digitalSet_component(int,bool)),this,SLOT(slot_change_digitalSet_component(int,bool)),Qt::UniqueConnection);
         connect(event_manager::get_instance(),SIGNAL(change_script_file_component(int,QString)),this,SLOT(slot_change_script_file_component(int,QString)));
         connect(event_manager::get_instance(),SIGNAL(change_data_aquistition_dll_component(int,QString)),this,SLOT(slot_change_data_aquistion_dll_component(int,QString)));
+        connect(event_manager::get_instance(),SIGNAL(change_user_data_path_component(int,QString)),this,SLOT(slot_change_userDataPath_component(int,QString)));
         connect(event_manager::get_instance(),SIGNAL(change_timeout_component(int,int)),this,SLOT(slot_change_timeout_component(int,int)));
         connect(event_manager::get_instance(),SIGNAL(change_updaterate_component(int,int)),this,SLOT(slot_change_updaterate_component(int,int)));
 
@@ -332,7 +334,7 @@ namespace talorion {
     {
         //QUuid uid("{6ddc030e-2001-4a38-a8ce-57b309f902ff}");
         int new_id = createNewEntity();
-
+//USER_DATA_COMPONENT
         createComponentAndAddTo( NAME_COMPONENT, new_id );
         createComponentAndAddTo( UNITS_COMPONENT, new_id );
         createComponentAndAddTo( SET_MIN_COMPONENT, new_id );
@@ -344,6 +346,7 @@ namespace talorion {
         createComponentAndAddTo( ID_COMPONENT, new_id );
         createComponentAndAddTo( BOX_ID_COMPONENT, new_id );
         createComponentAndAddTo(SERIAL_VERSION_UID_COMPONENT, new_id);
+        createComponentAndAddTo(USER_DATA_COMPONENT, new_id);
 
         setComponentDataForEntity(NAME_COMPONENT,               new_id, nameVal);
         setComponentDataForEntity(UNITS_COMPONENT,              new_id, unitsVal);
@@ -356,6 +359,7 @@ namespace talorion {
         setComponentDataForEntity(ID_COMPONENT,                 new_id, id);
         setComponentDataForEntity(BOX_ID_COMPONENT,             new_id, box_id);
         setComponentDataForEntity(SERIAL_VERSION_UID_COMPONENT, new_id, get_AnalogValue_uid());
+        setComponentDataForEntity(USER_DATA_COMPONENT, new_id, ANALOG_ACT_VALUE_COMPONENT);
 
         emit newAnalogValue(new_id);
         return new_id;
@@ -444,7 +448,7 @@ namespace talorion {
         return new_id;
     }
 
-    int entity_manager::createTofDaqDll(QString nameVal, QString pathVal, int timeout, int updaterate)
+    int entity_manager::createTofDaqDll(QString nameVal, QString pathVal, int timeout, int updaterate, QString user_data_path)
     {
         int new_id = createNewEntity();
         createComponentAndAddTo( NAME_COMPONENT, new_id );
@@ -452,12 +456,14 @@ namespace talorion {
         createComponentAndAddTo(SERIAL_VERSION_UID_COMPONENT, new_id);
         createComponentAndAddTo(TIMEOUT_COMPONENT, new_id);
         createComponentAndAddTo(UPDATERATE_COMPONENT, new_id);
+        createComponentAndAddTo(USER_DATA_PATH_COMPONENT, new_id);
 
         setComponentDataForEntity(NAME_COMPONENT,               new_id, nameVal);
         setComponentDataForEntity(DATA_AQUISITION_DLL_COMPONENT,               new_id, pathVal);
         setComponentDataForEntity(SERIAL_VERSION_UID_COMPONENT, new_id, get_TofDaqDll_uid());
         setComponentDataForEntity(TIMEOUT_COMPONENT, new_id, timeout);
         setComponentDataForEntity(UPDATERATE_COMPONENT, new_id, updaterate);
+        setComponentDataForEntity(USER_DATA_PATH_COMPONENT, new_id, user_data_path);
 
         emit newTofDaqDll(new_id);
         return new_id;
@@ -711,6 +717,8 @@ namespace talorion {
 
     void entity_manager::set_updaterate_component(int entity, int val){setComponentDataForEntity(UPDATERATE_COMPONENT, entity, val);}
 
+    void entity_manager::set_user_data_path_component(int entity, QString val){setComponentDataForEntity(USER_DATA_PATH_COMPONENT, entity, val);}
+
     QString entity_manager::get_name_component(int entity) const{return getComponentDataForEntity(NAME_COMPONENT, entity).toString();}
 
     QString entity_manager::get_units_component(int entity) const{return getComponentDataForEntity(UNITS_COMPONENT, entity).toString();}
@@ -736,6 +744,10 @@ namespace talorion {
     int entity_manager::get_timeout_component(int entity) const{return getComponentDataForEntity(TIMEOUT_COMPONENT, entity).toInt();}
 
     int entity_manager::get_updaterate_component(int entity) const{return getComponentDataForEntity(UPDATERATE_COMPONENT, entity).toInt();}
+
+    int entity_manager::get_userdata_component(int entity) const{return getComponentDataForEntity(USER_DATA_COMPONENT, entity).toInt();}
+
+    QString entity_manager::get_user_data_path_component(int entity) const{return getComponentDataForEntity(USER_DATA_PATH_COMPONENT, entity).toString();}
 
     double entity_manager::get_analogActValue_component(int entity) const{return getComponentDataForEntity(ANALOG_ACT_VALUE_COMPONENT, entity).toDouble();}
 
@@ -820,6 +832,14 @@ namespace talorion {
         if( get_updaterate_component(entity)!= value){
             set_updaterate_component(entity, value);
             emit updaterate_component_changed(entity);
+        }
+    }
+
+    void entity_manager::slot_change_userDataPath_component(int entity, QString value)
+    {
+        if( get_user_data_path_component(entity)!= value){
+            set_user_data_path_component(entity, value);
+            emit user_data_path_changed(entity);
         }
     }
 

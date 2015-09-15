@@ -17,9 +17,14 @@ namespace talorion {
         user_data_updaterate_field(NULL),
         timeout_field(NULL),
         browse_button(NULL),
+        userDataPath_label(NULL),
+        userDataPath_field(NULL),
         current_entity(-1),
         horizontal_spacer(NULL)
     {
+        //QLabel* userDataPath_label;
+        //QLineEdit* userDataPath_field;
+
         name_label = new QLabel(tr("TofDaqDll Path"));
         dll_name_field =  new QLineEdit();
         browse_button = new QPushButton(tr("..."));
@@ -42,6 +47,10 @@ namespace talorion {
         user_data_updaterate_field->setSuffix(tr(" ms"));
 
 
+        userDataPath_label = new QLabel(tr("user data path"));
+        userDataPath_field =  new QLineEdit();
+        connect(userDataPath_field,SIGNAL(textChanged(QString)),this,SLOT(user_data_path_changed(QString)));
+
         mainLayout = new QGridLayout();
         mainLayout->addWidget(name_label,0,0,1,1,Qt::AlignTop);
         mainLayout->addWidget(dll_name_field,0,1,7,1,Qt::AlignTop);
@@ -50,13 +59,16 @@ namespace talorion {
         mainLayout->addWidget(timeout_field,1,1,1,1,Qt::AlignTop);
         mainLayout->addWidget(user_data_updaterate_label,2,0,3,1,Qt::AlignTop);
         mainLayout->addWidget(user_data_updaterate_field,2,1,1,1,Qt::AlignTop);
-        mainLayout->setRowStretch(3,5);
+        mainLayout->addWidget(userDataPath_label,3,0,3,1,Qt::AlignTop);
+        mainLayout->addWidget(userDataPath_field,3,1,1,1,Qt::AlignTop);
+        mainLayout->setRowStretch(4,5);
 
         setLayout(mainLayout);
 
         connect(this,SIGNAL(change_data_aquistition_dll_component(int,QString)),event_manager::get_instance(),SIGNAL(change_data_aquistition_dll_component(int,QString)));
         connect(this,SIGNAL(change_timeout_component(int,int)),event_manager::get_instance(),SIGNAL(change_timeout_component(int,int)));
         connect(this,SIGNAL(change_user_data_updaterate_component(int,int)),event_manager::get_instance(),SIGNAL(change_updaterate_component(int,int)));
+        connect(this,SIGNAL(change_user_data_path_component(int,QString)),event_manager::get_instance(),SIGNAL(change_user_data_path_component(int,QString)));
         //        foreach (int box, entity_manager::get_instance()->get_all_TofDaqDlls()) {
         //            slot_newTcpBox(box);
         //        }
@@ -104,6 +116,9 @@ namespace talorion {
 
         int ur = entity_manager::get_instance()->get_updaterate_component(current_entity);
         user_data_updaterate_field->setValue(ur);
+
+        QString udp = entity_manager::get_instance()->get_user_data_path_component(current_entity);
+        userDataPath_field->setText(udp);
     }
 
     void dad_config_widget::browse_button_pressed()
@@ -127,6 +142,13 @@ namespace talorion {
         if(current_entity <0)
                 return;
         emit change_user_data_updaterate_component(current_entity,val);
+    }
+
+    void dad_config_widget::user_data_path_changed(QString val)
+    {
+        if(current_entity <0)
+                return;
+        emit change_user_data_path_component(current_entity,val);
     }
 
 } // namespace talorion

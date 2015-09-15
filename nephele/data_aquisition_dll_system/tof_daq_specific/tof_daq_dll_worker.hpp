@@ -3,6 +3,7 @@
 
 #include <QObject>
 #include <QTimer>
+#include <QList>
 
 namespace talorion{
 
@@ -32,6 +33,12 @@ namespace talorion{
     private slots:
         void update();
 
+        void updaterate_component_changed(int ent);
+        void register_user_data(int cmp_lvl =0);
+        void update_user_data();
+
+        bool aquisition_active() const;
+
     private:
         void prepare_buffers();
         //        void swap_shmdesc();
@@ -52,7 +59,10 @@ namespace talorion{
 
         QTimer *timer;
 
+        QList<int> registered_values;
+
     };
+
 }
 
 #endif // TOF_DAQ_DLL_WORKER_HPP
