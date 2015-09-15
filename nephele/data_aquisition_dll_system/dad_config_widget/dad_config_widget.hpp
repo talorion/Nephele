@@ -23,6 +23,7 @@ namespace talorion {
     signals:
         void change_data_aquistition_dll_component(int , QString );
         void change_timeout_component(int , int );
+        void change_user_data_updaterate_component(int , int );
 
     private:
         virtual void do_refresh_data() Q_DECL_OVERRIDE;
@@ -30,12 +31,15 @@ namespace talorion {
     private slots:
         void browse_button_pressed();
         void timout_value_changed(int val);
+        void user_data_updaterate_changed(int val);
 
     private:
         QGridLayout* mainLayout;
         QLabel* name_label;
         QLabel* timeout_label;
         QLineEdit* dll_name_field;
+        QLabel* user_data_updaterate_label;
+        QSpinBox* user_data_updaterate_field;
         QSpinBox* timeout_field;
         QPushButton* browse_button;
         int current_entity;

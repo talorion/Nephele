@@ -67,7 +67,8 @@ namespace talorion {
         SCRIPTABLE_OBJECT_COMPONENT,
         FILEVERSION_COMPONENT,
         PRODUCTVERSION_COMPONENT,
-        COMPANYNAME_COMPONENT
+        COMPANYNAME_COMPONENT,
+        UPDATERATE_COMPONENT
     } static_component_id;
 
     class entity_manager : public QObject
@@ -106,7 +107,7 @@ namespace talorion {
         int createNewDigitalValue(QString nameVal, bool setVal, int id, int box_id ) ;
         int createNewTcpBox(QString nameVal="New Box", QString ip="localhost", quint16 port=2701);
         int createQtScriptEngine(QString nameVal="Qt Script Engine", QScriptEngine* engine=NULL);
-        int createTofDaqDll(QString nameVal="TofDaqDll", QString pathVal="C:\\Tofwerk\\TofDaq_1.97_noHW\\TofDaqDll.dll", int timeout = 5000);
+        int createTofDaqDll(QString nameVal="TofDaqDll", QString pathVal="C:\\Tofwerk\\TofDaq_1.97_noHW\\TofDaqDll.dll", int timeout = 5000, int updaterate=1000);
 
         int createScriptableObject(QString nameVal, abstract_scriptable_object* comp);
         //===
@@ -159,6 +160,7 @@ namespace talorion {
         QString get_script_file_component(int entity)const;
         QString get_data_aquistion_dll_component(int entity)const;
         int get_timeout_component(int entity)const;
+        int get_updaterate_component(int entity)const;
 
 
         //QList<int> get_all_systems()const;
@@ -193,6 +195,7 @@ namespace talorion {
         void name_component_changed(int entity);
 
         void timeout_component_changed(int entity);
+        void updaterate_component_changed(int entity);
 
         void script_file_component_changed(int entity);
 
@@ -236,6 +239,7 @@ namespace talorion {
         void set_script_file_component(int entity, QString val);
         void set_data_aquistion_dll_component(int entity, QString val);
         void set_timeout_component(int entity, int val);
+        void set_updaterate_component(int entity, int val);
 
         int calc_enity_component_hash(int entity_id, int comp_id)const{return (comp_id*P1 + entity_id)*P2;}
 
@@ -251,6 +255,8 @@ namespace talorion {
         void slot_change_data_aquistion_dll_component(int entity, QString value);
 
         void slot_change_timeout_component(int entity, int value);
+
+        void slot_change_updaterate_component(int entity, int value);
 
     private:
 

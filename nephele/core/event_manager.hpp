@@ -48,6 +48,7 @@ namespace talorion {
 
         void data_aquistion_dll_component_changed(int );
         void timeout_component_changed(int entity);
+        void updaterate_component_changed(int entity);
 
         void name_component_changed(int);
         void script_file_component_changed(int);
@@ -59,6 +60,7 @@ namespace talorion {
         void change_script_file_component(int , QString );
         void change_data_aquistition_dll_component(int , QString );
         void change_timeout_component(int , int );
+        void change_updaterate_component(int , int );
 
         void send_custom_command(const QString&);
         void receivedCustomData(const QString &);

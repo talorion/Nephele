@@ -13,6 +13,8 @@ namespace talorion {
         name_label(NULL),
         timeout_label(NULL),
         dll_name_field(NULL),
+        user_data_updaterate_label(NULL),
+        user_data_updaterate_field(NULL),
         timeout_field(NULL),
         browse_button(NULL),
         current_entity(-1),
@@ -31,6 +33,13 @@ namespace talorion {
         connect(timeout_field,SIGNAL(valueChanged(int)),this,SLOT(timout_value_changed(int)));
 
         //horizontal_spacer = new QSpacerItem(80,5);
+//
+        user_data_updaterate_label = new QLabel(tr("user data update rate"));
+        user_data_updaterate_field = new QSpinBox();
+        connect(user_data_updaterate_field,SIGNAL(valueChanged(int)),this,SLOT(user_data_updaterate_changed(int)));
+        user_data_updaterate_field->setMinimum(0);
+        user_data_updaterate_field->setMaximum(0xFFFF);
+        user_data_updaterate_field->setSuffix(tr(" ms"));
 
 
         mainLayout = new QGridLayout();
@@ -39,14 +48,15 @@ namespace talorion {
         mainLayout->addWidget(browse_button,0,8,1,1,Qt::AlignTop);
         mainLayout->addWidget(timeout_label,1,0,3,1,Qt::AlignTop);
         mainLayout->addWidget(timeout_field,1,1,1,1,Qt::AlignTop);
-        //mainLayout->addItem(horizontal_spacer,1,2,7,1,Qt::AlignTop);
-        //mainLayout->setColumnStretch(4,5);
-        mainLayout->setRowStretch(2,5);
+        mainLayout->addWidget(user_data_updaterate_label,2,0,3,1,Qt::AlignTop);
+        mainLayout->addWidget(user_data_updaterate_field,2,1,1,1,Qt::AlignTop);
+        mainLayout->setRowStretch(3,5);
 
         setLayout(mainLayout);
 
         connect(this,SIGNAL(change_data_aquistition_dll_component(int,QString)),event_manager::get_instance(),SIGNAL(change_data_aquistition_dll_component(int,QString)));
         connect(this,SIGNAL(change_timeout_component(int,int)),event_manager::get_instance(),SIGNAL(change_timeout_component(int,int)));
+        connect(this,SIGNAL(change_user_data_updaterate_component(int,int)),event_manager::get_instance(),SIGNAL(change_updaterate_component(int,int)));
         //        foreach (int box, entity_manager::get_instance()->get_all_TofDaqDlls()) {
         //            slot_newTcpBox(box);
         //        }
@@ -73,6 +83,8 @@ namespace talorion {
         delete timeout_label;
         delete timeout_field;
         delete mainLayout;
+        delete user_data_updaterate_label;
+        delete user_data_updaterate_field;
 
     }
 
@@ -89,6 +101,9 @@ namespace talorion {
 
         int  to =  entity_manager::get_instance()->get_timeout_component(current_entity);
         timeout_field->setValue(to);
+
+        int ur = entity_manager::get_instance()->get_updaterate_component(current_entity);
+        user_data_updaterate_field->setValue(ur);
     }
 
     void dad_config_widget::browse_button_pressed()
@@ -105,6 +120,13 @@ namespace talorion {
         if(current_entity <0)
                 return;
         emit change_timeout_component(current_entity,val);
+    }
+
+    void dad_config_widget::user_data_updaterate_changed(int val)
+    {
+        if(current_entity <0)
+                return;
+        emit change_user_data_updaterate_component(current_entity,val);
     }
 
 } // namespace talorion

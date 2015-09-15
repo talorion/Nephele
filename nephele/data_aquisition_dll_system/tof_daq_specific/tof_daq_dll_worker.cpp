@@ -1,5 +1,7 @@
 #include "tof_daq_dll_worker.hpp"
 
+#include <QDebug>
+
 #include "core/event_manager.hpp"
 #include "core/entity_manager.hpp"
 
@@ -15,9 +17,12 @@ namespace talorion{
         m_shmdesc(NULL),
         m_shmptr(NULL),
         m_dll(dll),
-        m_entity(ent)
+        m_entity(ent),
+        timer(NULL)
     {
-
+        timer = new QTimer(this);
+        connect(timer, SIGNAL(timeout()), this, SLOT(update()));
+        timer->start(1000);
     }
 
     tof_daq_dll_worker::~tof_daq_dll_worker()
@@ -42,6 +47,11 @@ namespace talorion{
 
         emit data_aquisition_dll_answer(m_entity, ret);
         return ret;
+    }
+
+    void tof_daq_dll_worker::update()
+    {
+        //qDebug()<<"tick";
     }
 
     void tof_daq_dll_worker::prepare_buffers()

@@ -2,6 +2,7 @@
 #define TOF_DAQ_DLL_WORKER_HPP
 
 #include <QObject>
+#include <QTimer>
 
 namespace talorion{
 
@@ -28,6 +29,9 @@ namespace talorion{
     public slots:
         int wait_for_new_data(int Timeout =-1, bool WaitForEventReset=false);
 
+    private slots:
+        void update();
+
     private:
         void prepare_buffers();
         //        void swap_shmdesc();
@@ -45,6 +49,8 @@ namespace talorion{
         data_aquisition_dll_wrapper* m_dll;
 
         int m_entity;
+
+        QTimer *timer;
 
     };
 }

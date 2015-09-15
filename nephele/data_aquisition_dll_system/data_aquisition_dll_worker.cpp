@@ -15,8 +15,8 @@ namespace talorion {
     {
         connect(event_manager::get_instance(),SIGNAL(data_aquistion_dll_component_changed(int)),this,SLOT(slot_data_aquistion_dll_component_changed(int)),Qt::QueuedConnection);
 
-        foreach (int box, entity_manager::get_instance()->get_all_TofDaqDlls()) {
-            slot_data_aquistion_dll_component_changed(box);
+        foreach (int dll, entity_manager::get_instance()->get_all_TofDaqDlls()) {
+            slot_data_aquistion_dll_component_changed(dll);
         }
     }
 

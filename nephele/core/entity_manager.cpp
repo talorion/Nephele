@@ -42,6 +42,7 @@ namespace talorion {
         connect(this,SIGNAL(script_file_component_changed(int)),event_manager::get_instance(),SIGNAL(script_file_component_changed(int)));
         connect(this, SIGNAL(data_aquistion_dll_component_changed(int)),event_manager::get_instance(),SIGNAL(data_aquistion_dll_component_changed(int)));
         connect(this, SIGNAL(timeout_component_changed(int)),event_manager::get_instance(),SIGNAL(timeout_component_changed(int)));
+        connect(this, SIGNAL(updaterate_component_changed(int)),event_manager::get_instance(),SIGNAL(updaterate_component_changed(int)));
         //connect(this, SIGNAL(register_scritable_component(int)),event_manager::get_instance(),SIGNAL(register_scritable_component(int)));
         //connect(this, SIGNAL(unregister_scritable_component(int)),event_manager::get_instance(),SIGNAL(unregister_scritable_component(int)));
         connect(this, SIGNAL(newScriptableObject(int)),event_manager::get_instance(),SIGNAL(newScriptableObject(int)));
@@ -53,6 +54,7 @@ namespace talorion {
         connect(event_manager::get_instance(),SIGNAL(change_script_file_component(int,QString)),this,SLOT(slot_change_script_file_component(int,QString)));
         connect(event_manager::get_instance(),SIGNAL(change_data_aquistition_dll_component(int,QString)),this,SLOT(slot_change_data_aquistion_dll_component(int,QString)));
         connect(event_manager::get_instance(),SIGNAL(change_timeout_component(int,int)),this,SLOT(slot_change_timeout_component(int,int)));
+        connect(event_manager::get_instance(),SIGNAL(change_updaterate_component(int,int)),this,SLOT(slot_change_updaterate_component(int,int)));
 
         connect(this,SIGNAL(newAnalogValue(int)),event_manager::get_instance(),SIGNAL(newAnalogValue(int)));
         connect(this,SIGNAL(newDigitalValue(int)),event_manager::get_instance(),SIGNAL(newDigitalValue(int)));
@@ -442,18 +444,20 @@ namespace talorion {
         return new_id;
     }
 
-    int entity_manager::createTofDaqDll(QString nameVal, QString pathVal, int timeout)
+    int entity_manager::createTofDaqDll(QString nameVal, QString pathVal, int timeout, int updaterate)
     {
         int new_id = createNewEntity();
         createComponentAndAddTo( NAME_COMPONENT, new_id );
         createComponentAndAddTo( DATA_AQUISITION_DLL_COMPONENT, new_id );
         createComponentAndAddTo(SERIAL_VERSION_UID_COMPONENT, new_id);
         createComponentAndAddTo(TIMEOUT_COMPONENT, new_id);
+        createComponentAndAddTo(UPDATERATE_COMPONENT, new_id);
 
         setComponentDataForEntity(NAME_COMPONENT,               new_id, nameVal);
         setComponentDataForEntity(DATA_AQUISITION_DLL_COMPONENT,               new_id, pathVal);
         setComponentDataForEntity(SERIAL_VERSION_UID_COMPONENT, new_id, get_TofDaqDll_uid());
         setComponentDataForEntity(TIMEOUT_COMPONENT, new_id, timeout);
+        setComponentDataForEntity(UPDATERATE_COMPONENT, new_id, updaterate);
 
         emit newTofDaqDll(new_id);
         return new_id;
@@ -705,6 +709,8 @@ namespace talorion {
 
     void entity_manager::set_timeout_component(int entity, int val){setComponentDataForEntity(TIMEOUT_COMPONENT, entity, val);}
 
+    void entity_manager::set_updaterate_component(int entity, int val){setComponentDataForEntity(UPDATERATE_COMPONENT, entity, val);}
+
     QString entity_manager::get_name_component(int entity) const{return getComponentDataForEntity(NAME_COMPONENT, entity).toString();}
 
     QString entity_manager::get_units_component(int entity) const{return getComponentDataForEntity(UNITS_COMPONENT, entity).toString();}
@@ -728,6 +734,8 @@ namespace talorion {
     QString entity_manager::get_data_aquistion_dll_component(int entity) const{return getComponentDataForEntity(DATA_AQUISITION_DLL_COMPONENT, entity).toString();}
 
     int entity_manager::get_timeout_component(int entity) const{return getComponentDataForEntity(TIMEOUT_COMPONENT, entity).toInt();}
+
+    int entity_manager::get_updaterate_component(int entity) const{return getComponentDataForEntity(UPDATERATE_COMPONENT, entity).toInt();}
 
     double entity_manager::get_analogActValue_component(int entity) const{return getComponentDataForEntity(ANALOG_ACT_VALUE_COMPONENT, entity).toDouble();}
 
@@ -804,6 +812,14 @@ namespace talorion {
         if( get_timeout_component(entity)!= value){
             set_timeout_component(entity, value);
             emit timeout_component_changed(entity);
+        }
+    }
+
+    void entity_manager::slot_change_updaterate_component(int entity, int value)
+    {
+        if( get_updaterate_component(entity)!= value){
+            set_updaterate_component(entity, value);
+            emit updaterate_component_changed(entity);
         }
     }
 

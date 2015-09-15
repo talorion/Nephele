@@ -2,6 +2,7 @@
 #define TALORION_ABSTRACT_SCRIPTABLE_OBJECT_HPP
 
 #include <QObject>
+#include <QScriptable>
 
 QT_BEGIN_NAMESPACE
 class QScriptValue;
@@ -10,7 +11,9 @@ QT_END_NAMESPACE
 
 namespace talorion {
 
-    class abstract_scriptable_object : public QObject
+    class abstract_scriptable_object :
+            public QObject,
+            protected QScriptable
     {
         Q_OBJECT
     public:

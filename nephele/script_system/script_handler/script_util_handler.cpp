@@ -20,7 +20,7 @@ namespace talorion {
 
     }
 
-    void script_util_handler::sleep(unsigned long millisecs)
+    void script_util_handler::sleep_ms(unsigned long millisecs)
     {
         QEventLoop loop;
         //connect(this,SIGNAL(dialog_finished()),&loop,SLOT(quit()));

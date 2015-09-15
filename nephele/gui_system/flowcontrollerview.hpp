@@ -13,10 +13,9 @@ class QTimer;
 class QTimer;
 QT_END_NAMESPACE
 
-class QCustomPlot;
 
 
-
+#include <qcustomplot.hpp>
 
 namespace talorion {
 
@@ -27,6 +26,8 @@ namespace talorion {
         flowControllerView(int m_entity, QWidget* par = 0);
         ~flowControllerView(void);
         Q_DISABLE_COPY(flowControllerView)
+
+        int getGraph_persistance_time() const;
 
     signals:
         void setValueChangedByGui(double setValue);
@@ -49,6 +50,8 @@ namespace talorion {
         QCustomPlot* plot;
         QTimer* graphTimer;
         QLabel* lblName;
+        int graph_persistance_time;
+        QCPGraph* grap;
 
     protected:
         void enterEvent(QEvent* e);

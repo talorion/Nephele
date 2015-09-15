@@ -8,7 +8,7 @@
 #include <QTimer>
 #include <QDebug>
 
-#include <qcustomplot.hpp>
+
 
 #include "math.h"
 #include "core/entity_manager.hpp"
@@ -23,7 +23,9 @@ namespace talorion {
         editAct(NULL),
         plot(NULL),
         graphTimer(NULL),
-        lblName(NULL)
+        lblName(NULL),
+        graph_persistance_time(60),
+        grap(NULL)
     {
 
         connect(this, SIGNAL(change_set_value(int,double)),event_manager::get_instance(),SIGNAL(change_analogSet_component(int,double)),Qt::UniqueConnection);
@@ -57,7 +59,7 @@ namespace talorion {
         this->setLayout(m_layout);
 
         plot = new QCustomPlot();
-        plot->addGraph();
+        grap= plot->addGraph();
         plot->setWindowFlags(Qt::ToolTip);
 
         plot->setFixedHeight(100);
@@ -124,16 +126,24 @@ namespace talorion {
         //editSet->blockSignals(oldState);
     }
 
+//#define graph_persistance_time 60
     void flowControllerView::updatePlot(double value)
     {
         //QDateTime* t = new QDateTime();
         QDateTime t;
         double time = t.currentMSecsSinceEpoch()/1000.0;
-        plot->graph(0)->addData(time, value);
+        grap->addData(time, value);
         plot->xAxis->setRangeUpper(time);
-        plot->xAxis->setRangeLower(time - 20.0);
+        plot->xAxis->setRangeLower(time - getGraph_persistance_time());
+        grap->removeDataBefore(time - getGraph_persistance_time());
         plot->replot();
     }
+
+    int flowControllerView::getGraph_persistance_time() const
+    {
+        return graph_persistance_time;
+    }
+
 
     void flowControllerView::enterEvent(QEvent * e)
     {
@@ -145,8 +155,9 @@ namespace talorion {
     void flowControllerView::leaveEvent(QEvent * e)
     {
         Q_UNUSED(e)
-        if (! plot->underMouse())
+        if (! plot->underMouse()){
             plot->hide();
+        }
     }
 
     void flowControllerView::mouseMoveEvent(QMouseEvent* e)
