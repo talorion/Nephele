@@ -646,7 +646,7 @@ namespace talorion {
         QList<int> ecs;
         QMap<int, entity_t>::const_iterator it= entities.constBegin();
         for(it = entities.constBegin(); it !=entities.constEnd(); ++it){
-            if(hasComponent(it.key(),comp_id)){
+            if(hasComponent(comp_id,it.key())){
                 ecs.append(it.key());
             }
         }
