@@ -605,15 +605,17 @@ namespace talorion {
 
 
 
-    int entity_manager::get_entity_by_name(const QString &name) const
+    QList<int> entity_manager::get_entity_by_name(const QString &name) const
     {
+        QList<int> ecs;
         QMap<int, entity_t>::const_iterator it= entities.constBegin();
         for(it = entities.constBegin(); it !=entities.constEnd(); ++it){
             if(QString::compare(get_name_component(it.key()), name)==0){
-                return it.key();
+                //return it.key();
+                ecs.append(it.key());
             }
         }
-        return -1;
+        return ecs;
 
     }
 

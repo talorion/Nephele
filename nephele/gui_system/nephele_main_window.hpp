@@ -28,31 +28,49 @@ namespace talorion {
     signals:
         void send_custom_command(const QString& cm);
 
+        void change_set_value(int m_entity, double value);
+
     private:
         void createActions();
         void createMenus();
         void createToolBars();
         void createStatusBar();
 
+        bool maybeSave();
+
+        void loadFile(const QString &fileName);
+        bool saveFile(const QString &fileName);
+        void setCurrentFile(const QString &fileName);
+
+        void read(const QJsonObject &json);
+        void write(QJsonObject &json) const;
+
+        void zero_all();
+
     private:
-       // QLineEdit* cmd;
-        //QLabel* response;
+        QString curFile;
+        bool modified;
         QGridLayout* mainLayout;
-        //QPushButton* scriptButton;
-        //QPushButton* settingsButton;
         script_editor_window* script_wnd;
         settings_dialog* sett_dlg;
         QMap<int, flowControllerView* > fc_views;
 
+        QMenu *fileMenu;
         QMenu *scriptMenu;
         QMenu *toolsMenu;
         QMenu *helpMenu;
 
+        QToolBar *fileToolBar;
         QToolBar *scriptToolBar;
 
         QAction *scriptEditAct;
 
         QAction *optionsEditAct;
+        QAction *newAct;
+        QAction *openAct;
+        QAction *saveAct;
+        QAction *saveAsAct;
+        QAction *exitAct;
 
         QAction *aboutAct;
         QWidget *central_wdgt;
@@ -65,6 +83,12 @@ namespace talorion {
         void slot_set_value_changed(int entity);
 
         void open_script_window();
+
+        void newFile();
+        void open();
+        bool save();
+
+        bool saveAs();
         void about();
     };
 }

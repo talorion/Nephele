@@ -169,7 +169,7 @@ namespace talorion {
 
 
         //QList<int> get_all_systems()const;
-        int get_entity_by_name(const QString& name) const;
+        QList<int> get_entity_by_name(const QString& name) const;
         QList<int> get_entity_by_serialVersionUID(const QUuid& uid) const;
         QList<int> get_entity_by_systemVersionUID(const QUuid& uid) const;
         QList<int> get_entity_by_component(int comp_id) const;

@@ -120,7 +120,7 @@ namespace talorion {
     void flowControllerView::slot_set_value_changed(double val)
     {
         //entity_manager::get_instance()->set_setValue_component(entity, val);
-        qDebug()<<"flowControllerView::slot_set_value_changed"<<val;
+        //qDebug()<<"flowControllerView::slot_set_value_changed"<<val;
         //bool oldState = editSet->blockSignals(true);
         emit change_set_value(m_entity, val);
         //editSet->blockSignals(oldState);

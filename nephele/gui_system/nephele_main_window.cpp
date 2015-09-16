@@ -21,20 +21,25 @@ namespace talorion {
 
     nephele_main_window::nephele_main_window(QWidget *par) :
         QMainWindow(par),
-        //cmd(NULL),
-        //response(NULL),
+        curFile(""),
+        modified(false),
         mainLayout(NULL),
-        //scriptButton(NULL),
-        //settingsButton(NULL),
         script_wnd(NULL),
         sett_dlg(NULL),
-        fc_views(),
+        fc_views (),
+        fileMenu(NULL),
         scriptMenu(NULL),
         toolsMenu(NULL),
-        helpMenu(NULL),
-        scriptToolBar(NULL),
-        scriptEditAct(NULL),
+        helpMenu (NULL),
+        fileToolBar(NULL),
+        scriptToolBar (NULL),
+        scriptEditAct (NULL),
         optionsEditAct(NULL),
+        newAct(NULL),
+        openAct(NULL),
+        saveAct(NULL),
+        saveAsAct(NULL),
+        exitAct (NULL),
         aboutAct(NULL),
         central_wdgt(NULL)
     {
@@ -47,6 +52,8 @@ namespace talorion {
         connect(event_manager::get_instance(),SIGNAL(analogAct_component_changed(int)),this,SLOT(slot_act_value_changed(int)));
         connect(event_manager::get_instance(),SIGNAL(analogSet_component_changed(int)),this,SLOT(slot_set_value_changed(int)));
         connect(event_manager::get_instance(),SIGNAL(error(QString)),statusBar(),SLOT(showMessage(QString)));
+
+        connect(this,SIGNAL(change_set_value(int,double)),event_manager::get_instance(),SIGNAL(change_analogSet_component(int,double)));
 
         //script_wnd = new script_editor_window();
 
@@ -92,10 +99,10 @@ namespace talorion {
         delete centralWidget();
         QMap<int, flowControllerView*>::iterator it;
         for (it=fc_views.begin(); it != fc_views.end(); it++){
-             flowControllerView* tmp = it.value();
-             if(tmp)
-                 delete tmp;
-              it.value() = NULL;
+            flowControllerView* tmp = it.value();
+            if(tmp)
+                delete tmp;
+            it.value() = NULL;
         }
         fc_views.clear();
 
@@ -161,6 +168,48 @@ namespace talorion {
         script_wnd->updateModel();
     }
 
+    void nephele_main_window::newFile()
+    {
+        if (maybeSave()) {
+            //editor->clear();
+            //QMap<int, flowControllerView* > fc_views;
+            zero_all();
+            setCurrentFile("");
+        }
+    }
+
+    void nephele_main_window::open()
+    {
+        if (maybeSave()) {
+            QString fileName = QFileDialog::getOpenFileName(this, tr("Open File"), "", "nephele values file (*.json)");
+            if (!fileName.isEmpty())
+                loadFile(fileName);
+        }
+    }
+
+    bool nephele_main_window::save()
+    {
+        if (curFile.isEmpty()) {
+            return saveAs();
+        } else {
+            return saveFile(curFile);
+        }
+    }
+
+    bool nephele_main_window::saveAs()
+    {
+        QFileDialog dialog(this, tr("Open File"), "", "nephele values file (*.json)");
+        dialog.setWindowModality(Qt::WindowModal);
+        dialog.setAcceptMode(QFileDialog::AcceptSave);
+        QStringList files;
+        if (dialog.exec())
+            files = dialog.selectedFiles();
+        else
+            return false;
+
+        return saveFile(files.at(0));
+    }
+
     void nephele_main_window::about()
     {
         QMessageBox::about(this, tr("About Nephele"),
@@ -175,8 +224,216 @@ namespace talorion {
         statusBar()->showMessage(tr("Ready"));
     }
 
+    bool nephele_main_window::maybeSave()
+    {
+        //if (editor->document()->isModified()) {
+        if (modified) {
+            QMessageBox::StandardButton ret;
+            ret = QMessageBox::warning(this, tr("Application"),
+                                       tr("The document has been modified.\n"
+                                          "Do you want to save your changes?"),
+                                       QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel);
+            if (ret == QMessageBox::Save)
+                return save();
+            else if (ret == QMessageBox::Cancel)
+                return false;
+        }
+        return true;
+    }
+
+    void nephele_main_window::loadFile(const QString &fileName)
+    {
+        QFile file(fileName);
+        if (!file.open(QFile::ReadOnly)) {
+            QMessageBox::warning(this, tr("Application"),
+                                 tr("Cannot read file %1:\n%2.")
+                                 .arg(fileName)
+                                 .arg(file.errorString()));
+            return;
+        }
+
+        //QTextStream in(&file);
+#ifndef QT_NO_CURSOR
+        QApplication::setOverrideCursor(Qt::WaitCursor);
+#endif
+        //editor->setPlainText(in.readAll());
+        //========
+        //if (!file.open(QIODevice::ReadOnly)) {
+        //    QMessageBox::warning(this, tr("Application"),tr("Couldn't open save file."));
+        //    return ;
+        //}
+        QByteArray saveData = file.readAll();
+        QJsonDocument loadDoc(QJsonDocument::fromJson(saveData));
+
+        read(loadDoc.object());
+        //========
+#ifndef QT_NO_CURSOR
+        QApplication::restoreOverrideCursor();
+#endif
+
+        setCurrentFile(fileName);
+        statusBar()->showMessage(tr("File loaded"), 2000);
+    }
+
+    bool nephele_main_window::saveFile(const QString &fileName)
+    {
+        QFile file(fileName);
+        if (!file.open(QFile::WriteOnly)) {
+            QMessageBox::warning(this, tr("Application"),
+                                 tr("Cannot write file %1:\n%2.")
+                                 .arg(fileName)
+                                 .arg(file.errorString()));
+            return false;
+        }
+
+        //QTextStream out(&file);
+#ifndef QT_NO_CURSOR
+        QApplication::setOverrideCursor(Qt::WaitCursor);
+#endif
+        //out << editor->toPlainText();
+        //=========
+        //if (!file.open(QIODevice::WriteOnly)) {
+        //    QMessageBox::warning(this, tr("Application"), tr("Couldn't open save file."));
+        //    return false;
+        //}
+
+        QJsonObject gameObject;
+        write(gameObject);
+        QJsonDocument saveDoc(gameObject);
+        file.write(saveDoc.toJson());
+        //=========
+#ifndef QT_NO_CURSOR
+        QApplication::restoreOverrideCursor();
+#endif
+
+        setCurrentFile(fileName);
+        statusBar()->showMessage(tr("File saved"), 2000);
+        return true;
+    }
+
+    void nephele_main_window::setCurrentFile(const QString &fileName)
+    {
+        curFile = fileName;
+        //editor->document()->setModified(false);
+        modified = false;
+        setWindowModified(false);
+
+        QString shownName = curFile;
+        if (curFile.isEmpty())
+            shownName = "untitled.js";
+        //else if(my_engine>=0)
+        //    emit change_script_file_component(my_engine, fileName);
+        setWindowFilePath(shownName);
+    }
+
+    void nephele_main_window::read(const QJsonObject &json)
+    {
+        zero_all();
+        bool ok;
+        //int entity;
+        int box_id;
+        int bid;
+        double val;
+        QJsonObject obj;
+
+        foreach(QString box_nme, json.keys()){
+
+            if(json[box_nme].isObject()){
+                obj = json[box_nme].toObject();
+                foreach (QString nme, obj.keys()) {
+
+                    QList<int> entities =  entity_manager::get_instance()->get_entity_by_name(nme);
+
+                    foreach (int entity, entities) {
+                        box_id = entity_manager::get_instance()->get_box_id_component(entity);
+                        bid=  box_nme.toInt(&ok);
+
+                        if(ok && bid == box_id){
+                            val =  obj.value(nme).toDouble(0);
+                            emit change_set_value(entity,val);
+                        }
+                    }
+                }
+            }
+        }
+
+    }
+
+    void nephele_main_window::write(QJsonObject &json) const
+    {
+        int box_id;
+        QString box_nme;
+        QJsonObject obj;
+        QString nme;
+        double val;
+
+        QJsonObject::iterator it;
+        foreach (int entity , entity_manager::get_instance()->get_all_AnalogValues()) {
+
+            box_id = entity_manager::get_instance()->get_box_id_component(entity);
+            box_nme= QString::number(box_id);
+
+            it = json.find(box_nme);
+            if(it == json.end())
+                it= json.insert(box_nme, obj);
+
+            if((*it).isObject())
+                obj = (*it).toObject();
+
+            nme= entity_manager::get_instance()->get_name_component(entity);
+            val = entity_manager::get_instance()->get_analogSetValue_component(entity);
+
+            if(!nme.isEmpty()){
+                obj.insert(nme, val);
+            }
+
+            json.insert(box_nme, obj);
+        }
+    }
+
+    void nephele_main_window::zero_all()
+    {
+        setFocus();
+        //        QMap<int, flowControllerView* >::iterator it;
+        //        for(it= fc_views.begin(); it != fc_views.end(); it++){
+        //        //    int entity =  fcv.key();
+        //            if(it.value())
+        //                it.value()->clearFocus();
+        //        }
+
+        foreach (int entity , entity_manager::get_instance()->get_all_AnalogValues()) {
+            emit change_set_value(entity,0);
+        }
+
+    }
+
     void nephele_main_window::createActions()
     {
+        newAct = new QAction(QIcon(":/images/images/new.png"), tr("&New"), this);
+        newAct->setShortcuts(QKeySequence::New);
+        newAct->setStatusTip(tr("Create a new file"));
+        connect(newAct, SIGNAL(triggered()), this, SLOT(newFile()));
+
+        openAct = new QAction(QIcon(":/images/images/open.png"), tr("&Open..."), this);
+        openAct->setShortcuts(QKeySequence::Open);
+        openAct->setStatusTip(tr("Open an existing file"));
+        connect(openAct, SIGNAL(triggered()), this, SLOT(open()));
+
+        saveAct = new QAction(QIcon(":/images/images/save.png"), tr("&Save"), this);
+        saveAct->setShortcuts(QKeySequence::Save);
+        saveAct->setStatusTip(tr("Save the document to disk"));
+        connect(saveAct, SIGNAL(triggered()), this, SLOT(save()));
+
+        saveAsAct = new QAction(tr("Save &As..."), this);
+        saveAsAct->setShortcuts(QKeySequence::SaveAs);
+        saveAsAct->setStatusTip(tr("Save the document under a new name"));
+        connect(saveAsAct, SIGNAL(triggered()), this, SLOT(saveAs()));
+
+        exitAct = new QAction(tr("E&xit"), this);
+        exitAct->setShortcuts(QKeySequence::Quit);
+        exitAct->setStatusTip(tr("Exit the application"));
+        connect(exitAct, SIGNAL(triggered()), this, SLOT(close()));
+
         scriptEditAct = new QAction(QIcon(":/images/images/application-javascript.png"), tr("&Script Editor..."), this);
         //scriptEditAct->setShortcuts(QKeySequence::New);
         scriptEditAct->setStatusTip(tr("start script editor"));
@@ -193,6 +450,14 @@ namespace talorion {
 
     void nephele_main_window::createMenus()
     {
+        fileMenu = menuBar()->addMenu(tr("&File"));
+        fileMenu->addAction(newAct);
+        fileMenu->addAction(openAct);
+        fileMenu->addAction(saveAct);
+        fileMenu->addAction(saveAsAct);
+        fileMenu->addSeparator();
+        fileMenu->addAction(exitAct);
+
         scriptMenu = menuBar()->addMenu(tr("&Script"));
         scriptMenu->addAction(scriptEditAct);
 
@@ -206,6 +471,11 @@ namespace talorion {
 
     void nephele_main_window::createToolBars()
     {
+        fileToolBar = addToolBar(tr("File"));
+        fileToolBar->addAction(newAct);
+        fileToolBar->addAction(openAct);
+        fileToolBar->addAction(saveAct);
+
         scriptToolBar = addToolBar(tr("Script"));
         scriptToolBar->addAction(scriptEditAct);
     }

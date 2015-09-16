@@ -33,6 +33,10 @@ namespace talorion {
 
     int script_util_handler::get_entity_by_name(QString name)
     {
-        return entity_manager::get_instance()->get_entity_by_name(name);
+        QList<int>entities= entity_manager::get_instance()->get_entity_by_name(name);
+        if(entities.isEmpty())
+            return -1;
+        else
+            return entities.at(0);
     }
 }

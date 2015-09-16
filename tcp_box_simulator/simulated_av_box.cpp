@@ -27,7 +27,7 @@ void simulated_av_box::set(int id, double val)
             av->set_Set(val);
         }
     }
-    all_avs.clear();
+    //all_avs.clear();
 
 }
 
