@@ -15,6 +15,7 @@ namespace talorion {
     class flowControllerView;
     class script_editor_window;
     class settings_dialog;
+    class config_file;
 
     class nephele_main_window : public QMainWindow
     {
@@ -24,6 +25,8 @@ namespace talorion {
         explicit nephele_main_window(QWidget *par = 0);
         ~nephele_main_window();
         Q_DISABLE_COPY(nephele_main_window)
+
+        void setCfg_hdl(config_file *value);
 
     signals:
         void send_custom_command(const QString& cm);
@@ -42,8 +45,8 @@ namespace talorion {
         bool saveFile(const QString &fileName);
         void setCurrentFile(const QString &fileName);
 
-        void read(const QJsonObject &json);
-        void write(QJsonObject &json) const;
+        //void read(const QJsonObject &json);
+        //void write(QJsonObject &json) const;
 
         void zero_all();
 
@@ -75,9 +78,14 @@ namespace talorion {
         QAction *aboutAct;
         QWidget *central_wdgt;
 
+        config_file *cfg_hdl;
+
+
     private slots:
         void displayCustomResponse(const QString& cm);
         void dispatchCommand();
+        void addAIV(int entity);
+        void addAOV(int entity);
         void addAV(int entity);
         void slot_act_value_changed(int entity);
         void slot_set_value_changed(int entity);

@@ -125,16 +125,18 @@ namespace talorion {
     {
         int box_id;
         QString box_nme;
-        QJsonObject obj;
+        //QJsonObject obj;
         QString nme;
         double val;
 
         QJsonObject::iterator it;
-        foreach (int entity , entity_manager::get_instance()->get_all_AnalogValues()) {
+        //foreach (int entity , entity_manager::get_instance()->get_all_AnalogValues()) {
+        foreach (int entity , entity_manager::get_instance()->get_all_Values()) {
 
             box_id = entity_manager::get_instance()->get_box_id_component(entity);
             box_nme= QString::number(box_id);
 
+            QJsonObject obj;
             it = json.find(box_nme);
             if(it == json.end())
                 it= json.insert(box_nme, obj);

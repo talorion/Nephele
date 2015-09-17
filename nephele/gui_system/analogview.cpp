@@ -3,9 +3,10 @@
 
 namespace talorion {
 
-    analogView::analogView(int entity, QWidget *par):
+    analogView::analogView(int entity, mode md, QWidget *par):
         QWidget(par),
-        m_entity(entity)
+        m_entity(entity),
+        m_mode(md)
     {
     }
 

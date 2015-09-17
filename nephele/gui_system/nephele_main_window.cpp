@@ -17,6 +17,8 @@
 
 #include "version.hpp"
 
+#include "config_file/config_file.hpp"
+
 namespace talorion {
 
     nephele_main_window::nephele_main_window(QWidget *par) :
@@ -41,12 +43,14 @@ namespace talorion {
         saveAsAct(NULL),
         exitAct (NULL),
         aboutAct(NULL),
-        central_wdgt(NULL)
+        central_wdgt(NULL),
+        cfg_hdl(NULL)
     {
 
-
-
+        connect(event_manager::get_instance(),SIGNAL(newAnalogInputValue(int)),this, SLOT(addAIV(int)));
+        connect(event_manager::get_instance(),SIGNAL(newAnalogOutputValue(int)),this, SLOT(addAOV(int)));
         connect(event_manager::get_instance(),SIGNAL(newAnalogValue(int)),this, SLOT(addAV(int)));
+
         connect(this, SIGNAL(send_custom_command(QString)),event_manager::get_instance(),SIGNAL(send_custom_command(QString)));
         connect(event_manager::get_instance(),SIGNAL(receivedCustomData(QString)),this,SLOT(displayCustomResponse(QString)));
         connect(event_manager::get_instance(),SIGNAL(analogAct_component_changed(int)),this,SLOT(slot_act_value_changed(int)));
@@ -132,11 +136,31 @@ namespace talorion {
         //        }
     }
 
+    void nephele_main_window::addAIV(int entity)
+    {
+        QMap<int, flowControllerView*>::ConstIterator fcv = fc_views.constFind(entity);
+        if (fcv == fc_views.constEnd()){
+            flowControllerView* tmp = new flowControllerView(entity,flowControllerView::Input, this);
+            fc_views.insert(entity,tmp);
+            mainLayout->addWidget(tmp);
+        }
+    }
+
+    void nephele_main_window::addAOV(int entity)
+    {
+        QMap<int, flowControllerView*>::ConstIterator fcv = fc_views.constFind(entity);
+        if (fcv == fc_views.constEnd()){
+            flowControllerView* tmp = new flowControllerView(entity,flowControllerView::Output, this);
+            fc_views.insert(entity,tmp);
+            mainLayout->addWidget(tmp);
+        }
+    }
+
     void nephele_main_window::addAV(int entity)
     {
         QMap<int, flowControllerView*>::ConstIterator fcv = fc_views.constFind(entity);
         if (fcv == fc_views.constEnd()){
-            flowControllerView* tmp = new flowControllerView(entity, this);
+            flowControllerView* tmp = new flowControllerView(entity,flowControllerView::InputOutput, this);
             fc_views.insert(entity,tmp);
             mainLayout->addWidget(tmp);
         }
@@ -243,6 +267,7 @@ namespace talorion {
 
     void nephele_main_window::loadFile(const QString &fileName)
     {
+
         QFile file(fileName);
         if (!file.open(QFile::ReadOnly)) {
             QMessageBox::warning(this, tr("Application"),
@@ -262,10 +287,13 @@ namespace talorion {
         //    QMessageBox::warning(this, tr("Application"),tr("Couldn't open save file."));
         //    return ;
         //}
-        QByteArray saveData = file.readAll();
-        QJsonDocument loadDoc(QJsonDocument::fromJson(saveData));
+//        QByteArray saveData = file.readAll();
+//        QJsonDocument loadDoc(QJsonDocument::fromJson(saveData));
 
-        read(loadDoc.object());
+//        read(loadDoc.object());
+        if(! cfg_hdl)
+            return;
+        cfg_hdl->loadFile(fileName);
         //========
 #ifndef QT_NO_CURSOR
         QApplication::restoreOverrideCursor();
@@ -297,10 +325,13 @@ namespace talorion {
         //    return false;
         //}
 
-        QJsonObject gameObject;
-        write(gameObject);
-        QJsonDocument saveDoc(gameObject);
-        file.write(saveDoc.toJson());
+//        QJsonObject gameObject;
+//        write(gameObject);
+//        QJsonDocument saveDoc(gameObject);
+//        file.write(saveDoc.toJson());
+        if(! cfg_hdl)
+            return false;
+        cfg_hdl->saveFile(fileName);
         //=========
 #ifndef QT_NO_CURSOR
         QApplication::restoreOverrideCursor();
@@ -326,70 +357,70 @@ namespace talorion {
         setWindowFilePath(shownName);
     }
 
-    void nephele_main_window::read(const QJsonObject &json)
-    {
-        zero_all();
-        bool ok;
-        //int entity;
-        int box_id;
-        int bid;
-        double val;
-        QJsonObject obj;
+//    void nephele_main_window::read(const QJsonObject &json)
+//    {
+//        zero_all();
+//        bool ok;
+//        //int entity;
+//        int box_id;
+//        int bid;
+//        double val;
+//        QJsonObject obj;
 
-        foreach(QString box_nme, json.keys()){
+//        foreach(QString box_nme, json.keys()){
 
-            if(json[box_nme].isObject()){
-                obj = json[box_nme].toObject();
-                foreach (QString nme, obj.keys()) {
+//            if(json[box_nme].isObject()){
+//                obj = json[box_nme].toObject();
+//                foreach (QString nme, obj.keys()) {
 
-                    QList<int> entities =  entity_manager::get_instance()->get_entity_by_name(nme);
+//                    QList<int> entities =  entity_manager::get_instance()->get_entity_by_name(nme);
 
-                    foreach (int entity, entities) {
-                        box_id = entity_manager::get_instance()->get_box_id_component(entity);
-                        bid=  box_nme.toInt(&ok);
+//                    foreach (int entity, entities) {
+//                        box_id = entity_manager::get_instance()->get_box_id_component(entity);
+//                        bid=  box_nme.toInt(&ok);
 
-                        if(ok && bid == box_id){
-                            val =  obj.value(nme).toDouble(0);
-                            emit change_set_value(entity,val);
-                        }
-                    }
-                }
-            }
-        }
+//                        if(ok && bid == box_id){
+//                            val =  obj.value(nme).toDouble(0);
+//                            emit change_set_value(entity,val);
+//                        }
+//                    }
+//                }
+//            }
+//        }
 
-    }
+//    }
 
-    void nephele_main_window::write(QJsonObject &json) const
-    {
-        int box_id;
-        QString box_nme;
-        QJsonObject obj;
-        QString nme;
-        double val;
+//    void nephele_main_window::write(QJsonObject &json) const
+//    {
+//        int box_id;
+//        QString box_nme;
+//        QJsonObject obj;
+//        QString nme;
+//        double val;
 
-        QJsonObject::iterator it;
-        foreach (int entity , entity_manager::get_instance()->get_all_AnalogValues()) {
+//        QJsonObject::iterator it;
+//        foreach (int entity , entity_manager::get_instance()->get_all_AnalogValues()) {
 
-            box_id = entity_manager::get_instance()->get_box_id_component(entity);
-            box_nme= QString::number(box_id);
+//            box_id = entity_manager::get_instance()->get_box_id_component(entity);
+//            box_nme= QString::number(box_id);
 
-            it = json.find(box_nme);
-            if(it == json.end())
-                it= json.insert(box_nme, obj);
+//            it = json.find(box_nme);
+//            if(it == json.end())
+//                it= json.insert(box_nme, obj);
 
-            if((*it).isObject())
-                obj = (*it).toObject();
+//            if((*it).isObject())
+//                obj = (*it).toObject();
 
-            nme= entity_manager::get_instance()->get_name_component(entity);
-            val = entity_manager::get_instance()->get_analogSetValue_component(entity);
+//            nme= entity_manager::get_instance()->get_name_component(entity);
+//            val = entity_manager::get_instance()->get_analogSetValue_component(entity);
 
-            if(!nme.isEmpty()){
-                obj.insert(nme, val);
-            }
+//            if(!nme.isEmpty()){
+//                obj.insert(nme, val);
+//            }
 
-            json.insert(box_nme, obj);
-        }
-    }
+//            json.insert(box_nme, obj);
+//        }
+//    }
 
     void nephele_main_window::zero_all()
     {
@@ -400,12 +431,17 @@ namespace talorion {
         //            if(it.value())
         //                it.value()->clearFocus();
         //        }
-
-        foreach (int entity , entity_manager::get_instance()->get_all_AnalogValues()) {
+        //foreach (int entity , entity_manager::get_instance()->get_all_AnalogValues()) {
+        foreach (int entity , entity_manager::get_instance()->get_all_Values()) {
             emit change_set_value(entity,0);
         }
 
     }
+    void nephele_main_window::setCfg_hdl(config_file *value)
+    {
+        cfg_hdl = value;
+    }
+
 
     void nephele_main_window::createActions()
     {

@@ -17,8 +17,8 @@
 
 namespace talorion {
 
-    flowControllerView::flowControllerView(int entity,QWidget* par) :
-        analogView(entity, par),
+    flowControllerView::flowControllerView(int entity, mode md, QWidget* par) :
+        analogView(entity, md,  par),
         editSet(NULL),
         editAct(NULL),
         plot(NULL),
@@ -30,31 +30,43 @@ namespace talorion {
 
         connect(this, SIGNAL(change_set_value(int,double)),event_manager::get_instance(),SIGNAL(change_analogSet_component(int,double)),Qt::UniqueConnection);
         this->setMouseTracking(true);
-        editSet = new QDoubleSpinBox(this);
-        editSet->setRange(
-                    entity_manager::get_instance()->get_setMin_component(entity),
-                    entity_manager::get_instance()->get_setMax_component(entity));
-        editSet->setSingleStep(entity_manager::get_instance()->get_setMax_component(entity)/50.0);
-        editSet->setSuffix(" " + entity_manager::get_instance()->get_units_component(entity));
-        if (entity_manager::get_instance()->get_setMax_component(entity) > 1 && log10(entity_manager::get_instance()->get_setMax_component(entity))<=6)
-            editSet->setDecimals(6-log10(entity_manager::get_instance()->get_setMax_component(entity)));
 
-        editSet->setValue(entity_manager::get_instance()->get_analogSetValue_component(entity));
+        QGridLayout* m_layout = new QGridLayout;
 
-        editAct = new QDoubleSpinBox(this);
-        editAct->setReadOnly(true);
-        editAct->setDecimals(editSet->decimals());
-        editAct->setSuffix(editSet->suffix());
-        editAct->setRange(entity_manager::get_instance()->get_actMin_component(entity), entity_manager::get_instance()->get_actMax_component(entity));
-        editAct->setButtonSymbols(QDoubleSpinBox::NoButtons);
-        editAct->setMinimumWidth(100);
-        editAct->setStyleSheet("QDoubleSpinBox { background-color :  lightGray;}");
+        if(md & Output){
+            editSet = new QDoubleSpinBox(this);
+            editSet->setRange(
+                        entity_manager::get_instance()->get_setMin_component(entity),
+                        entity_manager::get_instance()->get_setMax_component(entity));
+            editSet->setSingleStep(entity_manager::get_instance()->get_setMax_component(entity)/50.0);
+            editSet->setSuffix(" " + entity_manager::get_instance()->get_units_component(entity));
+            if (entity_manager::get_instance()->get_setMax_component(entity) > 1 && log10(entity_manager::get_instance()->get_setMax_component(entity))<=6)
+                editSet->setDecimals(6-log10(entity_manager::get_instance()->get_setMax_component(entity)));
+
+            editSet->setValue(entity_manager::get_instance()->get_analogSetValue_component(entity));
+
+            m_layout->addWidget(editSet,0,1,1,1);
+        }
+
+        if(md & Input){
+            editAct = new QDoubleSpinBox(this);
+            editAct->setReadOnly(true);
+            editAct->setDecimals(6-log10(entity_manager::get_instance()->get_actMax_component(entity)));
+            editAct->setSuffix(" " + entity_manager::get_instance()->get_units_component(entity));
+            editAct->setRange(entity_manager::get_instance()->get_actMin_component(entity), entity_manager::get_instance()->get_actMax_component(entity));
+            editAct->setButtonSymbols(QDoubleSpinBox::NoButtons);
+            editAct->setMinimumWidth(100);
+            editAct->setStyleSheet("QDoubleSpinBox { background-color :  lightGray;}");
+
+            m_layout->addWidget(editAct,0,2,1,1);
+
+        }
 
         lblName = new QLabel(entity_manager::get_instance()->get_name_component(entity),this);
-        QGridLayout* m_layout = new QGridLayout;
+
         m_layout->addWidget(lblName,0,0,1,1);
-        m_layout->addWidget(editSet,0,1,1,1);
-        m_layout->addWidget(editAct,0,2,1,1);
+
+
         m_layout->setMargin(0);
         this->setLayout(m_layout);
 
@@ -66,8 +78,8 @@ namespace talorion {
         plot->setFixedWidth(400);
         double lowerRange = entity_manager::get_instance()->get_actMin_component(entity) - (entity_manager::get_instance()->get_actMax_component(entity)-entity_manager::get_instance()->get_actMin_component(entity))/10;
         double upperRange = entity_manager::get_instance()->get_actMax_component(entity)
-                            + (entity_manager::get_instance()->get_actMax_component(entity)
-                            - entity_manager::get_instance()->get_actMin_component(entity))/10;
+                + (entity_manager::get_instance()->get_actMax_component(entity)
+                   - entity_manager::get_instance()->get_actMin_component(entity))/10;
         plot->yAxis->setRangeLower(lowerRange);
         plot->yAxis->setRangeUpper(upperRange);
         plot->yAxis->setAutoTickCount(2);
@@ -86,8 +98,11 @@ namespace talorion {
 
     flowControllerView::~flowControllerView()
     {
-        delete editSet;
+        if(editSet)
+            delete editSet;
+        if(editAct)
         delete editAct;
+
         delete lblName;
         delete plot;
         delete graphTimer;
@@ -97,6 +112,9 @@ namespace talorion {
 
     void flowControllerView::changeActValue(double actValue)
     {
+        if(!editAct)
+            return;
+
         editAct->setValue(actValue);
         updatePlot(actValue);
         graphTimer->start(); // avoid timeout since we got a new signal
@@ -104,6 +122,9 @@ namespace talorion {
 
     void flowControllerView::changeSetValue(double setValue)
     {
+        if(!editSet)
+            return;
+
         if (!editSet->hasFocus())
         {
             bool oldState = editSet->blockSignals(true);
@@ -114,6 +135,9 @@ namespace talorion {
 
     void flowControllerView::newValueTimeout()
     {
+        if(!editAct)
+            return;
+
         updatePlot(editAct->value());
     }
 
@@ -126,7 +150,7 @@ namespace talorion {
         //editSet->blockSignals(oldState);
     }
 
-//#define graph_persistance_time 60
+    //#define graph_persistance_time 60
     void flowControllerView::updatePlot(double value)
     {
         //QDateTime* t = new QDateTime();

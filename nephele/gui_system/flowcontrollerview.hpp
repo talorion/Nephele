@@ -23,7 +23,7 @@ namespace talorion {
     {
         Q_OBJECT
     public:
-        flowControllerView(int m_entity, QWidget* par = 0);
+        flowControllerView(int m_entity,mode md=InputOutput, QWidget* par = 0);
         ~flowControllerView(void);
         Q_DISABLE_COPY(flowControllerView)
 

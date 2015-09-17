@@ -97,6 +97,7 @@ namespace talorion{
             QApplication::instance()->processEvents();
 
         window= new nephele_main_window();
+        window->setCfg_hdl(cfg_hdl);
         QDesktopWidget *desktop = QApplication::desktop();
 
         screenWidth = desktop->width();

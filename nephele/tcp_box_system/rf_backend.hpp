@@ -27,13 +27,26 @@ namespace talorion {
         virtual void fcSetChangeProxy(double value, int id)Q_DECL_OVERRIDE ;
 
     private:
-       void parse_all_AO(QVariantList desc, int box_id);
-       void parse_all_AI(QVariantList desc, int box_id);
+        void parse_alldata_AO(QVariantList& desc, int box_id);
+        void parse_alldata_AI(QVariantList& desc, int box_id);
+        void parse_alldata_AIO(QVariantList& desc, int box_id);
+        //       void parse_alldata_DO(QVariantList& desc, int box_id);
+        //       void parse_alldata_DI(QVariantList& desc, int box_id);
+        //       void parse_alldata_DIO(QVariantList& desc, int box_id);
+
+        void parse_actset_AO(QVariantList& desc);
+        void parse_actset_AI(QVariantList& desc);
+        void parse_actset_AIO(QVariantList& desc);
+        //       void parse_actset_DO(QVariantList& desc, int box_id);
+        //       void parse_actset_DI(QVariantList& desc, int box_id);
+        //       void parse_actset_DIO(QVariantList& desc, int box_id);
 
     private:
         //QList<analogValue*> flowcontroller;
-        QList<int> flowcontroller;
-        QList<double> actbuffer;
+        QMap<int, int> registered_values;
+        //QList<int> registered_values;
+        QMap<int, double> actbuffer;
+        //QList<double> actbuffer;
         QMap<int, double> setbuffer;
         //QList<double> setbuffer;
         //const tcpDriver* drv;

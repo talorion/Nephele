@@ -9,7 +9,7 @@ namespace talorion {
 
     rf_backend::rf_backend(QObject *par) :
         abstract_backend(par),
-        flowcontroller(),
+        registered_values(),
         actbuffer(),
         setbuffer(),
         block_next_read(false)
@@ -31,105 +31,51 @@ namespace talorion {
 
         switch (type)
         {
-        case tcpDriverDataTypes::ALLDATA:
-        {
-            flowcontroller.clear();
+        case tcpDriverDataTypes::ALLDATA:{
+            registered_values.clear();
             actbuffer.clear();
             setbuffer.clear();
             QVariantMap::const_iterator cit;
             for(cit = desc.constBegin(); cit != desc.constEnd(); cit++){
-                if(QString::compare( cit.key(), "AIO") == 0){
-
-                }
-                if(QString::compare( cit.key(), "AO") == 0){
-                    QVariant tmp =cit.value();
-                    if(tmp.canConvert(QMetaType::QVariantList)){
-                        QVariantList lst= tmp.toList();
-                        parse_all_AO(lst, box_id);
-                    }
-                }
-                if(QString::compare( cit.key(), "AI") == 0){
-                    QVariant tmp =cit.value();
-                    if(tmp.canConvert(QMetaType::QVariantList)){
-                        QVariantList lst=  tmp.toList();
-                        parse_all_AI(lst, box_id);
-                    }
-                }
-                if(QString::compare( cit.key(), "DO") == 0){
-
-                }
-                if(QString::compare( cit.key(), "DI") == 0){
-
-                }
-                if(QString::compare( cit.key(), "AIO") == 0){
-
-                }
-                if(QString::compare( cit.key(), "DIO") == 0){
-
-                }
-                if(QString::compare( cit.key(), "uibk_v") == 0){
-
+                QVariant tmp =cit.value();
+                if(tmp.canConvert(QMetaType::QVariantList)){
+                    QVariantList lst= tmp.toList();
+                    if(QString::compare( cit.key(), "AO") == 0){parse_alldata_AO(lst, box_id);}
+                    if(QString::compare( cit.key(), "AI") == 0){parse_alldata_AI(lst, box_id);}
+                    if(QString::compare( cit.key(), "AIO") == 0){parse_alldata_AIO(lst, box_id);}
+                    if(QString::compare( cit.key(), "FC") == 0){parse_alldata_AIO(lst, box_id);}
+                    if(QString::compare( cit.key(), "AV") == 0){parse_alldata_AIO(lst, box_id);}
+                    //                    if(QString::compare( cit.key(), "DO") == 0){parse_alldata_DO(lst, box_id);}
+                    //                    if(QString::compare( cit.key(), "DI") == 0){parse_alldata_DI(lst, box_id);}
+                    //                    if(QString::compare( cit.key(), "DIO") == 0){parse_alldata_DIO(lst, box_id);}
+                    //                    if(QString::compare( cit.key(), "uibk_v") == 0){}
                 }
             }
-
-            //            if((desc.find("FC").value().canConvert<QVariantList>()))
-            //            {
-            //                for(int i=0; i < desc.find("FC").value().toList().length(); i++)
-            //                {
-            //                    QVariantMap tmp = desc.find("FC").value().toList()[i].toMap();
-            //                    if (tmp.contains("name") && tmp.contains("units") && tmp.contains("smin") && tmp.contains("smax") && tmp.contains("amin") && tmp.contains("amax") && tmp.contains("set") && tmp.contains("id"))
-            //                    {
-            //                        int fc = entity_manager::get_instance()->createNewAnalogValue(tmp.find("name").value().toString(),
-            //                                                                                      tmp.find("units").value().toString(),
-            //                                                                                      tmp.find("smin").value().toDouble(),
-            //                                                                                      tmp.find("smax").value().toDouble(),
-            //                                                                                      tmp.find("amin").value().toDouble(),
-            //                                                                                      tmp.find("amax").value().toDouble(),
-            //                                                                                      tmp.find("set").value().toDouble(),
-            //                                                                                      tmp.find("id").value().toInt(),
-            //                                                                                      box_id
-            //                                                                                      );
-            //                        flowcontroller.append(fc);
-            //                        //setbuffer.append(tmp.find("set").value().toDouble());
-            //                        int tmp_id = tmp.find("id").value().toInt();
-            //                        double tmp_set = tmp.find("set").value().toDouble();
-            //                        setbuffer.insert(tmp_id, tmp_set);
-            //                        actbuffer.append(0);
-            //                    }
-            //                }
-            //            }
+            //            break;
         }
-        default:
-        {
-                        if ( (desc.find("AI").value().canConvert<QVariantList>()) && (flowcontroller.length()>0))
-                        {
-                            for(int i=0; i < desc.find("AI").value().toList().length(); i++)
-                            {
-                                QVariantMap tmp = desc.find("AI").value().toList()[i].toMap();
-                                //int tmp_id = tmp.find("id").value().toInt();
-                                if ( i<flowcontroller.length())
-                                {
-                                    int entity= flowcontroller[i];
-                                    if (tmp.contains("act")){
-                                        double val = tmp.find("act").value().toDouble();
-                                        if(actbuffer[i] != val){
-                                            actbuffer[i] =val;
-                                            emit change_act_value(entity,val);
-                                        }
-                                    }
-//                                    if (tmp.contains("set")){
-//                                        int tmp_id = tmp.find("id").value().toInt();
-//                                        double val = tmp.find("set").value().toDouble();
-//                                        if(setbuffer[tmp_id] != val){
-//                                            //qDebug()<<"flowControllerBackend::processData"<<setbuffer[tmp_id]<<val;
-//                                            setbuffer[tmp_id] =val;
-//                                            emit change_set_value(entity,val);
-//                                        }
-//                                    }
-                                }
-                            }
-                        }
-
+            //        case tcpDriverDataTypes::ALLDATA:{break;}
+            //        case tcpDriverDataTypes::ACTSETDATA:{break;}
+            //        case tcpDriverDataTypes::CUSTOMCOMMAND:{break;}
+            //        case tcpDriverDataTypes::IDLE:{break;}
+            //        case tcpDriverDataTypes::NONE:{break;}
+        default:{
+            QVariantMap::const_iterator cit;
+            for(cit = desc.constBegin(); cit != desc.constEnd(); cit++){
+                QVariant tmp =cit.value();
+                if(tmp.canConvert(QMetaType::QVariantList)){
+                    QVariantList lst= tmp.toList();
+                    if(QString::compare( cit.key(), "AO") == 0){parse_actset_AO(lst);}
+                    if(QString::compare( cit.key(), "AI") == 0){parse_actset_AI(lst);}
+                    if(QString::compare( cit.key(), "AIO") == 0){parse_actset_AIO(lst);}
+                    if(QString::compare( cit.key(), "FC") == 0){parse_actset_AIO(lst);}
+                    if(QString::compare( cit.key(), "AV") == 0){parse_actset_AIO(lst);}
+                    //                    if(QString::compare( cit.key(), "DO") == 0){parse_alldata_DO(lst, box_id);}
+                    //                    if(QString::compare( cit.key(), "DI") == 0){parse_alldata_DI(lst, box_id);}
+                    //                    if(QString::compare( cit.key(), "DIO") == 0){parse_alldata_DIO(lst, box_id);}
+                    //                    if(QString::compare( cit.key(), "uibk_v") == 0){}
+                }
+            }
+            break;
         }
         }
     }
@@ -143,7 +89,9 @@ namespace talorion {
     {
         double value =entity_manager::get_instance()->get_analogSetValue_component(entity);
         int id = entity_manager::get_instance()->get_id_component(entity);
-        if(id >= 0 && flowcontroller.contains(entity)){
+        if(id >= 0 && registered_values.contains(id)){
+            if(registered_values[id]!=entity)
+                return;
             setbuffer[id] =value;
             block_next_read = true;
             fcSetChangeProxy(value, id);
@@ -162,7 +110,7 @@ namespace talorion {
         //setbuffer[id] =value;
     }
 
-    void rf_backend::parse_all_AO(QVariantList desc, int box_id)
+    void rf_backend::parse_alldata_AO(QVariantList &desc, int box_id)
     {
         foreach (QVariant var, desc) {
             if(!var.canConvert(QMetaType::QVariantMap))
@@ -170,56 +118,152 @@ namespace talorion {
             QVariantMap tmp = var.toMap();
             if (tmp.contains("name") && tmp.contains("units") && tmp.contains("smin") && tmp.contains("smax") && tmp.contains("set") && tmp.contains("id"))
             {
-                int fc = entity_manager::get_instance()->createNewAnalogValue(tmp.find("name").value().toString(),
-                                                                              tmp.find("units").value().toString(),
-                                                                              tmp.find("smin").value().toDouble(),
-                                                                              tmp.find("smax").value().toDouble(),
-                                                                              0,
-                                                                              0,
-                                                                              tmp.find("set").value().toDouble(),
-                                                                              tmp.find("id").value().toInt(),
-                                                                              box_id
-                                                                              );
-                flowcontroller.append(fc);
+                int fc = entity_manager::get_instance()->createNewAnalogOutputValue(tmp.find("name").value().toString(),
+                                                                                    tmp.find("units").value().toString(),
+                                                                                    tmp.find("smin").value().toDouble(),
+                                                                                    tmp.find("smax").value().toDouble(),
+                                                                                    tmp.find("set").value().toDouble(),
+                                                                                    tmp.find("id").value().toInt(),
+                                                                                    box_id
+                                                                                    );
+                //registered_values.append(fc);
                 //setbuffer.append(tmp.find("set").value().toDouble());
                 int tmp_id = tmp.find("id").value().toInt();
                 double tmp_set = tmp.find("set").value().toDouble();
+                registered_values.insert(tmp_id, fc);
                 setbuffer.insert(tmp_id, tmp_set);
-                actbuffer.append(0);
+                //actbuffer.append(0);
             }
         }
     }
 
-    void rf_backend::parse_all_AI(QVariantList desc, int box_id)
+    void rf_backend::parse_alldata_AI(QVariantList &desc, int box_id)
     {
         foreach (QVariant var, desc) {
             if(!var.canConvert(QMetaType::QVariantMap))
                 continue;
             QVariantMap tmp = var.toMap();
-            if (tmp.contains("name") && tmp.contains("units") && tmp.contains("amin") && tmp.contains("amax") && tmp.contains("act") && tmp.contains("id"))
+
+            if (tmp.contains("name") && tmp.contains("units")  && tmp.contains("amin") && tmp.contains("amax")  && tmp.contains("id"))
             {
-                //QVariantMap tmp = var.toMap();
-                if (tmp.contains("name") && tmp.contains("units")  && tmp.contains("amin") && tmp.contains("amax")  && tmp.contains("id"))
-                {
-                    int fc = entity_manager::get_instance()->createNewAnalogValue(tmp.find("name").value().toString(),
-                                                                                  tmp.find("units").value().toString(),
-                                                                                  0,
-                                                                                  0,
-                                                                                  tmp.find("amin").value().toDouble(),
-                                                                                  tmp.find("amax").value().toDouble(),
-                                                                                  0,
-                                                                                  tmp.find("id").value().toInt(),
-                                                                                  box_id
-                                                                                  );
-                    flowcontroller.append(fc);
-                    //setbuffer.append(tmp.find("set").value().toDouble());
-                    int tmp_id = tmp.find("id").value().toInt();
-                    double tmp_set = tmp.find("set").value().toDouble();
-                    setbuffer.insert(tmp_id, tmp_set);
-                    actbuffer.append(0);
+                int fc = entity_manager::get_instance()->createNewAnalogInputValue(tmp.find("name").value().toString(),
+                                                                                   tmp.find("units").value().toString(),
+                                                                                   tmp.find("amin").value().toDouble(),
+                                                                                   tmp.find("amax").value().toDouble(),
+                                                                                   tmp.find("id").value().toInt(),
+                                                                                   box_id
+                                                                                   );
+
+                int tmp_id = tmp.find("id").value().toInt();
+                registered_values.insert(tmp_id, fc);
+                //double tmp_set = tmp.find("set").value().toDouble();
+                //setbuffer.insert(tmp_id, tmp_set);
+                actbuffer.insert(tmp_id,0);
+            }
+
+        }
+    }
+
+    void rf_backend::parse_alldata_AIO(QVariantList &desc, int box_id)
+    {
+        foreach (QVariant var, desc) {
+            if(!var.canConvert(QMetaType::QVariantMap))
+                continue;
+            QVariantMap tmp = var.toMap();
+            if (tmp.contains("name") && tmp.contains("units") && tmp.contains("smin") && tmp.contains("smax") && tmp.contains("amin") && tmp.contains("amax") && tmp.contains("set") && tmp.contains("id"))
+            {
+                int fc = entity_manager::get_instance()->createNewAnalogValue(tmp.find("name").value().toString(),
+                                                                              tmp.find("units").value().toString(),
+                                                                              tmp.find("smin").value().toDouble(),
+                                                                              tmp.find("smax").value().toDouble(),
+                                                                              tmp.find("amin").value().toDouble(),
+                                                                              tmp.find("amax").value().toDouble(),
+                                                                              tmp.find("set").value().toDouble(),
+                                                                              tmp.find("id").value().toInt(),
+                                                                              box_id
+                                                                              );
+                //registered_values.append(fc);
+                int tmp_id = tmp.find("id").value().toInt();
+                double tmp_set = tmp.find("set").value().toDouble();
+                registered_values.insert(tmp_id, fc);
+                setbuffer.insert(tmp_id, tmp_set);
+                actbuffer.insert(tmp_id,0);
+            }
+
+        }
+    }
+
+    void rf_backend::parse_actset_AO(QVariantList &desc)
+    {
+        foreach (QVariant var, desc) {
+            if(!var.canConvert(QMetaType::QVariantMap))
+                continue;
+
+            QVariantMap tmp = var.toMap();
+
+            int tmp_id = tmp.find("id").value().toInt();
+            int entity = registered_values[tmp_id];
+
+            if (tmp.contains("set")){
+                double val = tmp.find("set").value().toDouble();
+                if(setbuffer[tmp_id] != val){
+                    setbuffer[tmp_id] =val;
+                    emit change_set_value(entity,val);
                 }
             }
         }
+    }
+
+    void rf_backend::parse_actset_AI(QVariantList &desc)
+    {
+        foreach (QVariant var, desc) {
+            if(!var.canConvert(QMetaType::QVariantMap))
+                continue;
+
+            QVariantMap tmp = var.toMap();
+
+            int tmp_id = tmp.find("id").value().toInt();
+            int entity= registered_values[tmp_id];
+
+            if (tmp.contains("act")){
+                double val = tmp.find("act").value().toDouble();
+                if(actbuffer[tmp_id] != val){
+                    actbuffer[tmp_id] =val;
+                    emit change_act_value(entity,val);
+                }
+            }
+        }
+    }
+
+    void rf_backend::parse_actset_AIO(QVariantList &desc)
+    {
+        parse_actset_AO(desc);
+        parse_actset_AI(desc);
+//        foreach (QVariant var, desc) {
+//            if(!var.canConvert(QMetaType::QVariantMap))
+//                continue;
+
+//            QVariantMap tmp = var.toMap();
+
+//            int tmp_id = tmp.find("id").value().toInt();
+//            int entity= registered_values[tmp_id];
+
+//            if (tmp.contains("set")){
+//                double val = tmp.find("set").value().toDouble();
+//                if(setbuffer[tmp_id] != val){
+//                    setbuffer[tmp_id] =val;
+//                    emit change_set_value(entity,val);
+//                }
+//            }
+
+//            if (tmp.contains("act")){
+//                double val = tmp.find("act").value().toDouble();
+//                if(actbuffer[tmp_id] != val){
+//                    actbuffer[tmp_id] =val;
+//                    emit change_act_value(entity,val);
+//                }
+//            }
+//        }
     }
 } // namespace talorion
 

@@ -58,6 +58,8 @@ namespace talorion {
         connect(event_manager::get_instance(),SIGNAL(change_timeout_component(int,int)),this,SLOT(slot_change_timeout_component(int,int)));
         connect(event_manager::get_instance(),SIGNAL(change_updaterate_component(int,int)),this,SLOT(slot_change_updaterate_component(int,int)));
 
+        connect(this,SIGNAL(newAnalogInputValue(int)),event_manager::get_instance(),SIGNAL(newAnalogInputValue(int)));
+        connect(this,SIGNAL(newAnalogOutputValue(int)),event_manager::get_instance(),SIGNAL(newAnalogOutputValue(int)));
         connect(this,SIGNAL(newAnalogValue(int)),event_manager::get_instance(),SIGNAL(newAnalogValue(int)));
         connect(this,SIGNAL(newDigitalValue(int)),event_manager::get_instance(),SIGNAL(newDigitalValue(int)));
         connect(this, SIGNAL(newTcpBox(int)),event_manager::get_instance(),SIGNAL(newTcpBox(int)));
@@ -136,9 +138,17 @@ namespace talorion {
 
     void entity_manager::dispose()
     {
-        foreach (int id, get_all_AnalogValues()) {
+        foreach (int id, get_all_Values()) {
             delete_entity(id);
         }
+
+//        foreach (int id, get_all_AnalogInputValues()) {
+//            delete_entity(id);
+//        }
+
+//        foreach (int id, get_all_AnalogOutputValues()) {
+//            delete_entity(id);
+//        }
 
         foreach (int id, get_all_Systems()) {
             delete_entity(id);
@@ -186,7 +196,7 @@ namespace talorion {
         }
         else
             entity_id= entity;
-            //entity_id= qMax(current_identity_id+1, entity+1);
+        //entity_id= qMax(current_identity_id+1, entity+1);
 
         //current_identity_id = entity_id;
 
@@ -330,11 +340,86 @@ namespace talorion {
 
     }
 
+    int entity_manager::createNewAnalogInputValue(QString nameVal, QString unitsVal, double amin, double amax, int id, int box_id, int entity)
+    {
+        int new_id = entity;
+        if(entity <0)
+            new_id = createNewEntity();
+
+        createComponentAndAddTo( NAME_COMPONENT, new_id );
+        createComponentAndAddTo( UNITS_COMPONENT, new_id );
+        //createComponentAndAddTo( SET_MIN_COMPONENT, new_id );
+        //createComponentAndAddTo( SET_MAX_COMPONENT, new_id );
+        createComponentAndAddTo( ACT_MIN_COMPONENT, new_id );
+        createComponentAndAddTo( ACT_MAX_COMPONENT, new_id );
+        //createComponentAndAddTo( ANALOG_SET_VALUE_COMPONENT, new_id );
+        createComponentAndAddTo( ANALOG_ACT_VALUE_COMPONENT, new_id );
+        createComponentAndAddTo( ID_COMPONENT, new_id );
+        createComponentAndAddTo( BOX_ID_COMPONENT, new_id );
+        createComponentAndAddTo(SERIAL_VERSION_UID_COMPONENT, new_id);
+        createComponentAndAddTo(USER_DATA_COMPONENT, new_id);
+
+        setComponentDataForEntity(NAME_COMPONENT,               new_id, nameVal);
+        setComponentDataForEntity(UNITS_COMPONENT,              new_id, unitsVal);
+        //setComponentDataForEntity(SET_MIN_COMPONENT,            new_id, smin);
+        //setComponentDataForEntity(SET_MAX_COMPONENT,            new_id, smax);
+        setComponentDataForEntity(ACT_MIN_COMPONENT,            new_id, amin);
+        setComponentDataForEntity(ACT_MAX_COMPONENT,            new_id, amax);
+        //setComponentDataForEntity(ANALOG_SET_VALUE_COMPONENT,   new_id, setVal);
+        setComponentDataForEntity(ANALOG_ACT_VALUE_COMPONENT,   new_id, 0);
+        setComponentDataForEntity(ID_COMPONENT,                 new_id, id);
+        setComponentDataForEntity(BOX_ID_COMPONENT,             new_id, box_id);
+        setComponentDataForEntity(SERIAL_VERSION_UID_COMPONENT, new_id, get_AnalogInputValue_uid());
+        setComponentDataForEntity(USER_DATA_COMPONENT, new_id, ANALOG_ACT_VALUE_COMPONENT);
+
+        if(entity <0)
+            emit newAnalogInputValue(new_id);
+        return new_id;
+
+    }
+
+    int entity_manager::createNewAnalogOutputValue(QString nameVal, QString unitsVal, double smin, double smax, double setVal, int id, int box_id, int entity)
+    {
+        int new_id = entity;
+        if(entity <0)
+            new_id = createNewEntity();
+
+        createComponentAndAddTo( NAME_COMPONENT, new_id );
+        createComponentAndAddTo( UNITS_COMPONENT, new_id );
+        createComponentAndAddTo( SET_MIN_COMPONENT, new_id );
+        createComponentAndAddTo( SET_MAX_COMPONENT, new_id );
+        //createComponentAndAddTo( ACT_MIN_COMPONENT, new_id );
+        //createComponentAndAddTo( ACT_MAX_COMPONENT, new_id );
+        createComponentAndAddTo( ANALOG_SET_VALUE_COMPONENT, new_id );
+        //createComponentAndAddTo( ANALOG_ACT_VALUE_COMPONENT, new_id );
+        createComponentAndAddTo( ID_COMPONENT, new_id );
+        createComponentAndAddTo( BOX_ID_COMPONENT, new_id );
+        createComponentAndAddTo(SERIAL_VERSION_UID_COMPONENT, new_id);
+        createComponentAndAddTo(USER_DATA_COMPONENT, new_id);
+
+        setComponentDataForEntity(NAME_COMPONENT,               new_id, nameVal);
+        setComponentDataForEntity(UNITS_COMPONENT,              new_id, unitsVal);
+        setComponentDataForEntity(SET_MIN_COMPONENT,            new_id, smin);
+        setComponentDataForEntity(SET_MAX_COMPONENT,            new_id, smax);
+        //setComponentDataForEntity(ACT_MIN_COMPONENT,            new_id, amin);
+        //setComponentDataForEntity(ACT_MAX_COMPONENT,            new_id, amax);
+        setComponentDataForEntity(ANALOG_SET_VALUE_COMPONENT,   new_id, setVal);
+        //setComponentDataForEntity(ANALOG_ACT_VALUE_COMPONENT,   new_id, setVal);
+        setComponentDataForEntity(ID_COMPONENT,                 new_id, id);
+        setComponentDataForEntity(BOX_ID_COMPONENT,             new_id, box_id);
+        setComponentDataForEntity(SERIAL_VERSION_UID_COMPONENT, new_id, get_AnalogOutputValue_uid());
+        setComponentDataForEntity(USER_DATA_COMPONENT, new_id, ANALOG_SET_VALUE_COMPONENT);
+
+        if(entity <0)
+            emit newAnalogOutputValue(new_id);
+        return new_id;
+    }
+
     int entity_manager::createNewAnalogValue(QString nameVal, QString unitsVal, double smin, double smax, double amin, double amax, double setVal, int id, int box_id)
     {
         //QUuid uid("{6ddc030e-2001-4a38-a8ce-57b309f902ff}");
         int new_id = createNewEntity();
-//USER_DATA_COMPONENT
+        //USER_DATA_COMPONENT
         createComponentAndAddTo( NAME_COMPONENT, new_id );
         createComponentAndAddTo( UNITS_COMPONENT, new_id );
         createComponentAndAddTo( SET_MIN_COMPONENT, new_id );
@@ -487,36 +572,45 @@ namespace talorion {
         return new_id;
     }
 
-//    int entity_manager::add_scriptable_component(int entity, abstract_scriptable_object *comp)
-//    {
-//        if(!comp)
-//            return -1;
+    QList<int> entity_manager::get_all_Values() const
+    {
+        QList<int> tmp= get_all_AnalogInputValues();
+        tmp += get_all_AnalogOutputValues();
+        tmp += get_all_AnalogValues();
 
-//        if(!entity_exists(entity))
-//            return -1;
+        return tmp;
+    }
 
-//        if(hasComponent(SCRIPTABLE_OBJECT_COMPONENT, entity))
-//            return -1;
+    //    int entity_manager::add_scriptable_component(int entity, abstract_scriptable_object *comp)
+    //    {
+    //        if(!comp)
+    //            return -1;
 
-//        createComponentAndAddTo( SCRIPTABLE_OBJECT_COMPONENT, entity );
-//        set_scriptable_object_component(entity, comp);
-//        emit register_scritable_component(entity);
-//        return 0;
-//    }
+    //        if(!entity_exists(entity))
+    //            return -1;
 
-//    int entity_manager::remove_scriptable_component(int entity)
-//    {
-//        if(!entity_exists(entity))
-//            return -1;
+    //        if(hasComponent(SCRIPTABLE_OBJECT_COMPONENT, entity))
+    //            return -1;
 
-//        if(!hasComponent(SCRIPTABLE_OBJECT_COMPONENT, entity))
-//            return -1;
+    //        createComponentAndAddTo( SCRIPTABLE_OBJECT_COMPONENT, entity );
+    //        set_scriptable_object_component(entity, comp);
+    //        emit register_scritable_component(entity);
+    //        return 0;
+    //    }
 
-//        removeComponentFrom(SCRIPTABLE_OBJECT_COMPONENT, entity);
-//        emit unregister_scritable_component(entity);
-//        return 0;
+    //    int entity_manager::remove_scriptable_component(int entity)
+    //    {
+    //        if(!entity_exists(entity))
+    //            return -1;
 
-//    }
+    //        if(!hasComponent(SCRIPTABLE_OBJECT_COMPONENT, entity))
+    //            return -1;
+
+    //        removeComponentFrom(SCRIPTABLE_OBJECT_COMPONENT, entity);
+    //        emit unregister_scritable_component(entity);
+    //        return 0;
+
+    //    }
 
 
     abstract_configuration_widget *entity_manager::get_systemConfigurationWidget_component(int entity_id) const

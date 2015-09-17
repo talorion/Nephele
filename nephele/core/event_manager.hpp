@@ -66,7 +66,11 @@ namespace talorion {
 
         void send_custom_command(const QString&);
         void receivedCustomData(const QString &);
+
+        void newAnalogInputValue(int);
+        void newAnalogOutputValue(int);
         void newAnalogValue(int);
+
         void newDigitalValue(int);
         void error(QString);
 

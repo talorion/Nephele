@@ -82,6 +82,8 @@ bool tcp_box_connection::readCommand()
         ret = parseSubCommand();
     }else if(buffer == "uibkav "){
         ret = parseSubCommand();
+    }else if(buffer == "uibk "){
+        ret = parseSubCommand();
         //    } else if (buffer == "mac"){
         //    } else if (buffer == "netmask"){
         //    } else if (buffer == "ip"){
@@ -125,6 +127,18 @@ bool tcp_box_connection::parseSubCommand()
     } else if (buffer == "uibkav setByModule "){
         parseArguments();
     } else if (buffer == "uibkav setById "){
+        parseArguments();
+    } else if(buffer == "uibk getAll\r\n"){
+        fc_sendAll();
+    } else if(buffer == "uibk getActSet\r\n"){
+        fc_sendActSet();
+    } else if(buffer == "uibk set "){
+        parseArguments();
+        //write("OK\r\n");
+        //    } else if (buffer == "uibkafc setById"){
+    } else if (buffer == "uibk setByModule "){
+        parseArguments();
+    } else if (buffer == "uibk setById "){
         parseArguments();
         //    } else if (buffer == "uibkafc saveChannelInfos"){
         //    } else if (buffer == "uibkafc setDefaultChannelInfos"){
