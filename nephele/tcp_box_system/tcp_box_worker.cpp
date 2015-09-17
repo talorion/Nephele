@@ -6,6 +6,7 @@
 #include "tcpdriver.hpp"
 #include "qvmbackend.hpp"
 #include "flowcontrollerbackend.h"
+#include "rf_backend.hpp"
 
 namespace talorion {
 
@@ -46,10 +47,18 @@ namespace talorion {
 
         QMap<int, tcpDriver*>::iterator it = boxes.find(entity);
         if(it == boxes.end()){
-            if(mode == 0)
-                connect_to_fc_box(entity);
-            else
-                connect_to_av_box(entity);
+
+            switch(mode){
+
+            case 0:{connect_to_fc_box(entity);break;}
+            case 1:{connect_to_av_box(entity);break;}
+            case 2:{connect_to_rf_box(entity);break;}
+            }
+
+            //            if(mode == 0)
+            //                connect_to_fc_box(entity);
+            //            else
+            //                connect_to_av_box(entity);
         }
         //        else{
         //            tcpDriver* dev1 = it.value();
@@ -113,6 +122,27 @@ namespace talorion {
 
         tcpDriver* dev1;
         dev1 = new tcpDriver(box_id, "uibkav getAll","uibkav getAll", back); // for AFC Board
+        bool co = dev1->connectDevice(ip, port);
+
+        entity_manager::get_instance()->slot_connection_state_component(box_id, co);
+
+        if(co)
+            boxes.insert(box_id,dev1);
+        else
+            delete dev1;
+    }
+
+    void tcp_box_worker::connect_to_rf_box(int box_id)
+    {
+        rf_backend* back = new rf_backend();
+        qDebug()<<"creating rf box";
+
+        //int box_id = entity_manager::get_instance()->createNewTcpBox("new TCP Box", ip, port);
+        QString ip = entity_manager::get_instance()->get_ip_address_component(box_id);
+        quint16 port = entity_manager::get_instance()->get_port_component(box_id);
+
+        tcpDriver* dev1;
+        dev1 = new tcpDriver(box_id, "uibk getAll","uibk getAll", back); // for AFC Board
         bool co = dev1->connectDevice(ip, port);
 
         entity_manager::get_instance()->slot_connection_state_component(box_id, co);

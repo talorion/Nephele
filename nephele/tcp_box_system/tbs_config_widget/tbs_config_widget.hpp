@@ -53,7 +53,8 @@ namespace talorion {
         QGridLayout* editLayout;
         QLineEdit* box_name_field;
         QLineEdit* ip_address_field;
-        QLineEdit* backend_field;
+        //QLineEdit* backend_field;
+        QSpinBox* backend_field;
         QSpinBox* portField;
 
         QPushButton* add_button;

@@ -112,7 +112,9 @@ SOURCES += main.cpp\
     script_system/script_config_widget/script_config_widget.cpp \
     gui_system/settings_dialog/empty_config_widget.cpp \
     gui_system/script_editor/treemodelcompleter.cpp \
-    gui_system/script_editor/textedit.cpp
+    gui_system/script_editor/textedit.cpp \
+    tcp_box_system/rf_backend.cpp \
+    gui_system/config_file/config_file.cpp
 
 HEADERS  += version.hpp \
     nephele.rc \
@@ -161,7 +163,9 @@ HEADERS  += version.hpp \
     script_system/script_config_widget/script_config_widget.hpp \
     gui_system/settings_dialog/empty_config_widget.hpp \
     gui_system/script_editor/treemodelcompleter.h \
-    gui_system/script_editor/textedit.h
+    gui_system/script_editor/textedit.h \
+    tcp_box_system/rf_backend.hpp \
+    gui_system/config_file/config_file.hpp
 
 
 win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../qcustomplot/release/ -lqcustomplot
