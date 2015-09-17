@@ -46,6 +46,8 @@ namespace talorion {
             editSet->setValue(entity_manager::get_instance()->get_analogSetValue_component(entity));
 
             m_layout->addWidget(editSet,0,1,1,1);
+
+            connect(editSet, SIGNAL(valueChanged(double)), this, SLOT(slot_set_value_changed(double)));
         }
 
         if(md & Input){
@@ -92,8 +94,6 @@ namespace talorion {
         connect(graphTimer, SIGNAL(timeout()), this, SLOT(newValueTimeout()));
         graphTimer->start();
 
-        connect(editSet, SIGNAL(valueChanged(double)), this, SLOT(slot_set_value_changed(double)));
-
     }
 
     flowControllerView::~flowControllerView()
@@ -101,7 +101,7 @@ namespace talorion {
         if(editSet)
             delete editSet;
         if(editAct)
-        delete editAct;
+            delete editAct;
 
         delete lblName;
         delete plot;
@@ -143,11 +143,8 @@ namespace talorion {
 
     void flowControllerView::slot_set_value_changed(double val)
     {
-        //entity_manager::get_instance()->set_setValue_component(entity, val);
-        //qDebug()<<"flowControllerView::slot_set_value_changed"<<val;
-        //bool oldState = editSet->blockSignals(true);
+
         emit change_set_value(m_entity, val);
-        //editSet->blockSignals(oldState);
     }
 
     //#define graph_persistance_time 60
