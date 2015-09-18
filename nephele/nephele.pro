@@ -187,6 +187,12 @@ unix: DEPENDPATH += $$PWD/../../../libs/TofDaq_1.97_API/include
 win32-g++: INCLUDEPATH += $$PWD/../../../../../../Tofwerk/TofDaq_1.97_API/include
 win32-g++: DEPENDPATH += $$PWD/../../../../../../Tofwerk/TofDaq_1.97_API/include
 
+win32-g++: INCLUDEPATH += $$PWD/../../../../Apis/TofDaq_1.95_API/include
+win32-g++: DEPENDPATH += $$PWD/../../../../Apis/TofDaq_1.95_API/include
+
+unix: INCLUDEPATH += $$PWD/../../../../Apis/TofDaq_1.95_API/include
+unix: DEPENDPATH += $$PWD/../../../../Apis/TofDaq_1.95_API/include
+
 DISTFILES += \
     nephele.ico \
     build_number.txt
