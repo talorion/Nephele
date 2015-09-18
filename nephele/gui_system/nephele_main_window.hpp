@@ -13,6 +13,7 @@
 namespace talorion {
 
     class flowControllerView;
+    class digital_view;
     class script_editor_window;
     class settings_dialog;
     class config_file;
@@ -57,6 +58,7 @@ namespace talorion {
         script_editor_window* script_wnd;
         settings_dialog* sett_dlg;
         QMap<int, flowControllerView* > fc_views;
+        QMap<int, digital_view* > dig_views;
 
         QMenu *fileMenu;
         QMenu *scriptMenu;
@@ -87,6 +89,9 @@ namespace talorion {
         void addAIV(int entity);
         void addAOV(int entity);
         void addAV(int entity);
+        void addDIV(int entity);
+        void addDOV(int entity);
+        void addDIOV(int entity);
         void slot_act_value_changed(int entity);
         void slot_set_value_changed(int entity);
 

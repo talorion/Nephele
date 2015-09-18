@@ -114,7 +114,10 @@ SOURCES += main.cpp\
     gui_system/script_editor/treemodelcompleter.cpp \
     gui_system/script_editor/textedit.cpp \
     tcp_box_system/rf_backend.cpp \
-    gui_system/config_file/config_file.cpp
+    gui_system/config_file/config_file.cpp \
+    gui_system/digital_view/digital_indicator.cpp \
+    gui_system/digital_view/digital_view.cpp \
+    gui_system/digital_view/switch_button.cpp
 
 HEADERS  += version.hpp \
     nephele.rc \
@@ -165,7 +168,10 @@ HEADERS  += version.hpp \
     gui_system/script_editor/treemodelcompleter.h \
     gui_system/script_editor/textedit.h \
     tcp_box_system/rf_backend.hpp \
-    gui_system/config_file/config_file.hpp
+    gui_system/config_file/config_file.hpp \
+    gui_system/digital_view/digital_indicator.hpp \
+    gui_system/digital_view/digital_view.hpp \
+    gui_system/digital_view/switch_button.hpp
 
 
 win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../qcustomplot/release/ -lqcustomplot

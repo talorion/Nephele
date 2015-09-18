@@ -6,6 +6,7 @@ DISTFILES += \
     doc/ToDo.txt \
     doc/git.txt \
     doc/testscript.js \
+    doc/jsonResponseDiscretValue-Box.json \
     misc/build_number_generator.sh \
     misc/build_number_generator.bat
 

@@ -61,6 +61,8 @@ namespace talorion {
         connect(this,SIGNAL(newAnalogInputValue(int)),event_manager::get_instance(),SIGNAL(newAnalogInputValue(int)));
         connect(this,SIGNAL(newAnalogOutputValue(int)),event_manager::get_instance(),SIGNAL(newAnalogOutputValue(int)));
         connect(this,SIGNAL(newAnalogValue(int)),event_manager::get_instance(),SIGNAL(newAnalogValue(int)));
+        connect(this,SIGNAL(newDigitalInputValue(int)),event_manager::get_instance(),SIGNAL(newDigitalInputValue(int)));
+        connect(this,SIGNAL(newDigitalOutputValue(int)),event_manager::get_instance(),SIGNAL(newDigitalOutputValue(int)));
         connect(this,SIGNAL(newDigitalValue(int)),event_manager::get_instance(),SIGNAL(newDigitalValue(int)));
         connect(this, SIGNAL(newTcpBox(int)),event_manager::get_instance(),SIGNAL(newTcpBox(int)));
         connect(this, SIGNAL(newQtScriptEngine(int)),event_manager::get_instance(),SIGNAL(newQtScriptEngine(int)));
@@ -142,13 +144,17 @@ namespace talorion {
             delete_entity(id);
         }
 
-//        foreach (int id, get_all_AnalogInputValues()) {
-//            delete_entity(id);
-//        }
+        foreach (int id, get_all_DValues()) {
+            delete_entity(id);
+        }
 
-//        foreach (int id, get_all_AnalogOutputValues()) {
-//            delete_entity(id);
-//        }
+        //        foreach (int id, get_all_AnalogInputValues()) {
+        //            delete_entity(id);
+        //        }
+
+        //        foreach (int id, get_all_AnalogOutputValues()) {
+        //            delete_entity(id);
+        //        }
 
         foreach (int id, get_all_Systems()) {
             delete_entity(id);
@@ -450,6 +456,89 @@ namespace talorion {
         return new_id;
     }
 
+    int entity_manager::createNewDigitalInputValue(QString nameVal, QString unitsVal, int id, int box_id, int entity)
+    {
+        int new_id = entity;
+        if(entity <0)
+            new_id = createNewEntity();
+
+        createComponentAndAddTo( NAME_COMPONENT, new_id );
+        createComponentAndAddTo( UNITS_COMPONENT, new_id );
+        //createComponentAndAddTo( DIGITAL_SET_VALUE_COMPONENT, new_id );
+        createComponentAndAddTo( DIGITAL_ACT_VALUE_COMPONENT, new_id );
+        createComponentAndAddTo( ID_COMPONENT, new_id );
+        createComponentAndAddTo( BOX_ID_COMPONENT, new_id );
+        createComponentAndAddTo(SERIAL_VERSION_UID_COMPONENT, new_id);
+        createComponentAndAddTo(USER_DATA_COMPONENT, new_id);
+
+        setComponentDataForEntity(NAME_COMPONENT,               new_id, nameVal);
+        setComponentDataForEntity(UNITS_COMPONENT,              new_id, unitsVal);
+        //setComponentDataForEntity(DIGITAL_SET_VALUE_COMPONENT,   new_id, setVal);
+        setComponentDataForEntity(DIGITAL_ACT_VALUE_COMPONENT,   new_id, 0);
+        setComponentDataForEntity(ID_COMPONENT,                 new_id, id);
+        setComponentDataForEntity(BOX_ID_COMPONENT,             new_id, box_id);
+        setComponentDataForEntity(SERIAL_VERSION_UID_COMPONENT, new_id, get_DigitalInputValue_uid());
+        setComponentDataForEntity(USER_DATA_COMPONENT, new_id, DIGITAL_ACT_VALUE_COMPONENT);
+
+        if(entity <0)
+            emit newDigitalInputValue(new_id);
+        return new_id;
+    }
+
+    int entity_manager::createNewDigitalOutputValue(QString nameVal, QString unitsVal, bool setVal, int id, int box_id, int entity)
+    {
+        int new_id = entity;
+        if(entity <0)
+            new_id = createNewEntity();
+
+        createComponentAndAddTo( NAME_COMPONENT, new_id );
+        createComponentAndAddTo( UNITS_COMPONENT, new_id );
+        createComponentAndAddTo( DIGITAL_SET_VALUE_COMPONENT, new_id );
+        //createComponentAndAddTo( DIGITAL_ACT_VALUE_COMPONENT, new_id );
+        createComponentAndAddTo( ID_COMPONENT, new_id );
+        createComponentAndAddTo( BOX_ID_COMPONENT, new_id );
+        createComponentAndAddTo(SERIAL_VERSION_UID_COMPONENT, new_id);
+        createComponentAndAddTo(USER_DATA_COMPONENT, new_id);
+
+        setComponentDataForEntity(NAME_COMPONENT,               new_id, nameVal);
+        setComponentDataForEntity(UNITS_COMPONENT,              new_id, unitsVal);
+        setComponentDataForEntity(DIGITAL_SET_VALUE_COMPONENT,   new_id, setVal);
+        //setComponentDataForEntity(DIGITAL_ACT_VALUE_COMPONENT,   new_id, setVal);
+        setComponentDataForEntity(ID_COMPONENT,                 new_id, id);
+        setComponentDataForEntity(BOX_ID_COMPONENT,             new_id, box_id);
+        setComponentDataForEntity(SERIAL_VERSION_UID_COMPONENT, new_id, get_DigitalOutputValue_uid());
+        setComponentDataForEntity(USER_DATA_COMPONENT, new_id, DIGITAL_ACT_VALUE_COMPONENT);
+
+        if(entity <0)
+            emit newDigitalOutputValue(new_id);
+        return new_id;
+    }
+
+    int entity_manager::createNewDigitalValue(QString nameVal, QString unitsVal, bool setVal, int id, int box_id)
+    {
+        int new_id = createNewEntity();
+        createComponentAndAddTo( NAME_COMPONENT, new_id );
+        createComponentAndAddTo( UNITS_COMPONENT, new_id );
+        createComponentAndAddTo( DIGITAL_SET_VALUE_COMPONENT, new_id );
+        createComponentAndAddTo( DIGITAL_ACT_VALUE_COMPONENT, new_id );
+        createComponentAndAddTo( ID_COMPONENT, new_id );
+        createComponentAndAddTo( BOX_ID_COMPONENT, new_id );
+        createComponentAndAddTo(SERIAL_VERSION_UID_COMPONENT, new_id);
+        createComponentAndAddTo(USER_DATA_COMPONENT, new_id);
+
+        setComponentDataForEntity(NAME_COMPONENT,               new_id, nameVal);
+        setComponentDataForEntity(UNITS_COMPONENT,              new_id, unitsVal);
+        setComponentDataForEntity(DIGITAL_SET_VALUE_COMPONENT,   new_id, setVal);
+        setComponentDataForEntity(DIGITAL_ACT_VALUE_COMPONENT,   new_id, setVal);
+        setComponentDataForEntity(ID_COMPONENT,                 new_id, id);
+        setComponentDataForEntity(BOX_ID_COMPONENT,             new_id, box_id);
+        setComponentDataForEntity(SERIAL_VERSION_UID_COMPONENT, new_id, get_DigitalValue_uid());
+        setComponentDataForEntity(USER_DATA_COMPONENT, new_id, DIGITAL_ACT_VALUE_COMPONENT);
+
+        emit newDigitalValue(new_id);
+        return new_id;
+    }
+
     int entity_manager::createNewVersionInformation()
     {
         int new_id = createNewEntity();
@@ -577,6 +666,15 @@ namespace talorion {
         QList<int> tmp= get_all_AnalogInputValues();
         tmp += get_all_AnalogOutputValues();
         tmp += get_all_AnalogValues();
+
+        return tmp;
+    }
+
+    QList<int> entity_manager::get_all_DValues() const
+    {
+        QList<int> tmp= get_all_DigitalInputValues();
+        tmp += get_all_DigitalOutputValues();
+        tmp += get_all_DigitalValues();
 
         return tmp;
     }

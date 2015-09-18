@@ -10,8 +10,10 @@ namespace talorion {
     rf_backend::rf_backend(QObject *par) :
         abstract_backend(par),
         registered_values(),
-        actbuffer(),
-        setbuffer(),
+        analog_actbuffer(),
+        analog_setbuffer(),
+        digital_actbuffer(),
+        digital_setbuffer(),
         block_next_read(false)
     {
 
@@ -33,8 +35,8 @@ namespace talorion {
         {
         case tcpDriverDataTypes::ALLDATA:{
             registered_values.clear();
-            actbuffer.clear();
-            setbuffer.clear();
+            analog_actbuffer.clear();
+            analog_setbuffer.clear();
             QVariantMap::const_iterator cit;
             for(cit = desc.constBegin(); cit != desc.constEnd(); cit++){
                 QVariant tmp =cit.value();
@@ -45,7 +47,7 @@ namespace talorion {
                     if(QString::compare( cit.key(), "AIO") == 0){parse_alldata_AIO(lst, box_id);}
                     if(QString::compare( cit.key(), "FC") == 0){parse_alldata_AIO(lst, box_id);}
                     if(QString::compare( cit.key(), "AV") == 0){parse_alldata_AIO(lst, box_id);}
-                    //                    if(QString::compare( cit.key(), "DO") == 0){parse_alldata_DO(lst, box_id);}
+                    if(QString::compare( cit.key(), "DO") == 0){parse_alldata_DO(lst, box_id);}
                     //                    if(QString::compare( cit.key(), "DI") == 0){parse_alldata_DI(lst, box_id);}
                     //                    if(QString::compare( cit.key(), "DIO") == 0){parse_alldata_DIO(lst, box_id);}
                     //                    if(QString::compare( cit.key(), "uibk_v") == 0){}
@@ -69,7 +71,7 @@ namespace talorion {
                     if(QString::compare( cit.key(), "AIO") == 0){parse_actset_AIO(lst);}
                     if(QString::compare( cit.key(), "FC") == 0){parse_actset_AIO(lst);}
                     if(QString::compare( cit.key(), "AV") == 0){parse_actset_AIO(lst);}
-                    //                    if(QString::compare( cit.key(), "DO") == 0){parse_alldata_DO(lst, box_id);}
+                    if(QString::compare( cit.key(), "DO") == 0){parse_actset_DO(lst);}
                     //                    if(QString::compare( cit.key(), "DI") == 0){parse_alldata_DI(lst, box_id);}
                     //                    if(QString::compare( cit.key(), "DIO") == 0){parse_alldata_DIO(lst, box_id);}
                     //                    if(QString::compare( cit.key(), "uibk_v") == 0){}
@@ -92,7 +94,7 @@ namespace talorion {
         if(id >= 0 && registered_values.contains(id)){
             if(registered_values[id]!=entity)
                 return;
-            setbuffer[id] =value;
+            analog_setbuffer[id] =value;
             block_next_read = true;
             fcSetChangeProxy(value, id);
         }
@@ -108,6 +110,29 @@ namespace talorion {
         command.append(QByteArray::number(value));
         emit fcSetChangeCommand(command);
         //setbuffer[id] =value;
+    }
+
+    void rf_backend::dvSetChangeProxy(int entity)
+    {
+
+        bool valueb =entity_manager::get_instance()->get_digitalSetValue_component(entity);
+        int id = entity_manager::get_instance()->get_id_component(entity);
+        if(id >= 0 && registered_values.contains(id)){
+            if(registered_values[id]!=entity)
+                return;
+
+            int valuei = (valueb ? 1 : 0);
+            digital_setbuffer[id] =valuei;
+            block_next_read = true;
+            fcSetChangeProxy(valuei, id);
+
+        }
+    }
+
+    void rf_backend::dvSetChangeProxy(int value, int id)
+    {
+        Q_UNUSED(value);
+        Q_UNUSED(id);
     }
 
     void rf_backend::parse_alldata_AO(QVariantList &desc, int box_id)
@@ -131,7 +156,7 @@ namespace talorion {
                 int tmp_id = tmp.find("id").value().toInt();
                 double tmp_set = tmp.find("set").value().toDouble();
                 registered_values.insert(tmp_id, fc);
-                setbuffer.insert(tmp_id, tmp_set);
+                analog_setbuffer.insert(tmp_id, tmp_set);
                 //actbuffer.append(0);
             }
         }
@@ -158,7 +183,7 @@ namespace talorion {
                 registered_values.insert(tmp_id, fc);
                 //double tmp_set = tmp.find("set").value().toDouble();
                 //setbuffer.insert(tmp_id, tmp_set);
-                actbuffer.insert(tmp_id,0);
+                analog_actbuffer.insert(tmp_id,0);
             }
 
         }
@@ -186,12 +211,35 @@ namespace talorion {
                 int tmp_id = tmp.find("id").value().toInt();
                 double tmp_set = tmp.find("set").value().toDouble();
                 registered_values.insert(tmp_id, fc);
-                setbuffer.insert(tmp_id, tmp_set);
-                actbuffer.insert(tmp_id,0);
+                analog_setbuffer.insert(tmp_id, tmp_set);
+                analog_actbuffer.insert(tmp_id,0);
             }
 
         }
     }
+
+    void rf_backend::parse_alldata_DO(QVariantList &desc, int box_id)
+    {
+        foreach (QVariant var, desc) {
+            if(!var.canConvert(QMetaType::QVariantMap))
+                continue;
+            QVariantMap tmp = var.toMap();
+            if (tmp.contains("name") && tmp.contains("units") && tmp.contains("set") && tmp.contains("id"))
+            {
+                int fc = entity_manager::get_instance()->createNewDigitalOutputValue(tmp.find("name").value().toString(),
+                                                                                     tmp.find("units").value().toString(),
+                                                                                     tmp.find("set").value().toDouble(),
+                                                                                     tmp.find("id").value().toInt(),
+                                                                                     box_id
+                                                                                     );
+                int tmp_id = tmp.find("id").value().toInt();
+                int tmp_set = tmp.find("set").value().toInt();
+                registered_values.insert(tmp_id, fc);
+                digital_setbuffer.insert(tmp_id, tmp_set);
+            }
+        }
+    }
+
 
     void rf_backend::parse_actset_AO(QVariantList &desc)
     {
@@ -206,8 +254,8 @@ namespace talorion {
 
             if (tmp.contains("set")){
                 double val = tmp.find("set").value().toDouble();
-                if(setbuffer[tmp_id] != val){
-                    setbuffer[tmp_id] =val;
+                if(analog_setbuffer[tmp_id] != val){
+                    analog_setbuffer[tmp_id] =val;
                     emit change_set_value(entity,val);
                 }
             }
@@ -227,8 +275,8 @@ namespace talorion {
 
             if (tmp.contains("act")){
                 double val = tmp.find("act").value().toDouble();
-                if(actbuffer[tmp_id] != val){
-                    actbuffer[tmp_id] =val;
+                if(analog_actbuffer[tmp_id] != val){
+                    analog_actbuffer[tmp_id] =val;
                     emit change_act_value(entity,val);
                 }
             }
@@ -239,31 +287,28 @@ namespace talorion {
     {
         parse_actset_AO(desc);
         parse_actset_AI(desc);
-//        foreach (QVariant var, desc) {
-//            if(!var.canConvert(QMetaType::QVariantMap))
-//                continue;
 
-//            QVariantMap tmp = var.toMap();
+    }
 
-//            int tmp_id = tmp.find("id").value().toInt();
-//            int entity= registered_values[tmp_id];
+    void rf_backend::parse_actset_DO(QVariantList &desc)
+    {
+        foreach (QVariant var, desc) {
+            if(!var.canConvert(QMetaType::QVariantMap))
+                continue;
 
-//            if (tmp.contains("set")){
-//                double val = tmp.find("set").value().toDouble();
-//                if(setbuffer[tmp_id] != val){
-//                    setbuffer[tmp_id] =val;
-//                    emit change_set_value(entity,val);
-//                }
-//            }
+            QVariantMap tmp = var.toMap();
 
-//            if (tmp.contains("act")){
-//                double val = tmp.find("act").value().toDouble();
-//                if(actbuffer[tmp_id] != val){
-//                    actbuffer[tmp_id] =val;
-//                    emit change_act_value(entity,val);
-//                }
-//            }
-//        }
+            int tmp_id = tmp.find("id").value().toInt();
+            int entity = registered_values[tmp_id];
+
+            if (tmp.contains("set")){
+                int val = tmp.find("set").value().toInt();
+                if(digital_setbuffer[tmp_id] != val){
+                    digital_setbuffer[tmp_id] =val;
+                    emit change_digital_set_value(entity,val);
+                }
+            }
+        }
     }
 } // namespace talorion
 

@@ -1,0 +1,10 @@
+{
+    "uibk_v":1,
+
+    "ENMS":[
+        {"id":0,"set":5,"act":5,"name":"Uql","elms":["ELEM1","ELEM2","ELEM3"]},
+        {"id":1,"set":5,"act":5,"name":"Uql","elms":["ELEM1","ELEM2","ELEM3"]},
+        {"id":2,"set":5,"act":5,"name":"Uql","elms":["ELEM1","ELEM2","ELEM3"]},
+        {"id":3,"set":5,"act":5,"name":"Uql","elms":["ELEM1","ELEM2","ELEM3"]}
+    ]
+}

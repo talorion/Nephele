@@ -71,6 +71,8 @@ namespace talorion {
         void newAnalogOutputValue(int);
         void newAnalogValue(int);
 
+        void newDigitalInputValue(int);
+        void newDigitalOutputValue(int);
         void newDigitalValue(int);
         void error(QString);
 
