@@ -55,6 +55,7 @@ namespace talorion {
         QLabel* lblName;
         int graph_persistance_time;
         QCPGraph* grap;
+        QPalette pal;
 
     protected:
         void enterEvent(QEvent* e);

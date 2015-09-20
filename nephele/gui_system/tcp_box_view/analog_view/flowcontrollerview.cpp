@@ -7,13 +7,16 @@
 #include <QDateTime>
 #include <QTimer>
 #include <QDebug>
-
+#include <QtMath>
 
 
 #include "math.h"
 #include "core/entity_manager.hpp"
 #include "core/event_manager.hpp"
 
+#define bgstyle_ok "QDoubleSpinBox { background-color :  lightGray;}"
+#define bgstyle_warn "QDoubleSpinBox { background-color :  lightYellow;}"
+#define bgstyle_error "QDoubleSpinBox { background-color :  Tomato;}"
 
 namespace talorion {
 
@@ -61,7 +64,7 @@ namespace talorion {
             editAct->setRange(entity_manager::get_instance()->get_actMin_component(entity), entity_manager::get_instance()->get_actMax_component(entity));
             editAct->setButtonSymbols(QDoubleSpinBox::NoButtons);
             editAct->setMinimumWidth(100);
-            editAct->setStyleSheet("QDoubleSpinBox { background-color :  lightGray;}");
+            editAct->setStyleSheet(bgstyle_ok);
 
             m_layout->addWidget(editAct,0,2,1,1);
 
@@ -126,6 +129,18 @@ namespace talorion {
         editAct->setValue(actValue);
         updatePlot(actValue);
         graphTimer->start(); // avoid timeout since we got a new signal
+        if (editSet && editAct && qFabs(actValue - editSet->value()) > qFabs(editSet->value()/5.0)+qFabs(editSet->maximum()/100.0))
+        {
+            editAct->setStyleSheet(bgstyle_error);
+            return;
+        }
+        if (editSet && editAct && qFabs(actValue - editSet->value()) > qFabs(editSet->value()/10.0)+qFabs(editSet->maximum()/100.0))
+        {
+            editAct->setStyleSheet(bgstyle_warn);
+            return;
+        }
+        editAct->setStyleSheet(bgstyle_ok);
+
     }
 
     void flowControllerView::changeSetValue(int entity)
