@@ -32,6 +32,7 @@ namespace talorion {
     private slots:
         void slot_newTcpBox(int entity);
         void slot_add_button_clicked(bool);
+        void slot_remove_button_clicked(bool);
         void slot_itemClicked(QListWidgetItem * item);
         void slot_connection_state_changed(int entity);
         void slot_name_component_changed(int entity);

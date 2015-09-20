@@ -82,6 +82,7 @@ namespace talorion {
         setLayout(mainLayout);
 
         connect(add_button,SIGNAL(clicked(bool)),this,SLOT(slot_add_button_clicked(bool)));
+        connect(remove_button,SIGNAL(clicked(bool)),this,SLOT(slot_remove_button_clicked(bool)));
         connect(boxes_list,SIGNAL(itemClicked(QListWidgetItem*)),this,SLOT(slot_itemClicked(QListWidgetItem*)));
 
         connect(connect_button,SIGNAL(clicked(bool)),this,SLOT(slot_connect_button_clicked(bool)));
@@ -141,6 +142,11 @@ namespace talorion {
     void tbs_config_widget::slot_add_button_clicked(bool)
     {
         entity_manager::get_instance()->createNewTcpBox();
+    }
+
+    void tbs_config_widget::slot_remove_button_clicked(bool)
+    {
+
     }
 
     void tbs_config_widget::slot_itemClicked(QListWidgetItem *item)
