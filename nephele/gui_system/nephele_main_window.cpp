@@ -11,8 +11,9 @@
 #include "core/event_manager.hpp"
 #include "core/entity_manager.hpp"
 
-#include "flowcontrollerview.hpp"
-#include "digital_view/digital_view.hpp"
+#include "tcp_box_view/tcp_box_view.hpp"
+#include "tcp_box_view/analog_view/flowcontrollerview.hpp"
+#include "tcp_box_view/digital_view/digital_view.hpp"
 #include "script_editor/script_editor_window.hpp"
 #include "settings_dialog/settings_dialog.hpp"
 
@@ -26,15 +27,17 @@ namespace talorion {
         QMainWindow(par),
         curFile(""),
         modified(false),
-        mainLayout(NULL),
+        //mainLayout(NULL),
         script_wnd(NULL),
         sett_dlg(NULL),
         fc_views (),
         dig_views(),
+        boxes(),
         fileMenu(NULL),
         scriptMenu(NULL),
         toolsMenu(NULL),
         helpMenu (NULL),
+        viewMenu(NULL),
         fileToolBar(NULL),
         scriptToolBar (NULL),
         scriptEditAct (NULL),
@@ -49,18 +52,20 @@ namespace talorion {
         cfg_hdl(NULL)
     {
 
-        connect(event_manager::get_instance(),SIGNAL(newAnalogInputValue(int)),this, SLOT(addAIV(int)));
-        connect(event_manager::get_instance(),SIGNAL(newAnalogOutputValue(int)),this, SLOT(addAOV(int)));
-        connect(event_manager::get_instance(),SIGNAL(newAnalogValue(int)),this, SLOT(addAV(int)));
+//        connect(event_manager::get_instance(),SIGNAL(newAnalogInputValue(int)),this, SLOT(addAIV(int)));
+//        connect(event_manager::get_instance(),SIGNAL(newAnalogOutputValue(int)),this, SLOT(addAOV(int)));
+//        connect(event_manager::get_instance(),SIGNAL(newAnalogValue(int)),this, SLOT(addAV(int)));
 
-        connect(event_manager::get_instance(),SIGNAL(newDigitalInputValue(int)),this, SLOT(addDIV(int)));
-        connect(event_manager::get_instance(),SIGNAL(newDigitalOutputValue(int)),this, SLOT(addDOV(int)));
-        connect(event_manager::get_instance(),SIGNAL(newDigitalValue(int)),this, SLOT(addDIOV(int)));
+//        connect(event_manager::get_instance(),SIGNAL(newDigitalInputValue(int)),this, SLOT(addDIV(int)));
+//        connect(event_manager::get_instance(),SIGNAL(newDigitalOutputValue(int)),this, SLOT(addDOV(int)));
+//        connect(event_manager::get_instance(),SIGNAL(newDigitalValue(int)),this, SLOT(addDIOV(int)));
+
+
 
         connect(this, SIGNAL(send_custom_command(QString)),event_manager::get_instance(),SIGNAL(send_custom_command(QString)));
         connect(event_manager::get_instance(),SIGNAL(receivedCustomData(QString)),this,SLOT(displayCustomResponse(QString)));
-        connect(event_manager::get_instance(),SIGNAL(analogAct_component_changed(int)),this,SLOT(slot_act_value_changed(int)));
-        connect(event_manager::get_instance(),SIGNAL(analogSet_component_changed(int)),this,SLOT(slot_set_value_changed(int)));
+        //connect(event_manager::get_instance(),SIGNAL(analogAct_component_changed(int)),this,SLOT(slot_act_value_changed(int)));
+        //connect(event_manager::get_instance(),SIGNAL(analogSet_component_changed(int)),this,SLOT(slot_set_value_changed(int)));
         connect(event_manager::get_instance(),SIGNAL(error(QString)),statusBar(),SLOT(showMessage(QString)));
 
         connect(this,SIGNAL(change_set_value(int,double)),event_manager::get_instance(),SIGNAL(change_analogSet_component(int,double)));
@@ -82,7 +87,8 @@ namespace talorion {
         //settingsButton = new QPushButton("settings");
         //connect(settingsButton,SIGNAL(clicked(bool)),sett_dlg,SLOT(open()));
 
-        mainLayout = new QGridLayout();
+        //mainLayout = new QGridLayout();
+
         //mainLayout->addWidget(scriptButton,0,0,1,1);
         //mainLayout->addWidget(settingsButton,0,1,1,1);
         //mainLayout->addWidget(lbl,1,0,1,1);
@@ -90,7 +96,7 @@ namespace talorion {
         //mainLayout->addWidget(response,2,0,1,2);
 
         central_wdgt = new QWidget();
-        central_wdgt->setLayout(mainLayout);
+        //central_wdgt->setLayout(mainLayout);
 
         setWindowTitle("Nephele");
         setCentralWidget(central_wdgt);
@@ -100,12 +106,18 @@ namespace talorion {
         createToolBars();
         createStatusBar();
 
+        foreach (int entity, entity_manager::get_instance()->get_all_tcpBoxes()) {
+            add_box(entity);
+        }
+
+        connect(event_manager::get_instance(),SIGNAL(newTcpBox(int)), this,SLOT(add_box(int)));
+
     }
 
     nephele_main_window::~nephele_main_window()
     {
         delete sett_dlg;
-        delete mainLayout;
+        //delete mainLayout;
         delete centralWidget();
         QMap<int, flowControllerView*>::iterator it;
         for (it=fc_views.begin(); it != fc_views.end(); it++){
@@ -142,83 +154,105 @@ namespace talorion {
         //        }
     }
 
-    void nephele_main_window::addAIV(int entity)
+    void nephele_main_window::add_box(int entity)
     {
-        QMap<int, flowControllerView*>::ConstIterator fcv = fc_views.constFind(entity);
-        if (fcv == fc_views.constEnd()){
-            flowControllerView* tmp = new flowControllerView(entity,flowControllerView::Input, this);
-            fc_views.insert(entity,tmp);
-            mainLayout->addWidget(tmp);
+        QMap<int, tcp_box_view* >::ConstIterator it = boxes.constFind(entity);
+        if(it == boxes.constEnd()){
+            tcp_box_view* tmp = new tcp_box_view(entity);
+
+            //mainLayout->addWidget(tmp);
+            //addDockWidget(Qt::RightDockWidgetArea, tmp);
+            //viewMenu->addAction(tmp->toggleViewAction());
+            QDockWidget *dock = new QDockWidget(tmp->windowTitle(),this);
+            dock->setWidget(tmp);
+            //dock->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
+            //if(boxes.isEmpty())
+                addDockWidget(Qt::TopDockWidgetArea, dock, Qt::Vertical);
+            //else
+                //addDockWidget(Qt::BottomDockWidgetArea, dock);
+            viewMenu->addAction(dock->toggleViewAction());
+
+            boxes.insert(entity, tmp);
         }
     }
 
-    void nephele_main_window::addAOV(int entity)
-    {
-        QMap<int, flowControllerView*>::ConstIterator fcv = fc_views.constFind(entity);
-        if (fcv == fc_views.constEnd()){
-            flowControllerView* tmp = new flowControllerView(entity,flowControllerView::Output, this);
-            fc_views.insert(entity,tmp);
-            mainLayout->addWidget(tmp);
-        }
-    }
+//    void nephele_main_window::addAIV(int entity)
+//    {
+//        QMap<int, flowControllerView*>::ConstIterator fcv = fc_views.constFind(entity);
+//        if (fcv == fc_views.constEnd()){
+//            flowControllerView* tmp = new flowControllerView(entity,flowControllerView::Input, this);
+//            fc_views.insert(entity,tmp);
+//            mainLayout->addWidget(tmp);
+//        }
+//    }
 
-    void nephele_main_window::addAV(int entity)
-    {
-        QMap<int, flowControllerView*>::ConstIterator fcv = fc_views.constFind(entity);
-        if (fcv == fc_views.constEnd()){
-            flowControllerView* tmp = new flowControllerView(entity,flowControllerView::InputOutput, this);
-            fc_views.insert(entity,tmp);
-            mainLayout->addWidget(tmp);
-        }
-    }
+//    void nephele_main_window::addAOV(int entity)
+//    {
+//        QMap<int, flowControllerView*>::ConstIterator fcv = fc_views.constFind(entity);
+//        if (fcv == fc_views.constEnd()){
+//            flowControllerView* tmp = new flowControllerView(entity,flowControllerView::Output, this);
+//            fc_views.insert(entity,tmp);
+//            mainLayout->addWidget(tmp);
+//        }
+//    }
 
-    void nephele_main_window::addDIV(int entity)
-    {
-        QMap<int, digital_view*>::ConstIterator fcv = dig_views.constFind(entity);
-        if (fcv == dig_views.constEnd()){
-            digital_view* tmp = new digital_view(entity, digital_view::Input,this);
-            dig_views.insert(entity,tmp);
-            mainLayout->addWidget(tmp);
-        }
-    }
+//    void nephele_main_window::addAV(int entity)
+//    {
+//        QMap<int, flowControllerView*>::ConstIterator fcv = fc_views.constFind(entity);
+//        if (fcv == fc_views.constEnd()){
+//            flowControllerView* tmp = new flowControllerView(entity,flowControllerView::InputOutput, this);
+//            fc_views.insert(entity,tmp);
+//            mainLayout->addWidget(tmp);
+//        }
+//    }
 
-    void nephele_main_window::addDOV(int entity)
-    {
-        QMap<int, digital_view*>::ConstIterator fcv = dig_views.constFind(entity);
-        if (fcv == dig_views.constEnd()){
-            digital_view* tmp = new digital_view(entity, digital_view::Output,this);
-            dig_views.insert(entity,tmp);
-            mainLayout->addWidget(tmp);
-        }
-    }
+//    void nephele_main_window::addDIV(int entity)
+//    {
+//        QMap<int, digital_view*>::ConstIterator fcv = dig_views.constFind(entity);
+//        if (fcv == dig_views.constEnd()){
+//            digital_view* tmp = new digital_view(entity, digital_view::Input,this);
+//            dig_views.insert(entity,tmp);
+//            mainLayout->addWidget(tmp);
+//        }
+//    }
 
-    void nephele_main_window::addDIOV(int entity)
-    {
-        QMap<int, digital_view*>::ConstIterator fcv = dig_views.constFind(entity);
-        if (fcv == dig_views.constEnd()){
-            digital_view* tmp = new digital_view(entity, digital_view::InputOutput,this);
-            dig_views.insert(entity,tmp);
-            mainLayout->addWidget(tmp);
-        }
-    }
+//    void nephele_main_window::addDOV(int entity)
+//    {
+//        QMap<int, digital_view*>::ConstIterator fcv = dig_views.constFind(entity);
+//        if (fcv == dig_views.constEnd()){
+//            digital_view* tmp = new digital_view(entity, digital_view::Output,this);
+//            dig_views.insert(entity,tmp);
+//            mainLayout->addWidget(tmp);
+//        }
+//    }
 
-    void nephele_main_window::slot_act_value_changed(int entity)
-    {
-        QMap<int, flowControllerView*>::ConstIterator fcv = fc_views.constFind(entity);
-        if (fcv != fc_views.constEnd()){
-            double tmp = entity_manager::get_instance()->get_analogActValue_component(entity);
-            fcv.value()->changeActValue(tmp);
-        }
-    }
+//    void nephele_main_window::addDIOV(int entity)
+//    {
+//        QMap<int, digital_view*>::ConstIterator fcv = dig_views.constFind(entity);
+//        if (fcv == dig_views.constEnd()){
+//            digital_view* tmp = new digital_view(entity, digital_view::InputOutput,this);
+//            dig_views.insert(entity,tmp);
+//            mainLayout->addWidget(tmp);
+//        }
+//    }
 
-    void nephele_main_window::slot_set_value_changed(int entity)
-    {
-        QMap<int, flowControllerView*>::ConstIterator fcv = fc_views.constFind(entity);
-        if (fcv != fc_views.constEnd()){
-            double tmp = entity_manager::get_instance()->get_analogSetValue_component(entity);
-            fcv.value()->changeSetValue(tmp);
-        }
-    }
+//    void nephele_main_window::slot_act_value_changed(int entity)
+//    {
+//        QMap<int, flowControllerView*>::ConstIterator fcv = fc_views.constFind(entity);
+//        if (fcv != fc_views.constEnd()){
+//            double tmp = entity_manager::get_instance()->get_analogActValue_component(entity);
+//            fcv.value()->changeActValue(tmp);
+//        }
+//    }
+
+//    void nephele_main_window::slot_set_value_changed(int entity)
+//    {
+//        QMap<int, flowControllerView*>::ConstIterator fcv = fc_views.constFind(entity);
+//        if (fcv != fc_views.constEnd()){
+//            double tmp = entity_manager::get_instance()->get_analogSetValue_component(entity);
+//            fcv.value()->changeSetValue(tmp);
+//        }
+//    }
 
     void nephele_main_window::open_script_window()
     {
@@ -535,6 +569,10 @@ namespace talorion {
 
         toolsMenu = menuBar()->addMenu(tr("&Tools"));
         toolsMenu->addAction(optionsEditAct);
+
+        viewMenu = menuBar()->addMenu(tr("&View"));
+
+        menuBar()->addSeparator();
 
         helpMenu = menuBar()->addMenu(tr("&Help"));
         helpMenu->addAction(aboutAct);

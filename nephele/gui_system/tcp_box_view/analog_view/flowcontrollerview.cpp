@@ -28,7 +28,7 @@ namespace talorion {
         grap(NULL)
     {
 
-        connect(this, SIGNAL(change_set_value(int,double)),event_manager::get_instance(),SIGNAL(change_analogSet_component(int,double)),Qt::UniqueConnection);
+        //connect(this, SIGNAL(change_set_value(int,double)),event_manager::get_instance(),SIGNAL(change_analogSet_component(int,double)),Qt::UniqueConnection);
         this->setMouseTracking(true);
 
         QGridLayout* m_layout = new QGridLayout;
@@ -45,9 +45,12 @@ namespace talorion {
 
             editSet->setValue(entity_manager::get_instance()->get_analogSetValue_component(entity));
 
+            //connect(editSet,SIGNAL(valueChanged(double)),this,SLOT(slot_set_value_changed(double)));
+
             m_layout->addWidget(editSet,0,1,1,1);
 
             connect(editSet, SIGNAL(valueChanged(double)), this, SLOT(slot_set_value_changed(double)));
+            connect(event_manager::get_instance(),SIGNAL(analogSet_component_changed(int)),this,SLOT(changeSetValue(int)));
         }
 
         if(md & Input){
@@ -61,6 +64,9 @@ namespace talorion {
             editAct->setStyleSheet("QDoubleSpinBox { background-color :  lightGray;}");
 
             m_layout->addWidget(editAct,0,2,1,1);
+
+            //connect(editSet,SIGNAL(valueChanged(double)),this,SLOT(slot_set_value_changed(double)));
+            connect(event_manager::get_instance(),SIGNAL(analogAct_component_changed(int)),this,SLOT(changeActValue(int)));
 
         }
 
@@ -94,6 +100,8 @@ namespace talorion {
         connect(graphTimer, SIGNAL(timeout()), this, SLOT(newValueTimeout()));
         graphTimer->start();
 
+
+
     }
 
     flowControllerView::~flowControllerView()
@@ -118,6 +126,30 @@ namespace talorion {
         editAct->setValue(actValue);
         updatePlot(actValue);
         graphTimer->start(); // avoid timeout since we got a new signal
+    }
+
+    void flowControllerView::changeSetValue(int entity)
+    {
+        if(m_entity<0)
+            return;
+
+        if(m_entity != entity)
+            return;
+
+        double setValue = entity_manager::get_instance()->get_analogSetValue_component(entity);
+        changeSetValue(setValue);
+    }
+
+    void flowControllerView::changeActValue(int entity)
+    {
+        if(m_entity<0)
+            return;
+
+        if(m_entity != entity)
+            return;
+
+        double actValue = entity_manager::get_instance()->get_analogActValue_component(entity);
+        changeActValue(actValue);
     }
 
     void flowControllerView::changeSetValue(double setValue)
@@ -146,6 +178,8 @@ namespace talorion {
 
         emit change_set_value(m_entity, val);
     }
+
+
 
     //#define graph_persistance_time 60
     void flowControllerView::updatePlot(double value)

@@ -14,6 +14,7 @@ namespace talorion {
 
     class flowControllerView;
     class digital_view;
+    class tcp_box_view;
     class script_editor_window;
     class settings_dialog;
     class config_file;
@@ -54,16 +55,18 @@ namespace talorion {
     private:
         QString curFile;
         bool modified;
-        QGridLayout* mainLayout;
+        //QGridLayout* mainLayout;
         script_editor_window* script_wnd;
         settings_dialog* sett_dlg;
         QMap<int, flowControllerView* > fc_views;
         QMap<int, digital_view* > dig_views;
+        QMap<int, tcp_box_view* > boxes;
 
         QMenu *fileMenu;
         QMenu *scriptMenu;
         QMenu *toolsMenu;
         QMenu *helpMenu;
+        QMenu *viewMenu;
 
         QToolBar *fileToolBar;
         QToolBar *scriptToolBar;
@@ -86,14 +89,15 @@ namespace talorion {
     private slots:
         void displayCustomResponse(const QString& cm);
         void dispatchCommand();
-        void addAIV(int entity);
-        void addAOV(int entity);
-        void addAV(int entity);
-        void addDIV(int entity);
-        void addDOV(int entity);
-        void addDIOV(int entity);
-        void slot_act_value_changed(int entity);
-        void slot_set_value_changed(int entity);
+        void add_box(int entity);
+//        void addAIV(int entity);
+//        void addAOV(int entity);
+//        void addAV(int entity);
+//        void addDIV(int entity);
+//        void addDOV(int entity);
+//        void addDIOV(int entity);
+        //void slot_act_value_changed(int entity);
+        //void slot_set_value_changed(int entity);
 
         void open_script_window();
 

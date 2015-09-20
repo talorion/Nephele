@@ -76,8 +76,6 @@ SOURCES += main.cpp\
     script_system/script_handler/script_dialoges_handler.cpp \
     script_system/script_handler/script_set_handler.cpp \
     script_system/script_handler/script_util_handler.cpp \
-    gui_system/analogview.cpp \
-    gui_system/flowcontrollerview.cpp \
     gui_system/nephele_main_window.cpp \
     tcp_box_system/qvmbackend.cpp \
     tcp_box_system/tcpdriver.cpp \
@@ -115,9 +113,12 @@ SOURCES += main.cpp\
     gui_system/script_editor/textedit.cpp \
     tcp_box_system/rf_backend.cpp \
     gui_system/config_file/config_file.cpp \
-    gui_system/digital_view/digital_indicator.cpp \
-    gui_system/digital_view/digital_view.cpp \
-    gui_system/digital_view/switch_button.cpp
+    gui_system/tcp_box_view/tcp_box_view.cpp \
+    gui_system/tcp_box_view/analog_view/analogview.cpp \
+    gui_system/tcp_box_view/analog_view/flowcontrollerview.cpp \
+    gui_system/tcp_box_view/digital_view/digital_indicator.cpp \
+    gui_system/tcp_box_view/digital_view/digital_view.cpp \
+    gui_system/tcp_box_view/digital_view/switch_button.cpp
 
 HEADERS  += version.hpp \
     nephele.rc \
@@ -126,8 +127,6 @@ HEADERS  += version.hpp \
     tcp_box_system/qvmbackend.hpp \
     tcp_box_system/tcpcommandqueue.hpp \
     tcp_box_system/tcpdriver.hpp \
-    gui_system/analogview.hpp \
-    gui_system/flowcontrollerview.hpp \
     gui_system/nephele_main_window.hpp \
     script_system/script_handler/script_act_handler.hpp \
     script_system/script_handler/script_dialoges_handler.hpp \
@@ -169,9 +168,12 @@ HEADERS  += version.hpp \
     gui_system/script_editor/textedit.h \
     tcp_box_system/rf_backend.hpp \
     gui_system/config_file/config_file.hpp \
-    gui_system/digital_view/digital_indicator.hpp \
-    gui_system/digital_view/digital_view.hpp \
-    gui_system/digital_view/switch_button.hpp
+    gui_system/tcp_box_view/tcp_box_view.hpp \
+    gui_system/tcp_box_view/analog_view/analogview.hpp \
+    gui_system/tcp_box_view/analog_view/flowcontrollerview.hpp \
+    gui_system/tcp_box_view/digital_view/digital_indicator.hpp \
+    gui_system/tcp_box_view/digital_view/digital_view.hpp \
+    gui_system/tcp_box_view/digital_view/switch_button.hpp
 
 
 win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../qcustomplot/release/ -lqcustomplot

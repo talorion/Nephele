@@ -33,6 +33,8 @@ namespace talorion{
 
     private slots:
         void changeSetValue(int entity) ;
+        void changeActValue(int entity);
+
         void slot_set_value_changed(bool val);
 
     private:

@@ -21,9 +21,13 @@ namespace talorion {
         ~analogView(void);
         Q_DISABLE_COPY(analogView)
 
+    signals:
+        void change_set_value(int m_entity, double value);
+
     public slots:
         virtual void changeActValue(double actValue) = 0;
         virtual void changeSetValue(double setValue) = 0;
+
     protected:
         //analogValue* data;
         const int m_entity;

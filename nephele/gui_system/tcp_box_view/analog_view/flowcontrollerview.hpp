@@ -31,7 +31,7 @@ namespace talorion {
 
     signals:
         void setValueChangedByGui(double setValue);
-        void change_set_value(int m_entity, double value);
+        //void change_set_value(int m_entity, double value);
 
     public slots:
         virtual void changeActValue(double actValue) Q_DECL_OVERRIDE;
@@ -40,6 +40,9 @@ namespace talorion {
     private slots:
         void newValueTimeout();
         void slot_set_value_changed(double val);
+
+        void changeSetValue(int entity);
+        void changeActValue(int entity);
 
     private:
         void updatePlot(double value);
