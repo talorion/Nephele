@@ -507,7 +507,7 @@ namespace talorion {
         setComponentDataForEntity(ID_COMPONENT,                 new_id, id);
         setComponentDataForEntity(BOX_ID_COMPONENT,             new_id, box_id);
         setComponentDataForEntity(SERIAL_VERSION_UID_COMPONENT, new_id, get_DigitalOutputValue_uid());
-        setComponentDataForEntity(USER_DATA_COMPONENT, new_id, DIGITAL_ACT_VALUE_COMPONENT);
+        setComponentDataForEntity(USER_DATA_COMPONENT, new_id, DIGITAL_SET_VALUE_COMPONENT);
 
         if(entity <0)
             emit newDigitalOutputValue(new_id);
@@ -558,6 +558,7 @@ namespace talorion {
         createComponentAndAddTo( ID_COMPONENT, new_id );
         createComponentAndAddTo( BOX_ID_COMPONENT, new_id );
         createComponentAndAddTo(SERIAL_VERSION_UID_COMPONENT, new_id);
+        createComponentAndAddTo(USER_DATA_COMPONENT, new_id);
 
 
         setComponentDataForEntity(NAME_COMPONENT,               new_id, nameVal);
@@ -566,6 +567,7 @@ namespace talorion {
         setComponentDataForEntity(ID_COMPONENT,                 new_id, id);
         setComponentDataForEntity(BOX_ID_COMPONENT,             new_id, box_id);
         setComponentDataForEntity(SERIAL_VERSION_UID_COMPONENT, new_id, get_DigitalValue_uid());
+        setComponentDataForEntity(USER_DATA_COMPONENT, new_id, DIGITAL_ACT_VALUE_COMPONENT);
 
         emit newDigitalValue(new_id);
         return new_id;

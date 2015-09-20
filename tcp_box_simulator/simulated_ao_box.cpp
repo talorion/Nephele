@@ -1,5 +1,7 @@
 #include "simulated_ao_box.hpp"
 
+#include <QStringList>
+
 simulated_ao_box::simulated_ao_box(QObject *par) :
     abstract_simulated_box(par),
     all_aos(),

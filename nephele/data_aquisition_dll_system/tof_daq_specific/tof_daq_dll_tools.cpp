@@ -15,6 +15,7 @@ namespace talorion {
         case 3:{description = "TwFileNotFound";break;}
         case 4:{description = "TwSuccess";break;}
         case 5:{description = "TwError";break;}
+        case 6:{description = "TwOutOfBounds";break;}
         case 7:{description = "TwNoData";break;}
         case 8:{description = "TwTimeout";break;}
         case 9:{description = "TwValueAdjusted";break;}
@@ -23,7 +24,6 @@ namespace talorion {
         case 12:{description = "TwAborted";break;}
         default:{description = "UNKNOWN ERROR ["+QString::number(error)+"]";break;}
         }
-
         return description;
     }
 

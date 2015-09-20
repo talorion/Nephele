@@ -241,8 +241,9 @@ namespace talorion{
     int  data_aquisition_dll_wrapper::register_user_data(const QStringList& value_names, const QString& path , int cmp_lvl) const
     {
         if(m_RegisterUserDat){
-            int NbrElements = value_names.size();
+            int NbrElements = value_names.length();
             QByteArray path_ba = path.toLocal8Bit();
+            path_ba.append('\0');
             QByteArray desc_ba;
             QByteArray desc_elem_ba;
             foreach (QString des_elem, value_names) {
@@ -253,6 +254,7 @@ namespace talorion{
             }
 
             int ret = twErrChk(m_RegisterUserDat(path_ba.data(), NbrElements, desc_ba.data(), cmp_lvl));
+            //int ret = twErrChk(m_RegisterUserDat(path_ba.data(), NbrElements, NULL, cmp_lvl));
 
             return ret;
         }
@@ -263,7 +265,8 @@ namespace talorion{
     {
         if(m_UpdateUserData){
             QByteArray path_ba = path.toLocal8Bit();
-            int NbrElements = Data.size();
+            path_ba.append('\0');
+            int NbrElements = Data.length();
 
             return twErrChk(m_UpdateUserData(path_ba.data(),NbrElements, Data.data()));
         }

@@ -116,6 +116,8 @@ namespace talorion{
                 int component_id = entity_manager::get_instance()->get_userdata_component(var);
                 tmp = entity_manager::get_instance()->getComponentDataForEntity(component_id,var);
                 name =entity_manager::get_instance()->get_name_component(var);
+                if(name.isEmpty())
+                    continue;
                 if(tmp.isValid()){
                     tmp.toDouble(&ok);
                     if(ok){
