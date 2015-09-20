@@ -30,6 +30,7 @@ namespace talorion {
         int new_box_id();
         void connect_to_fc_box(int box_id);
         void connect_to_av_box(int box_id);
+        void connect_to_rf_box(int box_id);
 
     private:
         int curr_box_id;

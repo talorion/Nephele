@@ -5,20 +5,20 @@ the number between "+"(eg +100+) represents the proirity 0=lowest
 +25+ logfile(system??)
 +25+ optimize data structure to be used as scripting handlers (scriptable object mechanism)
 +1+ optimize data structure for qml gui use (very low prio)
-cleanup code in terms of memory management (eg: match every new with a delete)
-version information in about box
-conditional include win tofdaqdll
-conditional define tofdaqinclude
+
 
 === GUI system ===
 +50+ script_editor
     +1+ fix syntaxhighlighting functions, strings, buildin function
-
+little scripts that run on buttons configure via settings
+configure boxes via settings
 	
 === TCP_BOX system ===
 on line disconnect/reconnect
 configure TCP box via gui
 implement additional box with AV DV FC values
+use mac address as unique box identifier
+
 
 === SCRIPT system ===
 

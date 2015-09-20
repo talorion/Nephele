@@ -7,6 +7,9 @@
 #include "core/abstract_system.hpp"
 
 namespace talorion{
+
+    class psd_config_widget;
+
     class power_supply_dll_system: public QThread, public abstract_system
     {
         Q_OBJECT
@@ -23,7 +26,10 @@ namespace talorion{
     private:
         virtual void do_start_system() Q_DECL_OVERRIDE;
         virtual QString do_get_system_name() Q_DECL_OVERRIDE {return "power_supply_dll_system";}
-        virtual abstract_configuration_widget* do_get_configuration_widget() Q_DECL_OVERRIDE{return NULL;}
+        virtual abstract_configuration_widget* do_get_configuration_widget() Q_DECL_OVERRIDE;
+
+    private:
+        psd_config_widget* config_wdg;
     };
 }
 

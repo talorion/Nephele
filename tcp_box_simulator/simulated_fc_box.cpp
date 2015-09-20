@@ -25,7 +25,7 @@ void simulated_fc_box::set(int id, double val)
     foreach (simulated_fc* fc, all_fcs) {
         if(fc->get_Id()==id){
             fc->set_Set(val);
-            qDebug()<<"simulated_fc_box::set"<<val;
+            //qDebug()<<"simulated_fc_box::set"<<val;
         }
     }
 

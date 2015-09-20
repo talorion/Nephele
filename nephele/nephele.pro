@@ -76,8 +76,6 @@ SOURCES += main.cpp\
     script_system/script_handler/script_dialoges_handler.cpp \
     script_system/script_handler/script_set_handler.cpp \
     script_system/script_handler/script_util_handler.cpp \
-    gui_system/analogview.cpp \
-    gui_system/flowcontrollerview.cpp \
     gui_system/nephele_main_window.cpp \
     tcp_box_system/qvmbackend.cpp \
     tcp_box_system/tcpdriver.cpp \
@@ -112,7 +110,20 @@ SOURCES += main.cpp\
     script_system/script_config_widget/script_config_widget.cpp \
     gui_system/settings_dialog/empty_config_widget.cpp \
     gui_system/script_editor/treemodelcompleter.cpp \
-    gui_system/script_editor/textedit.cpp
+    gui_system/script_editor/textedit.cpp \
+    tcp_box_system/rf_backend.cpp \
+    gui_system/config_file/config_file.cpp \
+    gui_system/tcp_box_view/tcp_box_view.cpp \
+    gui_system/tcp_box_view/analog_view/analogview.cpp \
+    gui_system/tcp_box_view/analog_view/flowcontrollerview.cpp \
+    gui_system/tcp_box_view/digital_view/digital_indicator.cpp \
+    gui_system/tcp_box_view/digital_view/digital_view.cpp \
+    gui_system/tcp_box_view/digital_view/switch_button.cpp \
+    power_supply_dll_system/power_supply_dll_wrapper.cpp \
+    data_tools_dll_system/data_tools_dll_system.cpp \
+    data_tools_dll_system/twtoolswrapper.cpp \
+    data_tools_dll_system/dtd_config_widget/dtd_config_widget.cpp \
+    power_supply_dll_system/psd_config_widget/psd_config_widget.cpp
 
 HEADERS  += version.hpp \
     nephele.rc \
@@ -121,8 +132,6 @@ HEADERS  += version.hpp \
     tcp_box_system/qvmbackend.hpp \
     tcp_box_system/tcpcommandqueue.hpp \
     tcp_box_system/tcpdriver.hpp \
-    gui_system/analogview.hpp \
-    gui_system/flowcontrollerview.hpp \
     gui_system/nephele_main_window.hpp \
     script_system/script_handler/script_act_handler.hpp \
     script_system/script_handler/script_dialoges_handler.hpp \
@@ -161,7 +170,20 @@ HEADERS  += version.hpp \
     script_system/script_config_widget/script_config_widget.hpp \
     gui_system/settings_dialog/empty_config_widget.hpp \
     gui_system/script_editor/treemodelcompleter.h \
-    gui_system/script_editor/textedit.h
+    gui_system/script_editor/textedit.h \
+    tcp_box_system/rf_backend.hpp \
+    gui_system/config_file/config_file.hpp \
+    gui_system/tcp_box_view/tcp_box_view.hpp \
+    gui_system/tcp_box_view/analog_view/analogview.hpp \
+    gui_system/tcp_box_view/analog_view/flowcontrollerview.hpp \
+    gui_system/tcp_box_view/digital_view/digital_indicator.hpp \
+    gui_system/tcp_box_view/digital_view/digital_view.hpp \
+    gui_system/tcp_box_view/digital_view/switch_button.hpp \
+    power_supply_dll_system/power_supply_dll_wrapper.h \
+    data_tools_dll_system/data_tools_dll_system.hpp \
+    data_tools_dll_system/twtoolswrapper.h \
+    data_tools_dll_system/dtd_config_widget/dtd_config_widget.hpp \
+    power_supply_dll_system/psd_config_widget/psd_config_widget.hpp
 
 
 win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../qcustomplot/release/ -lqcustomplot
@@ -182,6 +204,12 @@ unix: DEPENDPATH += $$PWD/../../../libs/TofDaq_1.97_API/include
 
 win32-g++: INCLUDEPATH += $$PWD/../../../../../../Tofwerk/TofDaq_1.97_API/include
 win32-g++: DEPENDPATH += $$PWD/../../../../../../Tofwerk/TofDaq_1.97_API/include
+
+win32-g++: INCLUDEPATH += $$PWD/../../../../Apis/TofDaq_1.95_API/include
+win32-g++: DEPENDPATH += $$PWD/../../../../Apis/TofDaq_1.95_API/include
+
+unix: INCLUDEPATH += $$PWD/../../../../Apis/TofDaq_1.95_API/include
+unix: DEPENDPATH += $$PWD/../../../../Apis/TofDaq_1.95_API/include
 
 DISTFILES += \
     nephele.ico \

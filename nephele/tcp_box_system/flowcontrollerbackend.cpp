@@ -128,4 +128,15 @@ namespace talorion {
         emit fcSetChangeCommand(command);
         //setbuffer[id] =value;
     }
+
+    void flowControllerBackend::dvSetChangeProxy(int entity)
+    {
+        Q_UNUSED(entity);
+    }
+
+    void flowControllerBackend::dvSetChangeProxy(int value, int id)
+    {
+        Q_UNUSED(value);
+        Q_UNUSED(id);
+    }
 }

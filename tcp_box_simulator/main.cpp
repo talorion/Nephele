@@ -7,6 +7,7 @@
 
 #include "simulated_av_box.hpp"
 #include "simulated_fc_box.h"
+#include "simulated_ao_box.hpp"
 
 int main(int argc, char *argv[])
 {
@@ -22,6 +23,10 @@ int main(int argc, char *argv[])
     simulated_av_box* av_box = new simulated_av_box();
     tcp_box_simulator t(av_box, 4414);
     t.show();
+
+    simulated_ao_box* ao_box = new simulated_ao_box();
+    tcp_box_simulator d(ao_box, 4223);
+    d.show();
 
     int ret = a.exec();
 

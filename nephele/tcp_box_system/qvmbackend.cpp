@@ -135,4 +135,15 @@ namespace talorion {
         command.append(QByteArray::number(value));
         emit fcSetChangeCommand(command);
     }
+
+    void qvmbackend::dvSetChangeProxy(int entity)
+    {
+        Q_UNUSED(entity);
+    }
+
+    void qvmbackend::dvSetChangeProxy(int value, int id)
+    {
+Q_UNUSED(value);
+        Q_UNUSED(id);
+    }
 }

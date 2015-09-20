@@ -13,6 +13,9 @@
 
 #include "nephele_main_window.hpp"
 #include "core/event_manager.hpp"
+#include "core/entity_manager.hpp"
+
+#include "config_file/config_file.hpp"
 
 namespace talorion{
     gui_system::gui_system(QObject *par) :
@@ -73,6 +76,8 @@ namespace talorion{
 
     void talorion::gui_system::do_start_system()
     {
+        config_file *cfg_hdl = new config_file();
+        entity_manager::get_instance()->createScriptableObject(cfg_hdl->script_name(), cfg_hdl);
         int W = 250;
         int H = 250;
 
@@ -92,6 +97,7 @@ namespace talorion{
             QApplication::instance()->processEvents();
 
         window= new nephele_main_window();
+        window->setCfg_hdl(cfg_hdl);
         QDesktopWidget *desktop = QApplication::desktop();
 
         screenWidth = desktop->width();

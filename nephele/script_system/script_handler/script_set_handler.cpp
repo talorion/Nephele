@@ -29,8 +29,10 @@ namespace talorion {
 
     void script_set_handler::val(QString name, double value)
     {
-        int entity=entity_manager::get_instance()->get_entity_by_name(name);
-        if(entity >= 0){
+        QList<int> entities=entity_manager::get_instance()->get_entity_by_name(name);
+
+        if(!entities.isEmpty()){
+            int entity = entities.at(0);
             //qDebug()<<"script_set_handler::val";
             emit set_value_changed(entity, value);
         }

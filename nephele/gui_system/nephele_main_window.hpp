@@ -13,8 +13,11 @@
 namespace talorion {
 
     class flowControllerView;
+    class digital_view;
+    class tcp_box_view;
     class script_editor_window;
     class settings_dialog;
+    class config_file;
 
     class nephele_main_window : public QMainWindow
     {
@@ -25,8 +28,12 @@ namespace talorion {
         ~nephele_main_window();
         Q_DISABLE_COPY(nephele_main_window)
 
+        void setCfg_hdl(config_file *value);
+
     signals:
         void send_custom_command(const QString& cm);
+
+        void change_set_value(int m_entity, double value);
 
     private:
         void createActions();
@@ -34,37 +41,71 @@ namespace talorion {
         void createToolBars();
         void createStatusBar();
 
+        bool maybeSave();
+
+        void loadFile(const QString &fileName);
+        bool saveFile(const QString &fileName);
+        void setCurrentFile(const QString &fileName);
+
+        //void read(const QJsonObject &json);
+        //void write(QJsonObject &json) const;
+
+        void zero_all();
+
     private:
-       // QLineEdit* cmd;
-        //QLabel* response;
-        QGridLayout* mainLayout;
-        //QPushButton* scriptButton;
-        //QPushButton* settingsButton;
+        QString curFile;
+        bool modified;
+        //QGridLayout* mainLayout;
         script_editor_window* script_wnd;
         settings_dialog* sett_dlg;
         QMap<int, flowControllerView* > fc_views;
+        QMap<int, digital_view* > dig_views;
+        QMap<int, tcp_box_view* > boxes;
 
+        QMenu *fileMenu;
         QMenu *scriptMenu;
         QMenu *toolsMenu;
         QMenu *helpMenu;
+        QMenu *viewMenu;
 
+        QToolBar *fileToolBar;
         QToolBar *scriptToolBar;
 
         QAction *scriptEditAct;
 
         QAction *optionsEditAct;
+        QAction *newAct;
+        QAction *openAct;
+        QAction *saveAct;
+        QAction *saveAsAct;
+        QAction *exitAct;
 
         QAction *aboutAct;
         QWidget *central_wdgt;
 
+        config_file *cfg_hdl;
+
+
     private slots:
         void displayCustomResponse(const QString& cm);
         void dispatchCommand();
-        void addAV(int entity);
-        void slot_act_value_changed(int entity);
-        void slot_set_value_changed(int entity);
+        void add_box(int entity);
+//        void addAIV(int entity);
+//        void addAOV(int entity);
+//        void addAV(int entity);
+//        void addDIV(int entity);
+//        void addDOV(int entity);
+//        void addDIOV(int entity);
+        //void slot_act_value_changed(int entity);
+        //void slot_set_value_changed(int entity);
 
         void open_script_window();
+
+        void newFile();
+        void open();
+        bool save();
+
+        bool saveAs();
         void about();
     };
 }

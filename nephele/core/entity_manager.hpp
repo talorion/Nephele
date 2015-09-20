@@ -105,7 +105,12 @@ namespace talorion {
 
         //=== Factory methods
         int createNewSystem(QUuid suid, QString nameVal, abstract_configuration_widget* sys_cfg_wdg);
+        int createNewAnalogInputValue(QString nameVal, QString unitsVal, double amin, double amax, int id, int box_id , int entity =-1 ) ;
+        int createNewAnalogOutputValue(QString nameVal, QString unitsVal, double smin, double smax, double setVal, int id, int box_id , int entity =-1) ;
         int createNewAnalogValue(QString nameVal, QString unitsVal, double smin, double smax, double amin, double amax, double setVal, int id, int box_id ) ;
+        int createNewDigitalInputValue(QString nameVal, QString unitsVal,  int id, int box_id , int entity =-1) ;
+        int createNewDigitalOutputValue(QString nameVal, QString unitsVal,  bool setVal, int id, int box_id , int entity =-1) ;
+        int createNewDigitalValue(QString nameVal, QString unitsVal,  bool setVal, int id, int box_id ) ;
         int createNewDigitalValue(QString nameVal, bool setVal, int id, int box_id ) ;
         int createNewTcpBox(QString nameVal="New Box", QString ip="localhost", quint16 port=2701);
         int createQtScriptEngine(QString nameVal="Qt Script Engine", QScriptEngine* engine=NULL);
@@ -118,17 +123,29 @@ namespace talorion {
 //        int remove_scriptable_component(int entity);
 
         //=== Factory constants
-        QUuid get_AnalogValue_uid()const{return ("{6ddc030e-2001-4a38-a8ce-57b309f902ff}");}
-        QUuid get_DigitalValue_uid()const{return ("{837c326e-e5fb-4271-97e8-8a3161cfc02c}");}
-        QUuid get_TcpBox_uid()const{return ("{99060fb8-676f-47d8-b9f1-c9c492721009}");}
-        QUuid get_System_uid()const{return ("{b50224fa-8908-4503-8296-8b0c8531e1ce}");}
-        QUuid get_Qt_Script_Engine_uid()const{return ("{3a31ae25-c7f4-4e79-93c4-2a4f7b675298}");}
-        QUuid get_TofDaqDll_uid()const{return ("{e16e6a36-4f76-4746-995d-62996c86f74a}");}
-        QUuid get_ScriptableObject_uid()const{return ("{592400d5-7684-4c31-9bfa-7cd806c40589}");}
+        QUuid get_AnalogInputValue_uid()const   {return ("{340c5f10-6d53-4c15-8fc4-4c559580cfbc}");}
+        QUuid get_AnalogOutputValue_uid()const  {return ("{c81ab50c-417c-404f-87b3-f9a8e474a6b1}");}
+        QUuid get_AnalogValue_uid()const        {return ("{6ddc030e-2001-4a38-a8ce-57b309f902ff}");}
+        QUuid get_DigitalInputValue_uid()const  {return ("{231fe499-ed93-4f66-a2ed-5ca5063a0d86}");}
+        QUuid get_DigitalOutputValue_uid()const {return ("{bb3e0e52-fb29-429b-9668-b2e3414e9db3}");}
+        QUuid get_DigitalValue_uid()const       {return ("{837c326e-e5fb-4271-97e8-8a3161cfc02c}");}
+        QUuid get_TcpBox_uid()const             {return ("{99060fb8-676f-47d8-b9f1-c9c492721009}");}
+        QUuid get_System_uid()const             {return ("{b50224fa-8908-4503-8296-8b0c8531e1ce}");}
+        QUuid get_Qt_Script_Engine_uid()const   {return ("{3a31ae25-c7f4-4e79-93c4-2a4f7b675298}");}
+        QUuid get_TofDaqDll_uid()const          {return ("{e16e6a36-4f76-4746-995d-62996c86f74a}");}
+        QUuid get_ScriptableObject_uid()const   {return ("{592400d5-7684-4c31-9bfa-7cd806c40589}");}
         //
 
         QList<int> get_all_tcpBoxes()const{return get_entity_by_serialVersionUID(get_TcpBox_uid());}
+        QList<int> get_all_AnalogInputValues()const{return get_entity_by_serialVersionUID(get_AnalogInputValue_uid());}
+        QList<int> get_all_AnalogOutputValues()const{return get_entity_by_serialVersionUID(get_AnalogOutputValue_uid());}
         QList<int> get_all_AnalogValues()const{return get_entity_by_serialVersionUID(get_AnalogValue_uid());}
+        QList<int> get_all_Values()const;
+        QList<int> get_all_DigitalInputValues()const{return get_entity_by_serialVersionUID(get_DigitalInputValue_uid());}
+        QList<int> get_all_DigitalOutputValues()const{return get_entity_by_serialVersionUID(get_DigitalOutputValue_uid());}
+        QList<int> get_all_DigitalValues()const{return get_entity_by_serialVersionUID(get_DigitalValue_uid());}
+        QList<int> get_all_DValues()const;
+
         QList<int> get_all_Systems()const{return get_entity_by_serialVersionUID(get_System_uid());}
         QList<int> get_all_Qt_Script_Engines()const{return get_entity_by_serialVersionUID(get_Qt_Script_Engine_uid());}
         QList<int> get_all_TofDaqDlls()const{return get_entity_by_serialVersionUID(get_TofDaqDll_uid());}
@@ -169,7 +186,7 @@ namespace talorion {
 
 
         //QList<int> get_all_systems()const;
-        int get_entity_by_name(const QString& name) const;
+        QList<int> get_entity_by_name(const QString& name) const;
         QList<int> get_entity_by_serialVersionUID(const QUuid& uid) const;
         QList<int> get_entity_by_systemVersionUID(const QUuid& uid) const;
         QList<int> get_entity_by_component(int comp_id) const;
@@ -208,7 +225,11 @@ namespace talorion {
 
         void user_data_path_changed(int entity);
 
+        void newAnalogInputValue(int);
+        void newAnalogOutputValue(int);
         void newAnalogValue(int);
+        void newDigitalInputValue(int);
+        void newDigitalOutputValue(int);
         void newDigitalValue(int);
         void newTcpBox(int);
         void newQtScriptEngine(int);

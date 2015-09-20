@@ -40,7 +40,12 @@ namespace talorion {
 
         box_name_field =new QLineEdit();
         ip_address_field =new QLineEdit();
-        backend_field =new QLineEdit();
+        backend_field =new QSpinBox();
+        backend_field->setRange(0,65535);
+        backend_field->setSingleStep(1);
+        backend_field->setButtonSymbols( QSpinBox::NoButtons);
+        backend_field->setMinimumWidth(100);
+
         portField = new  QSpinBox();
         portField->setRange(0,65535);
         portField->setSingleStep(1);
@@ -150,6 +155,7 @@ namespace talorion {
         box_name_field->setText(entity_manager::get_instance()->get_name_component(current_entity));
         ip_address_field->setText(entity_manager::get_instance()->get_ip_address_component(current_entity));
         portField->setValue(entity_manager::get_instance()->get_port_component(current_entity));
+        backend_field->setValue(entity_manager::get_instance()->get_tcp_box_backend_component(current_entity));
 
         bool tmp = entity_manager::get_instance()->get_connection_state_component(current_entity);
         update_visibility(tmp);
@@ -185,15 +191,15 @@ namespace talorion {
 
     void tbs_config_widget::slot_connect_button_clicked(bool)
     {
-        int mode = 0;
-        if(!backend_field->text().isEmpty())
-            mode = 1;
+        //int mode = 0;
+        //if(!backend_field->text().isEmpty())
+        //mode = backend_field->value();
 
         if(current_entity>=0){
             entity_manager::get_instance()->slot_change_name_component(current_entity, box_name_field->text());
             entity_manager::get_instance()->slot_change_ip_address_component(current_entity, ip_address_field->text());
             entity_manager::get_instance()->slot_change_port_component(current_entity, portField->value());
-            entity_manager::get_instance()->slot_change_tcp_box_backend_component(current_entity, mode);
+            entity_manager::get_instance()->slot_change_tcp_box_backend_component(current_entity, backend_field->value());
 
             emit connect_tcp_box(current_entity);
         }

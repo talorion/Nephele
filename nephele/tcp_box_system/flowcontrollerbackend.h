@@ -33,6 +33,9 @@ namespace talorion {
     private slots:
         virtual void fcSetChangeProxy(int entity) Q_DECL_OVERRIDE;
         virtual void fcSetChangeProxy(double value, int id)Q_DECL_OVERRIDE ;
+
+        virtual void dvSetChangeProxy(int entity)Q_DECL_OVERRIDE ;
+        virtual void dvSetChangeProxy(int value, int id)Q_DECL_OVERRIDE ;
     private:
         //QList<analogValue*> flowcontroller;
         QList<int> flowcontroller;
