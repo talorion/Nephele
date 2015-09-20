@@ -43,6 +43,20 @@ namespace talorion{
 
     tof_daq_dll_worker::~tof_daq_dll_worker()
     {
+        timer->stop();
+        QString path= entity_manager::get_instance()->get_user_data_path_component(m_entity);
+//        QString name;
+//        QStringList value_names;
+//        foreach (int var, registered_values) {
+//            //int component_id = entity_manager::get_instance()->get_userdata_component(var);
+//            //tmp = entity_manager::get_instance()->getComponentDataForEntity(component_id,var);
+//            name =entity_manager::get_instance()->get_name_component(var);
+//            value_names.append(name);
+//        }
+
+
+        m_dll->unregister_user_data(path);
+
         if(m_shmdesc)
             delete m_shmdesc;
         if(m_shmptr)
@@ -70,7 +84,7 @@ namespace talorion{
         //m_dll->UpdateUserData();
         register_user_data();
         update_user_data();
-        //qDebug()<<"tick";
+        qDebug()<<"tick";
     }
 
     void tof_daq_dll_worker::updaterate_component_changed(int ent)
@@ -114,11 +128,16 @@ namespace talorion{
         if(value_names.isEmpty())
             return;
 
-        if(path.isEmpty())
+        if(path.isEmpty()){
+            qDebug()<<"path is empty";
             return;
+        }
 
-
-        m_dll->register_user_data(value_names, path, cmp_lvl);
+        qDebug()<<"registering user data: "<<value_names.length()<<"at"<<path;
+        if(m_dll->register_user_data(value_names, path, cmp_lvl) != 4){
+            qDebug()<<"unknown error at register_user_data";
+            registered_values.clear();
+        }
     }
 
     void tof_daq_dll_worker::update_user_data()
@@ -146,7 +165,8 @@ namespace talorion{
             }
         }
 
-        m_dll->UpdateUserData(Data, path);
+       if(m_dll->UpdateUserData(Data, path)<0)
+           qDebug()<<"unknown error at UpdateUserData";
     }
 
     void tof_daq_dll_worker::prepare_buffers()
