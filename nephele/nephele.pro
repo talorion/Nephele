@@ -118,7 +118,12 @@ SOURCES += main.cpp\
     gui_system/tcp_box_view/analog_view/flowcontrollerview.cpp \
     gui_system/tcp_box_view/digital_view/digital_indicator.cpp \
     gui_system/tcp_box_view/digital_view/digital_view.cpp \
-    gui_system/tcp_box_view/digital_view/switch_button.cpp
+    gui_system/tcp_box_view/digital_view/switch_button.cpp \
+    power_supply_dll_system/power_supply_dll_wrapper.cpp \
+    data_tools_dll_system/data_tools_dll_system.cpp \
+    data_tools_dll_system/twtoolswrapper.cpp \
+    data_tools_dll_system/dtd_config_widget/dtd_config_widget.cpp \
+    power_supply_dll_system/psd_config_widget/psd_config_widget.cpp
 
 HEADERS  += version.hpp \
     nephele.rc \
@@ -173,7 +178,12 @@ HEADERS  += version.hpp \
     gui_system/tcp_box_view/analog_view/flowcontrollerview.hpp \
     gui_system/tcp_box_view/digital_view/digital_indicator.hpp \
     gui_system/tcp_box_view/digital_view/digital_view.hpp \
-    gui_system/tcp_box_view/digital_view/switch_button.hpp
+    gui_system/tcp_box_view/digital_view/switch_button.hpp \
+    power_supply_dll_system/power_supply_dll_wrapper.h \
+    data_tools_dll_system/data_tools_dll_system.hpp \
+    data_tools_dll_system/twtoolswrapper.h \
+    data_tools_dll_system/dtd_config_widget/dtd_config_widget.hpp \
+    power_supply_dll_system/psd_config_widget/psd_config_widget.hpp
 
 
 win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../qcustomplot/release/ -lqcustomplot
