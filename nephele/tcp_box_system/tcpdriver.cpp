@@ -176,8 +176,15 @@ namespace talorion {
             if (curlyOpen==curlyClose && curlyOpen > 0)
             {
                 timeoutTimer->stop();
-                QJsonObject obj = QJsonDocument::fromJson(recBuf).object();
-                emit receivedData(obj.toVariantMap(), transmissionContext, getBox_id());
+                QJsonParseError* jsonerror = new QJsonParseError();
+                QJsonObject obj = QJsonDocument::fromJson(recBuf,jsonerror).object();
+                if (jsonerror->error == QJsonParseError::NoError)
+                {
+                    emit receivedData(obj.toVariantMap(), transmissionContext, getBox_id());
+                } else
+                {
+                    emit error("Invalid Json received: " + jsonerror->errorString());
+                }
                 ongoingRequest = false;
                 pollTimer->start();
                 responseCounter++;
