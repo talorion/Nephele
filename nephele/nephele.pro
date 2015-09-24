@@ -202,6 +202,9 @@ else:unix: PRE_TARGETDEPS += $$OUT_PWD/../qcustomplot/libqcustomplot.a
 unix: INCLUDEPATH += $$PWD/../../../libs/TofDaq_1.97_API/include
 unix: DEPENDPATH += $$PWD/../../../libs/TofDaq_1.97_API/include
 
+win32-g++: INCLUDEPATH += $$PWD/../../../libs/TofDaq_1.97_API/include
+win32-g++: DEPENDPATH += $$PWD/../../../libs/TofDaq_1.97_API/include
+
 win32-g++: INCLUDEPATH += $$PWD/../../../../../../Tofwerk/TofDaq_1.97_API/include
 win32-g++: DEPENDPATH += $$PWD/../../../../../../Tofwerk/TofDaq_1.97_API/include
 

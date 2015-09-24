@@ -21,38 +21,54 @@ using namespace talorion;
 
 int main(int argc, char *argv[])
 {
-    int ret = 0;
-    QString v = "0.1.0."+QString::number(BUILD);
-    qDebug()<<v;
 
-    QApplication a(argc, argv);
-    QCoreApplication::setOrganizationName("Nephele");
-    QCoreApplication::setOrganizationDomain("github.com/talorion");
-    QCoreApplication::setApplicationName("Nephele");
-    QCoreApplication::setApplicationVersion(v);
+    int ret = -1;
 
-    entity_manager::get_instance()->initialize();
+    try{
+        QString v = "0.1.0."+QString::number(BUILD);
+        qDebug()<<v;
 
-    QObject::connect(&a,SIGNAL(aboutToQuit()), event_manager::get_instance(), SIGNAL(application_aboutToQuit()));
+        QApplication a(argc, argv);
+        QCoreApplication::setOrganizationName("Nephele");
+        QCoreApplication::setOrganizationDomain("github.com/talorion");
+        QCoreApplication::setApplicationName("Nephele");
+        QCoreApplication::setApplicationVersion(v);
 
-    system_manager::get_instance()->register_new_system<gui_system>();
+        entity_manager::get_instance()->initialize();
 
-    system_manager::get_instance()->register_new_system<script_system>();
+        QObject::connect(&a,SIGNAL(aboutToQuit()), event_manager::get_instance(), SIGNAL(application_aboutToQuit()));
 
-    system_manager::get_instance()->register_new_system<tcp_box_system>();
+        system_manager::get_instance()->register_new_system<gui_system>();
 
-    system_manager::get_instance()->register_new_system<data_aquisition_dll_system>();
+        system_manager::get_instance()->register_new_system<script_system>();
 
-    system_manager::get_instance()->register_new_system<data_tools_dll_system>();
+        system_manager::get_instance()->register_new_system<tcp_box_system>();
 
-    system_manager::get_instance()->register_new_system<power_supply_dll_system>();
+        system_manager::get_instance()->register_new_system<data_aquisition_dll_system>();
 
-    ret = a.exec();
+        system_manager::get_instance()->register_new_system<data_tools_dll_system>();
 
-    event_manager::destroy();
+        system_manager::get_instance()->register_new_system<power_supply_dll_system>();
 
-    entity_manager::get_instance()->dispose();
-    entity_manager::destroy();
+        ret = a.exec();
 
+        event_manager::destroy();
+
+        entity_manager::get_instance()->dispose();
+        entity_manager::destroy();
+
+    } catch(const std::runtime_error &ex){
+        qDebug()<<ex.what();
+        ret = -2;
+    } catch (const std::exception& ex) {
+        qDebug()<<ex.what();
+        ret = -3;
+//    } catch (const std::string& ex) {
+//        qDebug()<<ex.what();
+//        ret = -4;
+    } catch (...) {
+        qDebug()<<"OMG! an unexpected exception has been caught";
+        ret = -5;
+    }
     return ret;
 }
