@@ -224,10 +224,9 @@ namespace talorion {
             if(!var.canConvert(QMetaType::QVariantMap))
                 continue;
             QVariantMap tmp = var.toMap();
-            if (tmp.contains("name") && tmp.contains("units") && tmp.contains("set") && tmp.contains("id"))
+            if (tmp.contains("name") && tmp.contains("set") && tmp.contains("id"))
             {
                 int fc = entity_manager::get_instance()->createNewDigitalOutputValue(tmp.find("name").value().toString(),
-                                                                                     tmp.find("units").value().toString(),
                                                                                      tmp.find("set").value().toDouble(),
                                                                                      tmp.find("id").value().toInt(),
                                                                                      box_id

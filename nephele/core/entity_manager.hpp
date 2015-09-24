@@ -109,7 +109,7 @@ namespace talorion {
         int createNewAnalogOutputValue(QString nameVal, QString unitsVal, double smin, double smax, double setVal, int id, int box_id , int entity =-1) ;
         int createNewAnalogValue(QString nameVal, QString unitsVal, double smin, double smax, double amin, double amax, double setVal, int id, int box_id ) ;
         int createNewDigitalInputValue(QString nameVal, QString unitsVal,  int id, int box_id , int entity =-1) ;
-        int createNewDigitalOutputValue(QString nameVal, QString unitsVal,  bool setVal, int id, int box_id , int entity =-1) ;
+        int createNewDigitalOutputValue(QString nameVal,  bool setVal, int id, int box_id , int entity =-1) ;
         int createNewDigitalValue(QString nameVal, QString unitsVal,  bool setVal, int id, int box_id ) ;
         int createNewDigitalValue(QString nameVal, bool setVal, int id, int box_id ) ;
         int createNewTcpBox(QString nameVal="New Box", QString ip="localhost", quint16 port=2701);

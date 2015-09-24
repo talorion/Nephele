@@ -485,14 +485,13 @@ namespace talorion {
         return new_id;
     }
 
-    int entity_manager::createNewDigitalOutputValue(QString nameVal, QString unitsVal, bool setVal, int id, int box_id, int entity)
+    int entity_manager::createNewDigitalOutputValue(QString nameVal, bool setVal, int id, int box_id, int entity)
     {
         int new_id = entity;
         if(entity <0)
             new_id = createNewEntity();
 
         createComponentAndAddTo( NAME_COMPONENT, new_id );
-        createComponentAndAddTo( UNITS_COMPONENT, new_id );
         createComponentAndAddTo( DIGITAL_SET_VALUE_COMPONENT, new_id );
         //createComponentAndAddTo( DIGITAL_ACT_VALUE_COMPONENT, new_id );
         createComponentAndAddTo( ID_COMPONENT, new_id );
@@ -501,7 +500,6 @@ namespace talorion {
         createComponentAndAddTo(USER_DATA_COMPONENT, new_id);
 
         setComponentDataForEntity(NAME_COMPONENT,               new_id, nameVal);
-        setComponentDataForEntity(UNITS_COMPONENT,              new_id, unitsVal);
         setComponentDataForEntity(DIGITAL_SET_VALUE_COMPONENT,   new_id, setVal);
         //setComponentDataForEntity(DIGITAL_ACT_VALUE_COMPONENT,   new_id, setVal);
         setComponentDataForEntity(ID_COMPONENT,                 new_id, id);
