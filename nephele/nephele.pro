@@ -38,13 +38,13 @@ CONFIG += c++11
 #unix: build_nr.depends = FORCE
 #unix: QMAKE_EXTRA_TARGETS += build_nr
 #unix: PRE_TARGETDEPS += build_nr
-unix: BUILDNO = $$system(../misc/build_number_generator.sh)
+#unix: BUILDNO = $$system(../misc/build_number_generator.sh)
 
 #win32: build_nr.commands = ../misc/build_number_generator.bat
 #win32: build_nr.depends = FORCE
 #win32: QMAKE_EXTRA_TARGETS += build_nr
 #win32: PRE_TARGETDEPS += build_nr
-win32: BUILDNO = $$system(..\misc\build_number_generator.bat)
+#win32: BUILDNO = $$system(..\misc\build_number_generator.bat)
 #==========
 
 
