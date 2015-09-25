@@ -20,7 +20,9 @@ namespace talorion{
         m_dll(dll),
         m_entity(ent),
         timer(NULL),
-        registered_values()
+        registered_values(),
+        values_registered(false),
+        fatal_emited(false)
     {
         timer = new QTimer(this);
         connect(timer, SIGNAL(timeout()), this, SLOT(update()));
@@ -28,6 +30,7 @@ namespace talorion{
         timer->start(rate);
 
         connect(event_manager::get_instance(),SIGNAL(updaterate_component_changed(int)),this,SLOT(updaterate_component_changed(int)));
+        connect(this,SIGNAL(fatal(QString)),event_manager::get_instance(),SIGNAL(fatal(QString)));
 
         //        QStateMachine machine;
         //        QState *s1 = new QState();
@@ -84,7 +87,7 @@ namespace talorion{
         //m_dll->UpdateUserData();
         register_user_data();
         update_user_data();
-        qDebug()<<"tick";
+        //qDebug()<<"tick";
     }
 
     void tof_daq_dll_worker::updaterate_component_changed(int ent)
@@ -136,10 +139,25 @@ namespace talorion{
         }
 
         qDebug()<<"registering user data: "<<value_names.length()<<"at"<<path;
+
+        //values_registered_old = values_registered;
+
         if(m_dll->register_user_data(value_names, path, cmp_lvl) != 4){
             qDebug()<<"unknown error at register_user_data";
             registered_values.clear();
+            values_registered = false;
+        }else{
+            values_registered = true;
+            fatal_emited = false;
         }
+
+        if(!values_registered){
+            if(!fatal_emited){
+                emit fatal("VALUES NOT REGISTERD");
+                fatal_emited = true;
+            }
+        }
+
     }
 
     void tof_daq_dll_worker::update_user_data()

@@ -75,7 +75,7 @@ namespace talorion {
         void newDigitalOutputValue(int);
         void newDigitalValue(int);
         void error(QString);
-
+        void fatal(QString);
 
         void open_numeric_dialog();
         void open_string_dialog();

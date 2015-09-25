@@ -27,6 +27,8 @@ namespace talorion{
         void data_aquisition_dll_answer(int, float);
         void data_aquisition_dll_answer(int, double);
 
+        void fatal(QString);
+
     public slots:
         int wait_for_new_data(int Timeout =-1, bool WaitForEventReset=false);
 
@@ -60,6 +62,9 @@ namespace talorion{
         QTimer *timer;
 
         QList<int> registered_values;
+
+        bool values_registered;
+        bool fatal_emited;
 
     };
 

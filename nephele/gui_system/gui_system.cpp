@@ -24,6 +24,7 @@ namespace talorion{
         window(NULL)
     {
 
+        connect(event_manager::get_instance(),SIGNAL(fatal(QString)),this,SLOT(slot_open_info_dialog(QString)));
     }
 
     gui_system::~gui_system()
