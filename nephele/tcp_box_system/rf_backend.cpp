@@ -104,7 +104,7 @@ namespace talorion {
     {
         //QByteArray command = "uibkafc set ";
         //qDebug()<<"flowControllerBackend::fcSetChangeProxy"<<"set "<<value;
-        QByteArray command = "uibk setByModule ";
+        QByteArray command = "uibk setById ";
         command.append(QByteArray::number(id));
         command.append(" ");
         command.append(QByteArray::number(value));

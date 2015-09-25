@@ -27,7 +27,7 @@ namespace talorion {
         plot(NULL),
         graphTimer(NULL),
         lblName(NULL),
-        graph_persistance_time(60),
+        graph_persistance_time(600),
         grap(NULL)
     {
 
