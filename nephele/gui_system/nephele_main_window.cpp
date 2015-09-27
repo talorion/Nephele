@@ -494,7 +494,7 @@ namespace talorion {
 
     void nephele_main_window::zero_all()
     {
-        setFocus();
+        //setFocus();
         //        QMap<int, flowControllerView* >::iterator it;
         //        for(it= fc_views.begin(); it != fc_views.end(); it++){
         //        //    int entity =  fcv.key();
@@ -502,9 +502,9 @@ namespace talorion {
         //                it.value()->clearFocus();
         //        }
         //foreach (int entity , entity_manager::get_instance()->get_all_AnalogValues()) {
-        foreach (int entity , entity_manager::get_instance()->get_all_Values()) {
-            emit change_set_value(entity,0);
-        }
+        //foreach (int entity , entity_manager::get_instance()->get_all_Values()) {
+        //    emit change_set_value(entity,0);
+        //}
 
     }
     void nephele_main_window::setCfg_hdl(config_file *value)

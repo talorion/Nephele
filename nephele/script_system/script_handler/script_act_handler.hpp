@@ -16,6 +16,7 @@ namespace talorion {
         //Q_INVOKABLE void sleep(unsigned long millisecs);
     private slots:
         void slot_act_value_changed(int entity);
+        void slot_dig_act_value_changed(int entity);
         void slot_newAnalogValue(int entity);
     };
 

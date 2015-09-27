@@ -661,6 +661,20 @@ namespace talorion {
         return new_id;
     }
 
+    bool entity_manager::is_analog_value(int entity) const
+    {
+        const QUuid uid=  get_serialVersionUID_component(entity);
+
+        return ((uid == get_AnalogInputValue_uid()) || (uid == get_AnalogOutputValue_uid()) || (uid == get_AnalogValue_uid()) );
+    }
+
+    bool entity_manager::is_digital_value(int entity) const
+    {
+        const QUuid uid=  get_serialVersionUID_component(entity);
+
+        return ((uid == get_DigitalInputValue_uid()) || (uid == get_DigitalOutputValue_uid()) || (uid == get_DigitalValue_uid()) );
+    }
+
     QList<int> entity_manager::get_all_Values() const
     {
         QList<int> tmp= get_all_AnalogInputValues();

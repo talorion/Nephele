@@ -11,6 +11,7 @@ namespace talorion {
         abstract_scriptable_object("act", par)
     {
         connect(event_manager::get_instance(),SIGNAL(analogAct_component_changed(int)),this,SLOT(slot_act_value_changed(int)));
+        connect(event_manager::get_instance(),SIGNAL(digitalAct_component_changed(int)),this,SLOT(slot_dig_act_value_changed(int)));
         connect(event_manager::get_instance(),SIGNAL(newAnalogValue(int)),this,SLOT(slot_newAnalogValue(int)));
 
     }
@@ -24,6 +25,15 @@ namespace talorion {
     {
         QString nme = entity_manager::get_instance()->get_name_component(entity);
         double val = entity_manager::get_instance()->get_analogActValue_component(entity);
+        QScriptValue* tmp= getScrip_value();
+        if( tmp != NULL)
+            tmp->setProperty(nme, val, QScriptValue::ReadOnly);
+    }
+
+    void script_act_handler::slot_dig_act_value_changed(int entity)
+    {
+        QString nme = entity_manager::get_instance()->get_name_component(entity);
+        bool val = entity_manager::get_instance()->get_digitalActValue_component(entity);
         QScriptValue* tmp= getScrip_value();
         if( tmp != NULL)
             tmp->setProperty(nme, val, QScriptValue::ReadOnly);

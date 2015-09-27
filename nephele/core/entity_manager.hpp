@@ -119,6 +119,9 @@ namespace talorion {
         int createScriptableObject(QString nameVal, abstract_scriptable_object* comp);
         //===
 
+        bool is_analog_value(int entity) const;
+        bool is_digital_value(int entity) const;
+
 //        int add_scriptable_component(int entity, abstract_scriptable_object* comp);
 //        int remove_scriptable_component(int entity);
 
