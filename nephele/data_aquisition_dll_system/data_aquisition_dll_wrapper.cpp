@@ -196,6 +196,8 @@ namespace talorion{
             delete m_data_aquisition_dll;
             m_data_aquisition_dll = NULL;
         }
+
+
     }
 
     int data_aquisition_dll_wrapper::initialize_dll() const

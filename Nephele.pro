@@ -11,7 +11,7 @@ DISTFILES += \
     misc/build_number_generator.bat
 
 SUBDIRS +=    qcustomplot
-#SUBDIRS +=    tcp_box_simulator
+SUBDIRS +=    tcp_box_simulator
 SUBDIRS +=    nephele
 
 

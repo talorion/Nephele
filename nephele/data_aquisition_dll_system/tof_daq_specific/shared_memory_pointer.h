@@ -21,7 +21,7 @@ namespace talorion{
         Q_OBJECT
     public:
         shared_memory_pointer(QObject *par = 0);
-        shared_memory_pointer(int NbrSamp, int NbrPea, int NbrSeg, int NbrBu, int NbrWri, QObject *par = 0);
+        //shared_memory_pointer(int NbrSamp, int NbrPea, int NbrSeg, int NbrBu, int NbrWri, QObject *par = 0);
         ~shared_memory_pointer();
         Q_DISABLE_COPY(shared_memory_pointer)
 
@@ -36,7 +36,7 @@ namespace talorion{
         void swap();
 
     private:
-        void init(TSharedMemoryPointer* m_data, int NbrSamples, int NbrPeaks, int NbrSegments, int NbrBufs, int NbrWrites);
+        //void init(TSharedMemoryPointer* m_data, int NbrSamples, int NbrPeaks, int NbrSegments, int NbrBufs, int NbrWrites);
         void cleanup(TSharedMemoryPointer* dat, int NbrBufs);
 
     private:

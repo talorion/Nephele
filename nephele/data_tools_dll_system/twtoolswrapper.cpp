@@ -167,6 +167,58 @@ namespace talorion{
     void TwToolsWrapper::dispose()
     {
 
+        m_TranslateReturnValue = NULL;
+
+        m_FitSinglePeak = NULL;
+        m_FitSinglePeak2 = NULL;
+        m_EvalSinglePeak = NULL;
+        m_MultiPeakFit = NULL;
+        m_EvalMultiPeak = NULL;
+
+        m_FitResolution = NULL;
+        m_EvalResolution = NULL;
+
+        m_GetMoleculeMass = NULL;
+        m_GetIsotopePattern = NULL;
+        m_GetIsotopePattern2 = NULL;
+        m_DecomposeMass = NULL;
+        m_GetComposition = NULL;
+        m_NistLibrarySearch = NULL;
+        m_NistLibraryQueryResult = NULL;
+
+        m_Tof2Mass = NULL;
+        m_Mass2Tof = NULL;
+        m_MassCalibrate = NULL;
+        m_BruteForceCalibrate = NULL;
+        m_GetMassCalibInfo = NULL;
+
+        m_EncImsCorrelateProfile = NULL;
+        m_EncImsSharpenProfile = NULL;
+        m_EncImsDenoiseProfile = NULL;
+        m_EncImsCorrelateMultiProfiles = NULL;
+        m_EncImsCleanup = NULL;
+
+        m_SiInitializeHistograms = NULL;
+        m_SiSetProcessingOptions = NULL;
+        m_SiProcessSpectrum = NULL;
+        m_SiGetHistogram = NULL;
+        m_SiGetSumHistogram = NULL;
+        m_SiResetHistograms = NULL;
+        m_SiCleanup = NULL;
+        m_SiFitPhd = NULL;
+        m_SiEvalPhd = NULL;
+        m_SiFitRateFromPhd = NULL;
+
+        m_FindTpsIp = NULL;
+
+        if(m_data_aquisition_dll){
+
+            if(m_data_aquisition_dll->isLoaded())
+                m_data_aquisition_dll->unload();
+
+            delete m_data_aquisition_dll;
+            m_data_aquisition_dll = NULL;
+        }
     }
 
     QString TwToolsWrapper::translate_return_value(int ReturnValue) const

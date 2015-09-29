@@ -48,23 +48,29 @@ namespace talorion{
     {
         timer->stop();
         QString path= entity_manager::get_instance()->get_user_data_path_component(m_entity);
-//        QString name;
-//        QStringList value_names;
-//        foreach (int var, registered_values) {
-//            //int component_id = entity_manager::get_instance()->get_userdata_component(var);
-//            //tmp = entity_manager::get_instance()->getComponentDataForEntity(component_id,var);
-//            name =entity_manager::get_instance()->get_name_component(var);
-//            value_names.append(name);
-//        }
+        //        QString name;
+        //        QStringList value_names;
+        //        foreach (int var, registered_values) {
+        //            //int component_id = entity_manager::get_instance()->get_userdata_component(var);
+        //            //tmp = entity_manager::get_instance()->getComponentDataForEntity(component_id,var);
+        //            name =entity_manager::get_instance()->get_name_component(var);
+        //            value_names.append(name);
+        //        }
 
 
         m_dll->unregister_user_data(path);
 
         if(m_shmdesc)
             delete m_shmdesc;
+
         if(m_shmptr)
             delete m_shmptr;
 
+        if(m_dll)
+            delete m_dll;
+
+        if(timer)
+            delete timer;
     }
 
     int tof_daq_dll_worker::wait_for_new_data(int Timeout, bool WaitForEventReset)
@@ -185,23 +191,23 @@ namespace talorion{
             }
         }
 
-       if(m_dll->UpdateUserData(Data, path)<0)
-           qDebug()<<"unknown error at UpdateUserData";
+        if(m_dll->UpdateUserData(Data, path)<0)
+            qDebug()<<"unknown error at UpdateUserData";
     }
 
     void tof_daq_dll_worker::prepare_buffers()
     {
-        int NbrSamples    = m_dll->read_int_parameter("NbrSamples");
-        int NbrPeaks      = m_dll->read_int_parameter("NbrPeaks");
-        int NbrSegments   = m_dll->read_int_parameter("NbrSegments");
-        int NbrBufs       = m_dll->read_int_parameter("NbrBufs");
-        int NbrWrites     = m_dll->read_int_parameter("NbrWrites");
+//        int NbrSamples    = m_dll->read_int_parameter("NbrSamples");
+//        int NbrPeaks      = m_dll->read_int_parameter("NbrPeaks");
+//        int NbrSegments   = m_dll->read_int_parameter("NbrSegments");
+//        int NbrBufs       = m_dll->read_int_parameter("NbrBufs");
+//        int NbrWrites     = m_dll->read_int_parameter("NbrWrites");
 
-        if(!m_shmdesc)
-            m_shmdesc = new shared_memory_descriptor();
+//        if(!m_shmdesc)
+//            m_shmdesc = new shared_memory_descriptor();
 
-        if(!m_shmptr)
-            m_shmptr = new shared_memory_pointer(NbrSamples, NbrPeaks, NbrSegments, NbrBufs, NbrWrites);
+        //if(!m_shmptr)
+            //m_shmptr = new shared_memory_pointer(NbrSamples, NbrPeaks, NbrSegments, NbrBufs, NbrWrites);
 
     }
 

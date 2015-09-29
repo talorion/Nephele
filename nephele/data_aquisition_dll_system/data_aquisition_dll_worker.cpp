@@ -30,6 +30,15 @@ namespace talorion {
             it.value() = NULL;
         }
         dlls.clear();
+
+        QMap<int, tof_daq_dll_worker*>::iterator wit;
+        for(wit = worker.begin(); wit != worker.end(); wit++){
+            tof_daq_dll_worker* tmp = wit.value();
+            if(tmp)
+                delete tmp;
+            it.value() = NULL;
+        }
+        worker.clear();
     }
 
 
