@@ -17,19 +17,21 @@ RESOURCES += \
 TARGET = nephele
 TEMPLATE = app
 
-unix: QMAKE_CXXFLAGS += -isystem $$[QT_INSTALL_HEADERS]
-unix: QMAKE_CXXFLAGS += -isystem $$[QT_INSTALL_HEADERS]/QtCore
-unix: QMAKE_CXXFLAGS += -isystem $$[QT_INSTALL_HEADERS]/QtGui
-unix: QMAKE_CXXFLAGS += -isystem $$[QT_INSTALL_HEADERS]/QtScript
-unix: QMAKE_CXXFLAGS += -isystem $$[QT_INSTALL_HEADERS]/QtWidgets
-unix: QMAKE_CXXFLAGS += -isystem '$ORIGIN'/../../../libs/qcustomplot
-unix: QMAKE_CXXFLAGS += -Wall
-unix: QMAKE_CXXFLAGS += -Wextra
-unix: QMAKE_CXXFLAGS += -ansi
-unix: QMAKE_CXXFLAGS += -pedantic
-unix: QMAKE_CXXFLAGS += -Wshadow
-unix: QMAKE_CXXFLAGS += -Weffc++
-unix: QMAKE_CXXFLAGS += -Wstrict-aliasing
+unix | win32-g++:{
+    QMAKE_CXXFLAGS += -isystem $$[QT_INSTALL_HEADERS]
+    QMAKE_CXXFLAGS += -isystem $$[QT_INSTALL_HEADERS]/QtCore
+    QMAKE_CXXFLAGS += -isystem $$[QT_INSTALL_HEADERS]/QtGui
+    QMAKE_CXXFLAGS += -isystem $$[QT_INSTALL_HEADERS]/QtScript
+    QMAKE_CXXFLAGS += -isystem $$[QT_INSTALL_HEADERS]/QtWidgets
+    QMAKE_CXXFLAGS += -isystem '$ORIGIN'/../../../libs/qcustomplot
+    QMAKE_CXXFLAGS += -Wall
+    QMAKE_CXXFLAGS += -Wextra
+    QMAKE_CXXFLAGS += -ansi
+    QMAKE_CXXFLAGS += -pedantic
+    QMAKE_CXXFLAGS += -Wshadow
+    QMAKE_CXXFLAGS += -Weffc++
+    QMAKE_CXXFLAGS += -Wstrict-aliasing
+}
 
 CONFIG += c++11
 
