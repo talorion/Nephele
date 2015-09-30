@@ -58,7 +58,8 @@ namespace talorion{
         //        }
 
 
-        m_dll->unregister_user_data(path);
+        if(m_dll)
+            m_dll->unregister_user_data(path);
 
         if(m_shmdesc)
             delete m_shmdesc;
