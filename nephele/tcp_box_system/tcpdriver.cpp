@@ -188,6 +188,7 @@ namespace talorion {
                 ongoingRequest = false;
                 pollTimer->start();
                 responseCounter++;
+                delete jsonerror;
             }
         }
         else if (transmissionContext == tcpDriverDataTypes::SETDATA)
