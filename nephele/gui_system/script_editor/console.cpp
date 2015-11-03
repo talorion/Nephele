@@ -3,7 +3,7 @@
 #include <QDebug>
 #include <QThread>
 
-#include "core/event_manager.hpp"
+#include "event_manager/event_manager_locator.hpp"
 
 namespace talorion{
     Console::Console(QWidget *par) :
@@ -18,7 +18,7 @@ namespace talorion{
         setStyleSheet("QTextEdit { font-family: Courier; font-size: 12pt; background-color: 'lightGray'; }");
         setTextColor(QColor("white"));
 
-        connect(event_manager::get_instance(),SIGNAL(script_message(QString,QString)),this,SLOT(write(QString,QString)));
+        connect(event_manager_locator::get_instance(),SIGNAL(script_message(QString,QString)),this,SLOT(write(QString,QString)));
 
     }
 

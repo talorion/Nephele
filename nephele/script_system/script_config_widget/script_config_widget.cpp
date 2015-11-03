@@ -3,7 +3,7 @@
 #include <QScriptEngine>
 #include <QScriptValueIterator>
 
-#include "core/entity_manager.hpp"
+#include "entity_manager/entity_manager_locator.hpp"
 
 namespace talorion {
 
@@ -30,10 +30,10 @@ namespace talorion {
         delete script_object_tree;
         delete mainLayout;
 
-        foreach (QTreeWidgetItem* var, treeitems) {
-            if(var)
-                delete var;
-        }
+//        foreach (QTreeWidgetItem* var, treeitems) {
+//            if(var)
+//                delete var;
+//        }
     }
 
     void script_config_widget::update_script_tree(){
@@ -44,7 +44,7 @@ namespace talorion {
         //        script_object_tree->insertTopLevelItems(0, items);
 
         if(my_engine >= 0){
-            QScriptEngine* eng =  entity_manager::get_instance()->get_qt_script_engine_component(my_engine);
+            QScriptEngine* eng =  entity_manager_locator::get_instance()->get_qt_script_engine_component(my_engine);
 
             if(eng == NULL)
                 return;
@@ -107,7 +107,7 @@ namespace talorion {
 
     void script_config_widget::do_refresh_data()
     {
-        QList<int> script_engines = entity_manager::get_instance()->get_all_Qt_Script_Engines();
+        QList<int> script_engines = entity_manager_locator::get_instance()->get_all_Qt_Script_Engines();
         if(!script_engines.isEmpty())
             init_engine(script_engines[0]);
 

@@ -1,7 +1,7 @@
 #include "tcp_box_view.hpp"
 
-#include "core/entity_manager.hpp"
-#include "core/event_manager.hpp"
+#include "entity_manager/entity_manager_locator.hpp"
+#include "event_manager/event_manager_locator.hpp"
 
 #include "digital_view/digital_view.hpp"
 #include "analog_view/flowcontrollerview.hpp"
@@ -21,7 +21,7 @@ namespace talorion {
         if(m_entity<0)
             return;
 
-        QString boxname =  entity_manager::get_instance()->get_name_component(entity);
+        QString boxname =  entity_manager_locator::get_instance()->get_name_component(entity);
         setWindowTitle(boxname);
 
         m_layout = new QGridLayout();
@@ -38,13 +38,13 @@ namespace talorion {
         m_layout->setMargin(0);
         setLayout(m_layout);
 
-        connect(event_manager::get_instance(),SIGNAL(newAnalogInputValue(int)),this, SLOT(addAIV(int)));
-        connect(event_manager::get_instance(),SIGNAL(newAnalogOutputValue(int)),this, SLOT(addAOV(int)));
-        connect(event_manager::get_instance(),SIGNAL(newAnalogValue(int)),this, SLOT(addAV(int)));
+        connect(event_manager_locator::get_instance(),SIGNAL(newAnalogInputValue(int)),this, SLOT(addAIV(int)));
+        connect(event_manager_locator::get_instance(),SIGNAL(newAnalogOutputValue(int)),this, SLOT(addAOV(int)));
+        connect(event_manager_locator::get_instance(),SIGNAL(newAnalogValue(int)),this, SLOT(addAV(int)));
 
-        connect(event_manager::get_instance(),SIGNAL(newDigitalInputValue(int)),this, SLOT(addDIV(int)));
-        connect(event_manager::get_instance(),SIGNAL(newDigitalOutputValue(int)),this, SLOT(addDOV(int)));
-        connect(event_manager::get_instance(),SIGNAL(newDigitalValue(int)),this, SLOT(addDIOV(int)));
+        connect(event_manager_locator::get_instance(),SIGNAL(newDigitalInputValue(int)),this, SLOT(addDIV(int)));
+        connect(event_manager_locator::get_instance(),SIGNAL(newDigitalOutputValue(int)),this, SLOT(addDOV(int)));
+        connect(event_manager_locator::get_instance(),SIGNAL(newDigitalValue(int)),this, SLOT(addDIOV(int)));
 
 
     }
@@ -72,7 +72,7 @@ namespace talorion {
         if(m_entity<0)
             return false;
 
-        int box_entity = entity_manager::get_instance()->get_box_id_component(entity);
+        int box_entity = entity_manager_locator::get_instance()->get_box_id_component(entity);
 
         if(m_entity != box_entity)
             return false;

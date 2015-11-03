@@ -2,13 +2,13 @@
 
 #include <QDateTime>
 
-#include "core/event_manager.hpp"
+#include "event_manager/event_manager_locator.hpp"
 
 namespace talorion{
     script_log_handler::script_log_handler(QObject *par) :
         abstract_scriptable_object("console", par)
     {
-        connect(this,SIGNAL(script_message(QString,QString)),event_manager::get_instance(),SIGNAL(script_message(QString,QString)));
+        connect(this,SIGNAL(script_message(QString,QString)),event_manager_locator::get_instance(),SIGNAL(script_message(QString,QString)));
     }
 
     script_log_handler::~script_log_handler()

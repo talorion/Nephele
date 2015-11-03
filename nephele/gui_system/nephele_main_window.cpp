@@ -8,8 +8,8 @@
 #include <QApplication>
 #include <QScriptEngineDebugger>
 
-#include "core/event_manager.hpp"
-#include "core/entity_manager.hpp"
+#include "event_manager/event_manager_locator.hpp"
+#include "entity_manager/entity_manager_locator.hpp"
 
 #include "tcp_box_view/tcp_box_view.hpp"
 #include "tcp_box_view/analog_view/flowcontrollerview.hpp"
@@ -62,13 +62,13 @@ namespace talorion {
 
 
 
-        connect(this, SIGNAL(send_custom_command(QString)),event_manager::get_instance(),SIGNAL(send_custom_command(QString)));
-        connect(event_manager::get_instance(),SIGNAL(receivedCustomData(QString)),this,SLOT(displayCustomResponse(QString)));
+        connect(this, SIGNAL(send_custom_command(QString)),event_manager_locator::get_instance(),SIGNAL(send_custom_command(QString)));
+        connect(event_manager_locator::get_instance(),SIGNAL(receivedCustomData(QString)),this,SLOT(displayCustomResponse(QString)));
         //connect(event_manager::get_instance(),SIGNAL(analogAct_component_changed(int)),this,SLOT(slot_act_value_changed(int)));
         //connect(event_manager::get_instance(),SIGNAL(analogSet_component_changed(int)),this,SLOT(slot_set_value_changed(int)));
-        connect(event_manager::get_instance(),SIGNAL(error(QString)),statusBar(),SLOT(showMessage(QString)));
+        connect(event_manager_locator::get_instance(),SIGNAL(error(QString)),statusBar(),SLOT(showMessage(QString)));
 
-        connect(this,SIGNAL(change_set_value(int,double)),event_manager::get_instance(),SIGNAL(change_analogSet_component(int,double)));
+        connect(this,SIGNAL(change_set_value(int,double)),event_manager_locator::get_instance(),SIGNAL(change_analogSet_component(int,double)));
 
         //script_wnd = new script_editor_window();
 
@@ -106,73 +106,73 @@ namespace talorion {
         createToolBars();
         createStatusBar();
 
-        foreach (int entity, entity_manager::get_instance()->get_all_tcpBoxes()) {
+        foreach (int entity, entity_manager_locator::get_instance()->get_all_tcpBoxes()) {
             add_box(entity);
         }
 
-        connect(event_manager::get_instance(),SIGNAL(newTcpBox(int)), this,SLOT(add_box(int)));
+        connect(event_manager_locator::get_instance(),SIGNAL(newTcpBox(int)), this,SLOT(add_box(int)));
 
     }
 
     nephele_main_window::~nephele_main_window()
     {
-        delete sett_dlg;
-        //delete mainLayout;
-        delete centralWidget();
-        QMap<int, flowControllerView*>::iterator it;
-        for (it=fc_views.begin(); it != fc_views.end(); it++){
-            flowControllerView* tmp = it.value();
-            if(tmp)
-                delete tmp;
-            it.value() = NULL;
-        }
-        fc_views.clear();
+//        delete sett_dlg;
+//        //delete mainLayout;
+//        delete centralWidget();
+//        QMap<int, flowControllerView*>::iterator it;
+//        for (it=fc_views.begin(); it != fc_views.end(); it++){
+//            flowControllerView* tmp = it.value();
+//            if(tmp)
+//                delete tmp;
+//            it.value() = NULL;
+//        }
+//        fc_views.clear();
 
-        QMap<int, digital_view* >::iterator digit;
-        for (digit=dig_views.begin(); digit != dig_views.end(); digit++){
-            digital_view* tmp = digit.value();
-            if(tmp)
-                delete tmp;
-            digit.value() = NULL;
-        }
-        dig_views.clear();
+//        QMap<int, digital_view* >::iterator digit;
+//        for (digit=dig_views.begin(); digit != dig_views.end(); digit++){
+//            digital_view* tmp = digit.value();
+//            if(tmp)
+//                delete tmp;
+//            digit.value() = NULL;
+//        }
+//        dig_views.clear();
 
-        QMap<int, tcp_box_view* >::iterator boxit;
-        for (boxit=boxes.begin(); boxit != boxes.end(); boxit++){
-            tcp_box_view* tmp = boxit.value();
-            if(tmp)
-                delete tmp;
-            boxit.value() = NULL;
-        }
-        boxes.clear();
+//        QMap<int, tcp_box_view* >::iterator boxit;
+//        for (boxit=boxes.begin(); boxit != boxes.end(); boxit++){
+//            tcp_box_view* tmp = boxit.value();
+//            if(tmp)
+//                delete tmp;
+//            boxit.value() = NULL;
+//        }
+//        boxes.clear();
 
-        if(script_wnd)
-            delete script_wnd;
+//        if(script_wnd)
+//            delete script_wnd;
 
-        delete sett_dlg;
+//        //delete sett_dlg;
 
-        delete fileMenu;
-        delete scriptMenu;
-        delete toolsMenu;
-        delete helpMenu;
-        delete viewMenu;
+//        delete fileMenu;
+//        delete scriptMenu;
+//        delete toolsMenu;
+//        delete helpMenu;
+//        delete viewMenu;
 
-        delete fileToolBar;
-        delete scriptToolBar;
+//        delete fileToolBar;
+//        delete scriptToolBar;
 
-        delete scriptEditAct;
+//        delete scriptEditAct;
 
-        delete optionsEditAct;
-        delete newAct;
-        delete openAct;
-        delete saveAct;
-        delete saveAsAct;
-        delete exitAct;
+//        delete optionsEditAct;
+//        delete newAct;
+//        delete openAct;
+//        delete saveAct;
+//        delete saveAsAct;
+//        delete exitAct;
 
-        delete aboutAct;
-        delete central_wdgt;
+//        delete aboutAct;
+//        //delete central_wdgt;
 
-        delete cfg_hdl;
+//        delete cfg_hdl;
     }
 
     void nephele_main_window::displayCustomResponse(const QString &cm)

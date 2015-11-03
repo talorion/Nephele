@@ -1,7 +1,7 @@
 #include "digital_view.hpp"
 
-#include "core/entity_manager.hpp"
-#include "core/event_manager.hpp"
+#include "entity_manager/entity_manager_locator.hpp"
+#include "event_manager/event_manager_locator.hpp"
 
 namespace talorion{
     digital_view::digital_view(int entity,mode md=InputOutput, QWidget *par) :
@@ -24,7 +24,7 @@ namespace talorion{
             m_layout->addWidget(editSet,0,1);
 
             connect(editSet,SIGNAL(valueChanged(bool)),this,SLOT(slot_set_value_changed(bool)));
-            connect(event_manager::get_instance(),SIGNAL(digitalSet_component_changed(int)),this,SLOT(changeSetValue(int)));
+            connect(event_manager_locator::get_instance(),SIGNAL(digitalSet_component_changed(int)),this,SLOT(changeSetValue(int)));
 
         }
 
@@ -33,24 +33,24 @@ namespace talorion{
 
             m_layout->addWidget(editAct,0,2);
 
-            connect(event_manager::get_instance(),SIGNAL(digitalAct_component_changed(int)),this,SLOT(changeActValue(int)));
+            connect(event_manager_locator::get_instance(),SIGNAL(digitalAct_component_changed(int)),this,SLOT(changeActValue(int)));
         }
 
         m_layout->setMargin(0);
         setLayout(m_layout);
 
         //lblName->setText("Hugo");
-        lblName->setText(entity_manager::get_instance()->get_name_component(entity));
+        lblName->setText(entity_manager_locator::get_instance()->get_name_component(entity));
 
         //connect(editSet,SIGNAL(valueChanged(bool)), editAct,SLOT(setValue(bool)));
 
-        connect(this, SIGNAL(change_set_value(int,bool)), event_manager::get_instance(),SIGNAL(change_digitalSet_component(int,bool)),Qt::UniqueConnection);
+        connect(this, SIGNAL(change_set_value(int,bool)), event_manager_locator::get_instance(),SIGNAL(change_digitalSet_component(int,bool)),Qt::UniqueConnection);
 
         if(m_entity<0)
             return;
         //bool actval = entity_manager::get_instance()->get_digitalActValue_component(m_entity);
 
-        bool setval = entity_manager::get_instance()->get_digitalSetValue_component(m_entity);
+        bool setval = entity_manager_locator::get_instance()->get_digitalSetValue_component(m_entity);
         changeSetValue(setval);
     }
 
@@ -76,7 +76,7 @@ namespace talorion{
         if(m_entity != entity)
             return;
 
-        bool setValue =  entity_manager::get_instance()->get_digitalSetValue_component(entity);
+        bool setValue =  entity_manager_locator::get_instance()->get_digitalSetValue_component(entity);
         changeSetValue(setValue);
     }
 
@@ -88,7 +88,7 @@ namespace talorion{
         if(m_entity != entity)
             return;
 
-        bool actValue =  entity_manager::get_instance()->get_digitalActValue_component(entity);
+        bool actValue =  entity_manager_locator::get_instance()->get_digitalActValue_component(entity);
         changeActValue(actValue);
     }
 

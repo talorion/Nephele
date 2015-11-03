@@ -49,6 +49,12 @@ CONFIG += c++11
 #win32: BUILDNO = $$system(..\misc\build_number_generator.bat)
 #==========
 
+win32: CONFIG(release, debug|release) :DLLDESTDIR += ../release
+else:unix: CONFIG(release, debug|release) :DESTDIR += $$OUT_PWD/../release
+
+win32: CONFIG(debug, debug|release): DLLDESTDIR += ../debug
+else:unix: CONFIG(debug, debug|release): DESTDIR += $$OUT_PWD/../debug
+
 
 #==========Deploy
 win32: {
@@ -72,108 +78,68 @@ win32: {
 
 
 SOURCES += main.cpp\
-    core/event_manager.cpp \
     script_system/scripting_worker.cpp \
     script_system/script_handler/script_act_handler.cpp \
     script_system/script_handler/script_dialoges_handler.cpp \
     script_system/script_handler/script_set_handler.cpp \
     script_system/script_handler/script_util_handler.cpp \
     gui_system/nephele_main_window.cpp \
-    tcp_box_system/qvmbackend.cpp \
-    tcp_box_system/tcpdriver.cpp \
-    tcp_box_system/tcpcommand.cpp \
-    tcp_box_system/tcpcommandqueue.cpp \
-    tcp_box_system/flowcontrollerbackend.cpp \
     script_system/script_system.cpp \
-    tcp_box_system/tcp_box_system.cpp \
     gui_system/gui_system.cpp \
     gui_system/script_editor/script_editor_window.cpp \
     gui_system/script_editor/highlighter.cpp \
     gui_system/script_editor/console.cpp \
     script_system/script_handler/script_log_handler.cpp \
-    core/entity_manager.cpp \
-    data_aquisition_dll_system/data_aquisition_dll_system.cpp \
-    data_aquisition_dll_system/data_aquisition_dll_wrapper.cpp \
-    power_supply_dll_system/power_supply_dll_system.cpp \
     script_system/script_handler/script_daq_handler.cpp \
-    tcp_box_system/abstract_backend.cpp \
     gui_system/settings_dialog/settings_dialog.cpp \
-    core/system_manager.cpp \
-    tcp_box_system/tbs_config_widget/tbs_config_widget.cpp \
-    core/abstract_configuration_widget.cpp \
-    data_aquisition_dll_system/tof_daq_specific/tof_daq_dll_tools.cpp \
-    data_aquisition_dll_system/dad_config_widget/dad_config_widget.cpp \
-    data_aquisition_dll_system/data_aquisition_dll_worker.cpp \
-    tcp_box_system/tcp_box_worker.cpp \
-    core/abstract_scriptable_object.cpp \
-    data_aquisition_dll_system/tof_daq_specific/shared_memory_descriptor.cpp \
-    data_aquisition_dll_system/tof_daq_specific/shared_memory_pointer.cpp \
-    data_aquisition_dll_system/tof_daq_specific/tof_daq_dll_worker.cpp \
     script_system/script_config_widget/script_config_widget.cpp \
     gui_system/settings_dialog/empty_config_widget.cpp \
     gui_system/script_editor/treemodelcompleter.cpp \
     gui_system/script_editor/textedit.cpp \
-    tcp_box_system/rf_backend.cpp \
     gui_system/config_file/config_file.cpp \
     gui_system/tcp_box_view/tcp_box_view.cpp \
     gui_system/tcp_box_view/analog_view/analogview.cpp \
     gui_system/tcp_box_view/analog_view/flowcontrollerview.cpp \
     gui_system/tcp_box_view/digital_view/digital_indicator.cpp \
     gui_system/tcp_box_view/digital_view/digital_view.cpp \
-    gui_system/tcp_box_view/digital_view/switch_button.cpp \
-    power_supply_dll_system/power_supply_dll_wrapper.cpp \
-    data_tools_dll_system/data_tools_dll_system.cpp \
-    data_tools_dll_system/twtoolswrapper.cpp \
-    data_tools_dll_system/dtd_config_widget/dtd_config_widget.cpp \
-    power_supply_dll_system/psd_config_widget/psd_config_widget.cpp
+    gui_system/tcp_box_view/digital_view/switch_button.cpp
+#    ../nephele_core/abstract_configuration_widget.cpp \
+#    ../nephele_core/abstract_scriptable_object.cpp \
+#    ../nephele_core/entity_manager.cpp \
+#    ../nephele_core/event_manager.cpp \
+#    ../nephele_core/system_manager.cpp
+#    ../tcp_box_system/tbs_config_widget/tbs_config_widget.cpp \
+#    ../tcp_box_system/abstract_backend.cpp \
+#    ../tcp_box_system/flowcontrollerbackend.cpp \
+#    ../tcp_box_system/qvmbackend.cpp \
+#    ../tcp_box_system/rf_backend.cpp \
+#    ../tcp_box_system/tcp_box_system.cpp \
+#    ../tcp_box_system/tcp_box_worker.cpp \
+#    ../tcp_box_system/tcpcommand.cpp \
+#    ../tcp_box_system/tcpcommandqueue.cpp \
+#    ../tcp_box_system/tcpdriver.cpp
+#    ../data_aquisition_dll_system/tof_daq_specific/shared_memory_descriptor.cpp \
+#    ../data_aquisition_dll_system/tof_daq_specific/shared_memory_pointer.cpp \
+#    ../data_aquisition_dll_system/tof_daq_specific/tof_daq_dll_tools.cpp \
+#    ../data_aquisition_dll_system/tof_daq_specific/tof_daq_dll_worker.cpp \
+#    ../data_aquisition_dll_system/dad_config_widget/dad_config_widget.cpp \
+#    ../data_aquisition_dll_system/data_aquisition_dll_system.cpp \
+#    ../data_aquisition_dll_system/data_aquisition_dll_worker.cpp \
+#    ../data_aquisition_dll_system/data_aquisition_dll_wrapper.cpp
+#    ../data_tools_dll_system/dtd_config_widget/dtd_config_widget.cpp \
+#    ../data_tools_dll_system/data_tools_dll_system.cpp \
+#    ../data_tools_dll_system/twtoolswrapper.cpp
+#    ../power_supply_dll_system/psd_config_widget/psd_config_widget.cpp \
+#    ../power_supply_dll_system/power_supply_dll_system.cpp \
+#    ../power_supply_dll_system/power_supply_dll_wrapper.cpp
 
 HEADERS  += version.hpp \
     nephele.rc \
-    core/event_manager.hpp \
-    tcp_box_system/tcpcommand.hpp \
-    tcp_box_system/qvmbackend.hpp \
-    tcp_box_system/tcpcommandqueue.hpp \
-    tcp_box_system/tcpdriver.hpp \
-    gui_system/nephele_main_window.hpp \
-    script_system/script_handler/script_act_handler.hpp \
-    script_system/script_handler/script_dialoges_handler.hpp \
-    script_system/script_handler/script_set_handler.hpp \
-    script_system/script_handler/script_util_handler.hpp \
-    script_system/scripting_worker.hpp \
-    tcp_box_system/flowcontrollerbackend.h \
-    script_system/script_system.hpp \
-    tcp_box_system/tcp_box_system.hpp \
-    core/abstract_system.hpp \
-    gui_system/gui_system.hpp \
-    gui_system/script_editor/script_editor_window.hpp \
-    gui_system/script_editor/highlighter.h \
-    gui_system/script_editor/console.h \
-    script_system/script_handler/script_log_handler.hpp \
-    core/entity_manager.hpp \
-    tcp_box_system/tcpdriverdatatypes.hpp \
-    data_aquisition_dll_system/data_aquisition_dll_wrapper.hpp \
-    data_aquisition_dll_system/data_aquisition_dll_system.hpp \
-    power_supply_dll_system/power_supply_dll_system.hpp \
-    script_system/script_handler/script_daq_handler.hpp \
-    tcp_box_system/abstract_backend.hpp \
-    gui_system/settings_dialog/settings_dialog.hpp \
-    core/system_manager.hpp \
-    tcp_box_system/tbs_config_widget/tbs_config_widget.hpp \
-    core/abstract_configuration_widget.hpp \
-    data_aquisition_dll_system/tof_daq_specific/tof_daq_dll_tools.hpp \
-    data_aquisition_dll_system/dad_config_widget/dad_config_widget.hpp \
     build_number.h \
-    data_aquisition_dll_system/data_aquisition_dll_worker.hpp \
-    tcp_box_system/tcp_box_worker.hpp \
-    core/abstract_scriptable_object.hpp \
-    data_aquisition_dll_system/tof_daq_specific/shared_memory_descriptor.h \
-    data_aquisition_dll_system/tof_daq_specific/shared_memory_pointer.h \
-    data_aquisition_dll_system/tof_daq_specific/tof_daq_dll_worker.hpp \
-    script_system/script_config_widget/script_config_widget.hpp \
+    gui_system/nephele_main_window.hpp \
     gui_system/settings_dialog/empty_config_widget.hpp \
     gui_system/script_editor/treemodelcompleter.h \
     gui_system/script_editor/textedit.h \
-    tcp_box_system/rf_backend.hpp \
     gui_system/config_file/config_file.hpp \
     gui_system/tcp_box_view/tcp_box_view.hpp \
     gui_system/tcp_box_view/analog_view/analogview.hpp \
@@ -181,13 +147,53 @@ HEADERS  += version.hpp \
     gui_system/tcp_box_view/digital_view/digital_indicator.hpp \
     gui_system/tcp_box_view/digital_view/digital_view.hpp \
     gui_system/tcp_box_view/digital_view/switch_button.hpp \
-    power_supply_dll_system/power_supply_dll_wrapper.h \
-    data_tools_dll_system/data_tools_dll_system.hpp \
-    data_tools_dll_system/twtoolswrapper.h \
-    data_tools_dll_system/dtd_config_widget/dtd_config_widget.hpp \
-    power_supply_dll_system/psd_config_widget/psd_config_widget.hpp
+    gui_system/gui_system.hpp \
+    gui_system/script_editor/script_editor_window.hpp \
+    gui_system/script_editor/highlighter.h \
+    gui_system/script_editor/console.h \
+    gui_system/settings_dialog/settings_dialog.hpp \
+    script_system/script_handler/script_act_handler.hpp \
+    script_system/script_handler/script_dialoges_handler.hpp \
+    script_system/script_handler/script_set_handler.hpp \
+    script_system/script_handler/script_util_handler.hpp \
+    script_system/scripting_worker.hpp \
+    script_system/script_system.hpp \
+    script_system/script_handler/script_log_handler.hpp \
+    script_system/script_handler/script_daq_handler.hpp \
+    script_system/script_config_widget/script_config_widget.hpp
+#    ../nephele_core/abstract_configuration_widget.hpp \
+#    ../nephele_core/abstract_scriptable_object.hpp \
+#    ../nephele_core/abstract_system.hpp \
+#    ../nephele_core/entity_manager.hpp \
+#    ../nephele_core/event_manager.hpp \
+#    ../nephele_core/system_manager.hpp
+#    ../tcp_box_system/abstract_backend.hpp \
+#    ../tcp_box_system/tbs_config_widget/tbs_config_widget.hpp \
+#    ../tcp_box_system/flowcontrollerbackend.h \
+#    ../tcp_box_system/qvmbackend.hpp \
+#    ../tcp_box_system/rf_backend.hpp \
+#    ../tcp_box_system/tcp_box_system.hpp \
+#    ../tcp_box_system/tcp_box_worker.hpp \
+#    ../tcp_box_system/tcpcommand.hpp \
+#    ../tcp_box_system/tcpcommandqueue.hpp \
+#    ../tcp_box_system/tcpdriver.hpp \
+#    ../tcp_box_system/tcpdriverdatatypes.hpp
+#    ../data_aquisition_dll_system/dad_config_widget/dad_config_widget.hpp \
+#    ../data_aquisition_dll_system/tof_daq_specific/shared_memory_descriptor.h \
+#    ../data_aquisition_dll_system/tof_daq_specific/shared_memory_pointer.h \
+#    ../data_aquisition_dll_system/tof_daq_specific/tof_daq_dll_tools.hpp \
+#    ../data_aquisition_dll_system/tof_daq_specific/tof_daq_dll_worker.hpp \
+#    ../data_aquisition_dll_system/data_aquisition_dll_system.hpp \
+#    ../data_aquisition_dll_system/data_aquisition_dll_worker.hpp \
+#    ../data_aquisition_dll_system/data_aquisition_dll_wrapper.hpp
+#    ../data_tools_dll_system/dtd_config_widget/dtd_config_widget.hpp \
+#    ../data_tools_dll_system/data_tools_dll_system.hpp \
+#    ../data_tools_dll_system/twtoolswrapper.h
+#    ../power_supply_dll_system/psd_config_widget/psd_config_widget.hpp \
+#    ../power_supply_dll_system/power_supply_dll_system.hpp \
+#    ../power_supply_dll_system/power_supply_dll_wrapper.h
 
-
+#=====================================
 win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../qcustomplot/release/ -lqcustomplot
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../qcustomplot/debug/ -lqcustomplot
 else:unix: LIBS += -L$$OUT_PWD/../qcustomplot/ -lqcustomplot
@@ -201,20 +207,22 @@ else:win32:!win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$OUT_PW
 else:win32:!win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../qcustomplot/debug/qcustomplot.lib
 else:unix: PRE_TARGETDEPS += $$OUT_PWD/../qcustomplot/libqcustomplot.a
 
-unix: INCLUDEPATH += $$PWD/../../../libs/TofDaq_1.97_API/include
-unix: DEPENDPATH += $$PWD/../../../libs/TofDaq_1.97_API/include
+#=====================================
 
-win32-g++: INCLUDEPATH += $$PWD/../../../libs/TofDaq_1.97_API/include
-win32-g++: DEPENDPATH += $$PWD/../../../libs/TofDaq_1.97_API/include
+#unix: INCLUDEPATH += $$PWD/../../../libs/TofDaq_1.97_API/include
+#unix: DEPENDPATH += $$PWD/../../../libs/TofDaq_1.97_API/include
 
-win32-g++: INCLUDEPATH += $$PWD/../../../../../../Tofwerk/TofDaq_1.97_API/include
-win32-g++: DEPENDPATH += $$PWD/../../../../../../Tofwerk/TofDaq_1.97_API/include
+#win32-g++: INCLUDEPATH += $$PWD/../../../libs/TofDaq_1.97_API/include
+#win32-g++: DEPENDPATH += $$PWD/../../../libs/TofDaq_1.97_API/include
 
-win32-g++: INCLUDEPATH += $$PWD/../../../../Apis/TofDaq_1.95_API/include
-win32-g++: DEPENDPATH += $$PWD/../../../../Apis/TofDaq_1.95_API/include
+#win32-g++: INCLUDEPATH += $$PWD/../../../../../../Tofwerk/TofDaq_1.97_API/include
+#win32-g++: DEPENDPATH += $$PWD/../../../../../../Tofwerk/TofDaq_1.97_API/include
 
-unix: INCLUDEPATH += $$PWD/../../../../Apis/TofDaq_1.95_API/include
-unix: DEPENDPATH += $$PWD/../../../../Apis/TofDaq_1.95_API/include
+#win32-g++: INCLUDEPATH += $$PWD/../../../../Apis/TofDaq_1.95_API/include
+#win32-g++: DEPENDPATH += $$PWD/../../../../Apis/TofDaq_1.95_API/include
+
+#unix: INCLUDEPATH += $$PWD/../../../../Apis/TofDaq_1.95_API/include
+#unix: DEPENDPATH += $$PWD/../../../../Apis/TofDaq_1.95_API/include
 
 DISTFILES += \
     nephele.ico \
@@ -222,3 +230,17 @@ DISTFILES += \
 
 
 
+#=====================================
+win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../nephele_core/release/ -lnephele_core
+else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../nephele_core/debug/ -lnephele_core
+else:unix: LIBS += -L$$OUT_PWD/../nephele_core/ -lnephele_core
+
+INCLUDEPATH += $$PWD/../nephele_core
+DEPENDPATH += $$PWD/../nephele_core
+
+win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../nephele_core/release/libnephele_core.a
+else:win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../nephele_core/debug/libnephele_core.a
+else:win32:!win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../nephele_core/release/nephele_core.lib
+else:win32:!win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../nephele_core/debug/nephele_core.lib
+else:unix: PRE_TARGETDEPS += $$OUT_PWD/../nephele_core/libnephele_core.a
+#=====================================

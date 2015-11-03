@@ -1,7 +1,7 @@
 #ifndef TALORION_CONFIG_FILE_HPP
 #define TALORION_CONFIG_FILE_HPP
 
-#include "core/abstract_scriptable_object.hpp"
+#include "abstract_scriptable_object.hpp"
 
 namespace talorion {
 

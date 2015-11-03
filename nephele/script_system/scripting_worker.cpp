@@ -4,9 +4,9 @@
 #include <QThread>
 #include <QAction>
 
-#include "core/event_manager.hpp"
-#include "core/entity_manager.hpp"
-#include "core/abstract_scriptable_object.hpp"
+#include "event_manager/event_manager_locator.hpp"
+#include "entity_manager/entity_manager_locator.hpp"
+#include "abstract_scriptable_object.hpp"
 
 namespace talorion {
 
@@ -52,45 +52,45 @@ namespace talorion {
 
     void scripting_worker::initialize()
     {
-        entity_manager::get_instance()->createQtScriptEngine("Qt Script Engine", &m_script_engine);
+        entity_manager_locator::get_instance()->createQtScriptEngine("Qt Script Engine", &m_script_engine);
 
-        connect(event_manager::get_instance(),SIGNAL(start_script(QString)),this,SLOT(slot_start_script(QString)));
-        connect(event_manager::get_instance(),SIGNAL(start_script_file(QString)),this,SLOT(slot_start_script_file(QString)));
-        connect(event_manager::get_instance(),SIGNAL(debug_script_file(QString)),this,SLOT(debug_script_file(QString)));
+        connect(event_manager_locator::get_instance(),SIGNAL(start_script(QString)),this,SLOT(slot_start_script(QString)));
+        connect(event_manager_locator::get_instance(),SIGNAL(start_script_file(QString)),this,SLOT(slot_start_script_file(QString)));
+        connect(event_manager_locator::get_instance(),SIGNAL(debug_script_file(QString)),this,SLOT(debug_script_file(QString)));
         //connect(event_manager::get_instance(),SIGNAL(analogAct_component_changed(int)),this,SLOT(slot_act_value_changed(int)));
         //connect(event_manager::get_instance(),SIGNAL(analogSet_component_changed(int)),this,SLOT(slot_set_value_changed(int)));
         //connect(event_manager::get_instance(),SIGNAL(newAnalogValue(int)),this,SLOT(slot_newAnalogValue(int)));
-        connect(event_manager::get_instance(),SIGNAL(abort_script()),this,SLOT(slot_abort_script()));
-        connect(this,SIGNAL(script_finished()),event_manager::get_instance(),SIGNAL(script_finished()));
+        connect(event_manager_locator::get_instance(),SIGNAL(abort_script()),this,SLOT(slot_abort_script()));
+        connect(this,SIGNAL(script_finished()),event_manager_locator::get_instance(),SIGNAL(script_finished()));
 
-        foreach (int ent, entity_manager::get_instance()->get_all_ScriptableObjects()) {
+        foreach (int ent, entity_manager_locator::get_instance()->get_all_ScriptableObjects()) {
             slot_register_scritable_component(ent);
         }
 
         //connect(event_manager::get_instance(),SIGNAL(register_scritable_component(int)),this,SLOT(slot_register_scritable_component(int)));
         //connect(event_manager::get_instance(),SIGNAL(unregister_scritable_component(int)),this,SLOT(slot_unregister_scritable_component(int)));
-        connect(event_manager::get_instance(),SIGNAL(newScriptableObject(int)),this, SLOT(slot_register_scritable_component(int)));
+        connect(event_manager_locator::get_instance(),SIGNAL(newScriptableObject(int)),this, SLOT(slot_register_scritable_component(int)));
 
 
         m_set_hdl = new script_set_handler();
-        entity_manager::get_instance()->createScriptableObject(m_set_hdl->script_name(), m_set_hdl);
+        entity_manager_locator::get_instance()->createScriptableObject(m_set_hdl->script_name(), m_set_hdl);
 
         m_act_hdl = new script_act_handler();
-        entity_manager::get_instance()->createScriptableObject(m_act_hdl->script_name(), m_act_hdl);
+        entity_manager_locator::get_instance()->createScriptableObject(m_act_hdl->script_name(), m_act_hdl);
 
         m_diag_hdl = new script_dialoges_handler();
         connect(this, SIGNAL(abort_all_dialoges()),m_diag_hdl,SIGNAL(dialog_finished()));
-        entity_manager::get_instance()->createScriptableObject(m_diag_hdl->script_name(), m_diag_hdl);
+        entity_manager_locator::get_instance()->createScriptableObject(m_diag_hdl->script_name(), m_diag_hdl);
 
         m_util_hdl = new script_util_handler();
         //connect(this, SIGNAL(abort_all_dialoges()),m_util_hdl,SIGNAL(dialog_finished()));
-        entity_manager::get_instance()->createScriptableObject(m_util_hdl->script_name(), m_util_hdl);
+        entity_manager_locator::get_instance()->createScriptableObject(m_util_hdl->script_name(), m_util_hdl);
 
         m_log_hdl = new script_log_handler();
-        entity_manager::get_instance()->createScriptableObject(m_log_hdl->script_name(), m_log_hdl);
+        entity_manager_locator::get_instance()->createScriptableObject(m_log_hdl->script_name(), m_log_hdl);
 
         m_daq_hdl = new script_daq_handler();
-        entity_manager::get_instance()->createScriptableObject(m_daq_hdl->script_name(), m_daq_hdl);
+        entity_manager_locator::get_instance()->createScriptableObject(m_daq_hdl->script_name(), m_daq_hdl);
 
 
         //m_script_engine = new QScriptEngine();
@@ -227,7 +227,7 @@ namespace talorion {
 
     void scripting_worker::slot_register_scritable_component(int ent)
     {
-        abstract_scriptable_object* obj = entity_manager::get_instance()->get_scriptable_object_component(ent);
+        abstract_scriptable_object* obj = entity_manager_locator::get_instance()->get_scriptable_object_component(ent);
         if(!obj)
             return;
         QString script_name = obj->script_name();

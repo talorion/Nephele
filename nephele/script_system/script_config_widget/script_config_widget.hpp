@@ -5,7 +5,7 @@
 #include <QScriptValue>
 #include <QTreeWidget>
 
-#include "core/abstract_configuration_widget.hpp"
+#include "abstract_configuration_widget.hpp"
 
 namespace talorion {
 

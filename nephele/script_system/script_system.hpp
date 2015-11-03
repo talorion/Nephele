@@ -4,7 +4,7 @@
 #include <QThread>
 #include <QScriptEngine>
 
-#include "core/abstract_system.hpp"
+#include "abstract_system.hpp"
 
 
 namespace talorion {
@@ -18,6 +18,12 @@ namespace talorion {
         explicit script_system(QObject *par = 0);
         ~script_system();
         Q_DISABLE_COPY(script_system)
+
+        virtual void init_system() Q_DECL_OVERRIDE;
+        virtual void dispose_system() Q_DECL_OVERRIDE;
+
+        virtual void register_entity_manager(abstract_entity_manager* entity_manager=NULL) Q_DECL_OVERRIDE {entity_manager_locator::provide(entity_manager);}
+        virtual void register_event_manager(abstract_event_manager* event_manager=NULL) Q_DECL_OVERRIDE {event_manager_locator::provide(event_manager);}
 
     signals:
 

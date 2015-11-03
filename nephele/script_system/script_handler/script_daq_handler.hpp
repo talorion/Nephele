@@ -1,7 +1,7 @@
 #ifndef SCRIPT_DAQ_HANDLER_HPP
 #define SCRIPT_DAQ_HANDLER_HPP
 
-#include "core/abstract_scriptable_object.hpp"
+#include "abstract_scriptable_object.hpp"
 
 namespace talorion{
     class script_daq_handler : public abstract_scriptable_object

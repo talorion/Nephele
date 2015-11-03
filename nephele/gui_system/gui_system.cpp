@@ -12,25 +12,35 @@
 #include <QFileDialog>
 
 #include "nephele_main_window.hpp"
-#include "core/event_manager.hpp"
-#include "core/entity_manager.hpp"
+#include "event_manager/event_manager_locator.hpp"
+#include "entity_manager/entity_manager_locator.hpp"
 
 #include "config_file/config_file.hpp"
 
 namespace talorion{
-    gui_system::gui_system(QObject *par) :
+    gui_system::gui_system( QObject *par) :
         QObject(par),
         abstract_system("{93647299-a839-4cb6-ada7-7dabf01f297d}"),
         window(NULL)
     {
 
-        connect(event_manager::get_instance(),SIGNAL(fatal(QString)),this,SLOT(slot_open_info_dialog(QString)));
+
     }
 
     gui_system::~gui_system()
     {
-        if(window)
-            delete window;
+//        if(window)
+//            delete window;
+    }
+
+    void gui_system::init_system()
+    {
+        connect(event_manager_locator::get_instance(),SIGNAL(fatal(QString)),this,SLOT(slot_open_info_dialog(QString)));
+    }
+
+    void gui_system::dispose_system()
+    {
+
     }
 
     void gui_system::slot_open_numeric_dialog()
@@ -78,7 +88,7 @@ namespace talorion{
     void talorion::gui_system::do_start_system()
     {
         config_file *cfg_hdl = new config_file();
-        entity_manager::get_instance()->createScriptableObject(cfg_hdl->script_name(), cfg_hdl);
+        entity_manager_locator::get_instance()->createScriptableObject(cfg_hdl->script_name(), cfg_hdl);
         int W = 250;
         int H = 250;
 
@@ -114,15 +124,15 @@ namespace talorion{
         splash.finish(window);
 
         // connect dialoges
-        connect(event_manager::get_instance(),SIGNAL(open_numeric_dialog()),this,SLOT(slot_open_numeric_dialog()));
-        connect(event_manager::get_instance(),SIGNAL(open_string_dialog()),this,SLOT(slot_open_string_dialog()));
-        connect(event_manager::get_instance(),SIGNAL(open_file_dialog()),this,SLOT(slot_open_file_dialog()));
-        connect(event_manager::get_instance(),SIGNAL(open_info_dialog(QString)),this,SLOT(slot_open_info_dialog(QString)));
-        connect(event_manager::get_instance(),SIGNAL(open_plot_dialog()),this,SLOT(slot_open_plot_dialog()));
+        connect(event_manager_locator::get_instance(),SIGNAL(open_numeric_dialog()),this,SLOT(slot_open_numeric_dialog()));
+        connect(event_manager_locator::get_instance(),SIGNAL(open_string_dialog()),this,SLOT(slot_open_string_dialog()));
+        connect(event_manager_locator::get_instance(),SIGNAL(open_file_dialog()),this,SLOT(slot_open_file_dialog()));
+        connect(event_manager_locator::get_instance(),SIGNAL(open_info_dialog(QString)),this,SLOT(slot_open_info_dialog(QString)));
+        connect(event_manager_locator::get_instance(),SIGNAL(open_plot_dialog()),this,SLOT(slot_open_plot_dialog()));
 
-        connect(this, SIGNAL(dialog_finished(double)),event_manager::get_instance(),SIGNAL(dialog_finished(double)));
-        connect(this, SIGNAL(dialog_finished(QString)),event_manager::get_instance(),SIGNAL(dialog_finished(QString)));
-        connect(this, SIGNAL(dialog_finished()),event_manager::get_instance(),SIGNAL(dialog_finished()));
+        connect(this, SIGNAL(dialog_finished(double)),event_manager_locator::get_instance(),SIGNAL(dialog_finished(double)));
+        connect(this, SIGNAL(dialog_finished(QString)),event_manager_locator::get_instance(),SIGNAL(dialog_finished(QString)));
+        connect(this, SIGNAL(dialog_finished()),event_manager_locator::get_instance(),SIGNAL(dialog_finished()));
 
         // connect dialoges
     }

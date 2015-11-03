@@ -2,7 +2,7 @@
 #define GUI_SYSTEM_HPP
 
 #include <QObject>
-#include <core/abstract_system.hpp>
+#include "abstract_system.hpp"
 
 namespace talorion{
 
@@ -15,6 +15,12 @@ namespace talorion{
         explicit gui_system(QObject *par = 0);
         ~gui_system();
         Q_DISABLE_COPY(gui_system)
+
+        virtual void init_system() Q_DECL_OVERRIDE;
+        virtual void dispose_system() Q_DECL_OVERRIDE;
+
+        virtual void register_entity_manager(abstract_entity_manager* entity_manager=NULL) Q_DECL_OVERRIDE {entity_manager_locator::provide(entity_manager);}
+        virtual void register_event_manager(abstract_event_manager* event_manager=NULL) Q_DECL_OVERRIDE {event_manager_locator::provide(event_manager);}
 
     signals:
         void dialog_finished();

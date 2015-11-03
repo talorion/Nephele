@@ -11,8 +11,8 @@
 
 
 #include "math.h"
-#include "core/entity_manager.hpp"
-#include "core/event_manager.hpp"
+#include "entity_manager/entity_manager_locator.hpp"
+#include "event_manager/event_manager_locator.hpp"
 
 #define bgstyle_ok "QDoubleSpinBox { background-color :  lightGray;}"
 #define bgstyle_warn "QDoubleSpinBox { background-color :  lightYellow;}"
@@ -39,29 +39,29 @@ namespace talorion {
         if(md & Output){
             editSet = new QDoubleSpinBox(this);
             editSet->setRange(
-                        entity_manager::get_instance()->get_setMin_component(entity),
-                        entity_manager::get_instance()->get_setMax_component(entity));
-            editSet->setSingleStep(entity_manager::get_instance()->get_setMax_component(entity)/50.0);
-            editSet->setSuffix(" " + entity_manager::get_instance()->get_units_component(entity));
-            if (entity_manager::get_instance()->get_setMax_component(entity) > 1 && log10(entity_manager::get_instance()->get_setMax_component(entity))<=6)
-                editSet->setDecimals(6-log10(entity_manager::get_instance()->get_setMax_component(entity)));
+                        entity_manager_locator::get_instance()->get_setMin_component(entity),
+                        entity_manager_locator::get_instance()->get_setMax_component(entity));
+            editSet->setSingleStep(entity_manager_locator::get_instance()->get_setMax_component(entity)/50.0);
+            editSet->setSuffix(" " + entity_manager_locator::get_instance()->get_units_component(entity));
+            if (entity_manager_locator::get_instance()->get_setMax_component(entity) > 1 && log10(entity_manager_locator::get_instance()->get_setMax_component(entity))<=6)
+                editSet->setDecimals(6-log10(entity_manager_locator::get_instance()->get_setMax_component(entity)));
 
-            editSet->setValue(entity_manager::get_instance()->get_analogSetValue_component(entity));
+            editSet->setValue(entity_manager_locator::get_instance()->get_analogSetValue_component(entity));
 
             //connect(editSet,SIGNAL(valueChanged(double)),this,SLOT(slot_set_value_changed(double)));
 
             m_layout->addWidget(editSet,0,1,1,1);
 
             connect(editSet, SIGNAL(valueChanged(double)), this, SLOT(slot_set_value_changed(double)));
-            connect(event_manager::get_instance(),SIGNAL(analogSet_component_changed(int)),this,SLOT(changeSetValue(int)));
+            connect(event_manager_locator::get_instance(),SIGNAL(analogSet_component_changed(int)),this,SLOT(changeSetValue(int)));
         }
 
         if(md & Input){
             editAct = new QDoubleSpinBox(this);
             editAct->setReadOnly(true);
-            editAct->setDecimals(6-log10(entity_manager::get_instance()->get_actMax_component(entity)));
-            editAct->setSuffix(" " + entity_manager::get_instance()->get_units_component(entity));
-            editAct->setRange(entity_manager::get_instance()->get_actMin_component(entity), entity_manager::get_instance()->get_actMax_component(entity));
+            editAct->setDecimals(6-log10(entity_manager_locator::get_instance()->get_actMax_component(entity)));
+            editAct->setSuffix(" " + entity_manager_locator::get_instance()->get_units_component(entity));
+            editAct->setRange(entity_manager_locator::get_instance()->get_actMin_component(entity), entity_manager_locator::get_instance()->get_actMax_component(entity));
             editAct->setButtonSymbols(QDoubleSpinBox::NoButtons);
             editAct->setMinimumWidth(100);
             editAct->setStyleSheet(bgstyle_ok);
@@ -69,11 +69,11 @@ namespace talorion {
             m_layout->addWidget(editAct,0,2,1,1);
 
             //connect(editSet,SIGNAL(valueChanged(double)),this,SLOT(slot_set_value_changed(double)));
-            connect(event_manager::get_instance(),SIGNAL(analogAct_component_changed(int)),this,SLOT(changeActValue(int)));
+            connect(event_manager_locator::get_instance(),SIGNAL(analogAct_component_changed(int)),this,SLOT(changeActValue(int)));
 
         }
 
-        lblName = new QLabel(entity_manager::get_instance()->get_name_component(entity),this);
+        lblName = new QLabel(entity_manager_locator::get_instance()->get_name_component(entity),this);
 
         m_layout->addWidget(lblName,0,0,1,1);
 
@@ -87,10 +87,10 @@ namespace talorion {
 
         plot->setFixedHeight(100);
         plot->setFixedWidth(400);
-        double lowerRange = entity_manager::get_instance()->get_actMin_component(entity) - (entity_manager::get_instance()->get_actMax_component(entity)-entity_manager::get_instance()->get_actMin_component(entity))/10;
-        double upperRange = entity_manager::get_instance()->get_actMax_component(entity)
-                + (entity_manager::get_instance()->get_actMax_component(entity)
-                   - entity_manager::get_instance()->get_actMin_component(entity))/10;
+        double lowerRange = entity_manager_locator::get_instance()->get_actMin_component(entity) - (entity_manager_locator::get_instance()->get_actMax_component(entity)-entity_manager_locator::get_instance()->get_actMin_component(entity))/10;
+        double upperRange = entity_manager_locator::get_instance()->get_actMax_component(entity)
+                + (entity_manager_locator::get_instance()->get_actMax_component(entity)
+                   - entity_manager_locator::get_instance()->get_actMin_component(entity))/10;
         plot->yAxis->setRangeLower(lowerRange);
         plot->yAxis->setRangeUpper(upperRange);
         plot->yAxis->setAutoTickCount(2);
@@ -151,7 +151,7 @@ namespace talorion {
         if(m_entity != entity)
             return;
 
-        double setValue = entity_manager::get_instance()->get_analogSetValue_component(entity);
+        double setValue = entity_manager_locator::get_instance()->get_analogSetValue_component(entity);
         changeSetValue(setValue);
     }
 
@@ -163,7 +163,7 @@ namespace talorion {
         if(m_entity != entity)
             return;
 
-        double actValue = entity_manager::get_instance()->get_analogActValue_component(entity);
+        double actValue = entity_manager_locator::get_instance()->get_analogActValue_component(entity);
         changeActValue(actValue);
     }
 

@@ -4,15 +4,15 @@
 #include <QJsonDocument>
 #include <QJsonObject>
 
-#include "core/entity_manager.hpp"
-#include "core/event_manager.hpp"
+#include "entity_manager/entity_manager_locator.hpp"
+#include "event_manager/event_manager_locator.hpp"
 
 namespace talorion {
 
     config_file::config_file(QObject *par):
         abstract_scriptable_object("cfg_file", par)
     {
-        connect(this,SIGNAL(change_set_value(int,double)),event_manager::get_instance(),SIGNAL(change_analogSet_component(int,double)));
+        connect(this,SIGNAL(change_set_value(int,double)),event_manager_locator::get_instance(),SIGNAL(change_analogSet_component(int,double)));
     }
 
     config_file::~config_file()
@@ -105,10 +105,10 @@ namespace talorion {
                 obj = json[box_nme].toObject();
                 foreach (QString nme, obj.keys()) {
 
-                    QList<int> entities =  entity_manager::get_instance()->get_entity_by_name(nme);
+                    QList<int> entities =  entity_manager_locator::get_instance()->get_entity_by_name(nme);
 
                     foreach (int entity, entities) {
-                        box_id = entity_manager::get_instance()->get_box_id_component(entity);
+                        box_id = entity_manager_locator::get_instance()->get_box_id_component(entity);
                         bid=  box_nme.toInt(&ok);
 
                         if(ok && bid == box_id){
@@ -131,9 +131,9 @@ namespace talorion {
 
         QJsonObject::iterator it;
         //foreach (int entity , entity_manager::get_instance()->get_all_AnalogValues()) {
-        foreach (int entity , entity_manager::get_instance()->get_all_Values()) {
+        foreach (int entity , entity_manager_locator::get_instance()->get_all_Values()) {
 
-            box_id = entity_manager::get_instance()->get_box_id_component(entity);
+            box_id = entity_manager_locator::get_instance()->get_box_id_component(entity);
             box_nme= QString::number(box_id);
 
             QJsonObject obj;
@@ -144,8 +144,8 @@ namespace talorion {
             if((*it).isObject())
                 obj = (*it).toObject();
 
-            nme= entity_manager::get_instance()->get_name_component(entity);
-            val = entity_manager::get_instance()->get_analogSetValue_component(entity);
+            nme= entity_manager_locator::get_instance()->get_name_component(entity);
+            val = entity_manager_locator::get_instance()->get_analogSetValue_component(entity);
 
             if(!nme.isEmpty()){
                 obj.insert(nme, val);

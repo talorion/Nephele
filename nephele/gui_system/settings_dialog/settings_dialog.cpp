@@ -1,10 +1,10 @@
 #include "settings_dialog.hpp"
 
-#include "core/event_manager.hpp"
-#include "core/entity_manager.hpp"
-#include "core/system_manager.hpp"
+#include "event_manager/event_manager_locator.hpp"
+#include "entity_manager/entity_manager_locator.hpp"
+#include "system_manager.hpp"
 
-#include "core/abstract_configuration_widget.hpp"
+#include "abstract_configuration_widget.hpp"
 #include "empty_config_widget.hpp"
 
 namespace talorion {
@@ -54,40 +54,40 @@ namespace talorion {
         //        }
 
 
-        foreach (int entity, entity_manager::get_instance()->get_all_Systems()) {
+        foreach (int entity, entity_manager_locator::get_instance()->get_all_Systems()) {
             newSystem(entity);
         }
-        connect(event_manager::get_instance(),SIGNAL(newSystem(int)),this,SLOT(newSystem(int)));
+        connect(event_manager_locator::get_instance(),SIGNAL(newSystem(int)),this,SLOT(newSystem(int)));
     }
 
     settings_dialog::~settings_dialog()
     {
-        if(serach_field)
-            delete serach_field;
+//        if(serach_field)
+//            delete serach_field;
 
-        if(settings_group_list)
-            delete settings_group_list;
+//        if(settings_group_list)
+//            delete settings_group_list;
 
-        if(settings_widget_label)
-            delete settings_widget_label;
+//        if(settings_widget_label)
+//            delete settings_widget_label;
 
-        if(mainLayout)
-            delete mainLayout;
+//        if(mainLayout)
+//            delete mainLayout;
 
-         QMap<QListWidgetItem*,int>::iterator it;
-         for(it=list2entity.begin(); it !=list2entity.end();it++){
-             QListWidgetItem* tmp = it.key();
-             if(tmp)
-                 delete tmp;
-         }
+////         QMap<QListWidgetItem*,int>::iterator it;
+////         for(it=list2entity.begin(); it !=list2entity.end();it++){
+////             QListWidgetItem* tmp = it.key();
+////             if(tmp)
+////                 delete tmp;
+////         }
 
-         if(settings_widget)
-             delete settings_widget;
+//         if(settings_widget)
+//             delete settings_widget;
     }
 
     void settings_dialog::newSystem(int entity)
     {
-        QString itemText =entity_manager::get_instance()->get_name_component(entity);
+        QString itemText =entity_manager_locator::get_instance()->get_name_component(entity);
 
         //QStringList t = lst_mdl->stringList();
         //t.append(nme);
@@ -112,7 +112,7 @@ namespace talorion {
             return;
 
         int entity = it.value();
-        settings_widget = entity_manager::get_instance()->get_systemConfigurationWidget_component(entity);
+        settings_widget = entity_manager_locator::get_instance()->get_systemConfigurationWidget_component(entity);
 
         if(!settings_widget)
             settings_widget = new empty_config_widget();

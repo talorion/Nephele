@@ -2,26 +2,38 @@
 
 #include <QDebug>
 #include "scripting_worker.hpp"
-#include "core/event_manager.hpp"
+#include "event_manager/event_manager_locator.hpp"
 
 #include "script_config_widget/script_config_widget.hpp"
 
 namespace talorion {
 
-    script_system::script_system(QObject *par) :
+    script_system::script_system( QObject *par) :
         QThread(par),
         abstract_system("{8c2f892c-e2e2-417b-a3b1-96600e7822d3}"),
         config_wdg(NULL)
     {
-        config_wdg = new script_config_widget();
+//        config_wdg = new script_config_widget();
 
-        connect(event_manager::get_instance(),SIGNAL(application_aboutToQuit()),this,SLOT(quit()));
+//        connect(event_manager_locator::get_instance(),SIGNAL(application_aboutToQuit()),this,SLOT(quit()));
     }
 
     script_system::~script_system()
     {
-        if(config_wdg)
-            delete config_wdg;
+//        if(config_wdg)
+//            delete config_wdg;
+    }
+
+    void script_system::init_system()
+    {
+        config_wdg = new script_config_widget();
+
+        connect(event_manager_locator::get_instance(),SIGNAL(application_aboutToQuit()),this,SLOT(quit()));
+    }
+
+    void script_system::dispose_system()
+    {
+        quit();
     }
 
 

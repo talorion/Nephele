@@ -5,16 +5,18 @@
 #include <QApplication>
 #include <QDebug>
 
-#include "core/entity_manager.hpp"
-#include "core/event_manager.hpp"
-#include "core/system_manager.hpp"
+#include "entity_manager/entity_manager_locator.hpp"
+#include "entity_manager/entity_manager.hpp"
+#include "event_manager/event_manager_locator.hpp"
+#include "event_manager/event_manager.hpp"
+#include "system_manager.hpp"
 
-#include "data_aquisition_dll_system/data_aquisition_dll_system.hpp"
+//#include "data_aquisition_dll_system.hpp"
 #include "gui_system/gui_system.hpp"
 #include "script_system/script_system.hpp"
-#include "tcp_box_system/tcp_box_system.hpp"
-#include "data_tools_dll_system/data_tools_dll_system.hpp"
-#include "power_supply_dll_system/power_supply_dll_system.hpp"
+//#include "tcp_box_system.hpp"
+//#include "data_tools_dll_system/data_tools_dll_system.hpp"
+//#include "power_supply_dll_system/power_supply_dll_system.hpp"
 
 
 using namespace talorion;
@@ -34,28 +36,47 @@ int main(int argc, char *argv[])
         QCoreApplication::setApplicationName("Nephele");
         QCoreApplication::setApplicationVersion(v);
 
-        entity_manager::get_instance()->initialize();
+        event_manager* evt_mng = new event_manager();
+        event_manager_locator::provide(evt_mng);
 
-        QObject::connect(&a,SIGNAL(aboutToQuit()), event_manager::get_instance(), SIGNAL(application_aboutToQuit()));
+        entity_manager* ent_mng = new entity_manager();
+        entity_manager_locator::provide(ent_mng);
 
+
+        entity_manager_locator::get_instance()->initialize();
+        //event_manager_locator::get_instance()->initialize();
+
+
+        QObject::connect(&a,SIGNAL(aboutToQuit()), event_manager_locator::get_instance(), SIGNAL(application_aboutToQuit()));
+
+        //==== core systems==
         system_manager::get_instance()->register_new_system<gui_system>();
 
         system_manager::get_instance()->register_new_system<script_system>();
+        //===================
 
-        system_manager::get_instance()->register_new_system<tcp_box_system>();
+        //==== plugin systems==
+        //system_manager::get_instance()->register_new_system<tcp_box_system>();
+        system_manager::get_instance()->load_plugin_systems();
 
-        system_manager::get_instance()->register_new_system<data_aquisition_dll_system>();
+        //system_manager::get_instance()->register_new_system<data_aquisition_dll_system>();
 
-        system_manager::get_instance()->register_new_system<data_tools_dll_system>();
+        //system_manager::get_instance()->register_new_system<data_tools_dll_system>();
 
-        system_manager::get_instance()->register_new_system<power_supply_dll_system>();
+        //system_manager::get_instance()->register_new_system<power_supply_dll_system>();
+        //===================
 
         ret = a.exec();
 
-        event_manager::destroy();
+        //event_manager_locator::destroy();
 
-        entity_manager::get_instance()->dispose();
-        entity_manager::destroy();
+        //entity_manager_locator::get_instance()->dispose();
+        //entity_manager_locator::destroy();
+
+        system_manager::get_instance()->destroy();
+
+        delete evt_mng;
+        delete ent_mng;
 
     } catch(const std::runtime_error &ex){
         qDebug()<<ex.what();

@@ -1,7 +1,7 @@
 #ifndef SCRIPT_LOG_HANDLER_HPP
 #define SCRIPT_LOG_HANDLER_HPP
 
-#include "core/abstract_scriptable_object.hpp"
+#include "abstract_scriptable_object.hpp"
 
 namespace talorion{
 

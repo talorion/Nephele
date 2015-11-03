@@ -13,8 +13,8 @@
 #include <QScriptEngine>
 #include <QScriptValueIterator>
 
-#include "core/event_manager.hpp"
-#include "core/entity_manager.hpp"
+#include "event_manager/event_manager_locator.hpp"
+#include "entity_manager/entity_manager_locator.hpp"
 
 namespace talorion
 {
@@ -71,18 +71,18 @@ namespace talorion
 
 
         //connect(this,SIGNAL(start_script(QString)),event_manager::get_instance(),SIGNAL(start_script(QString)));
-        connect(this,SIGNAL(start_script_file(QString)),event_manager::get_instance(),SIGNAL(start_script_file(QString)));
-        connect(this,SIGNAL(debug_script_file(QString)),event_manager::get_instance(),SIGNAL(debug_script_file(QString)));
+        connect(this,SIGNAL(start_script_file(QString)),event_manager_locator::get_instance(),SIGNAL(start_script_file(QString)));
+        connect(this,SIGNAL(debug_script_file(QString)),event_manager_locator::get_instance(),SIGNAL(debug_script_file(QString)));
 
-        connect(this,SIGNAL(change_script_file_component(int,QString)),event_manager::get_instance(),SIGNAL(change_script_file_component(int,QString)));
+        connect(this,SIGNAL(change_script_file_component(int,QString)),event_manager_locator::get_instance(),SIGNAL(change_script_file_component(int,QString)));
 
-        connect(event_manager::get_instance(),SIGNAL(newQtScriptEngine(int)),this,SLOT(slot_newQtScriptEngine(int)));
+        connect(event_manager_locator::get_instance(),SIGNAL(newQtScriptEngine(int)),this,SLOT(slot_newQtScriptEngine(int)));
 
         //QScriptEngineDebugger *m_debugger = new QScriptEngineDebugger(this);
 
         m_debugger = new QScriptEngineDebugger(this);
 
-        QList<int> script_engines = entity_manager::get_instance()->get_all_Qt_Script_Engines();
+        QList<int> script_engines = entity_manager_locator::get_instance()->get_all_Qt_Script_Engines();
         if(!script_engines.isEmpty())
             init_engine(script_engines[0]);
 
@@ -94,26 +94,26 @@ namespace talorion
         delete layout;
         delete wnd;
 
-        if(editor)
-            delete editor;
+//        if(editor)
+//            delete editor;
 
-        if(highlighter)
-            delete highlighter;
+//        if(highlighter)
+//            delete highlighter;
 
         if(completer)
             delete completer;
 
-        delete model;
+        //delete model;
 
-        foreach (QStandardItem* var, std_items) {
-            if(var)
-                delete var;
-            var=NULL;
-        }
+//        foreach (QStandardItem* var, std_items) {
+//            if(var)
+//                delete var;
+//            var=NULL;
+//        }
         std_items.clear();
 
-        if(console)
-            delete console;
+//        if(console)
+//            delete console;
 
         if(openAct)
             delete openAct;
@@ -210,7 +210,7 @@ namespace talorion
     {
         if (maybeSave()) {
             if(my_engine >= 0){
-                QScriptEngine* eng =  entity_manager::get_instance()->get_qt_script_engine_component(my_engine);
+                QScriptEngine* eng =  entity_manager_locator::get_instance()->get_qt_script_engine_component(my_engine);
                 m_debugger->attachTo(eng);
                 m_debugger->action(QScriptEngineDebugger::InterruptAction)->trigger();
             }
@@ -268,7 +268,7 @@ namespace talorion
         model = new QStandardItemModel(completer);
 
         if(my_engine >= 0){
-            QScriptEngine* eng =  entity_manager::get_instance()->get_qt_script_engine_component(my_engine);
+            QScriptEngine* eng =  entity_manager_locator::get_instance()->get_qt_script_engine_component(my_engine);
 
             QStandardItem * rt = model->invisibleRootItem();
             QScriptValue object =eng->globalObject();
@@ -364,11 +364,11 @@ namespace talorion
         stopAct= new QAction(QIcon(":/images/images/stop_script.png"), tr("Stop script"), this);
         stopAct->setStatusTip(tr("Stop"));
         //connect(stopAct, SIGNAL(triggered()), this, SLOT(stop_script()));
-        connect(stopAct, SIGNAL(triggered()), event_manager::get_instance(),SIGNAL(abort_script()));
+        connect(stopAct, SIGNAL(triggered()), event_manager_locator::get_instance(),SIGNAL(abort_script()));
 
         skipSleepAct = new QAction(QIcon(":/images/images/skip.png"), tr("Skip Sleep"), this);
         skipSleepAct->setStatusTip(tr("Skip Sleep"));
-        connect(skipSleepAct, SIGNAL(triggered()), event_manager::get_instance(),SIGNAL(script_skip_sleep()));
+        connect(skipSleepAct, SIGNAL(triggered()), event_manager_locator::get_instance(),SIGNAL(script_skip_sleep()));
 
         aboutAct = new QAction(tr("&About"), this);
         aboutAct->setStatusTip(tr("Show the application's About box"));
@@ -517,7 +517,7 @@ namespace talorion
         if(entity<0)
             return;
 
-        QString tmp= entity_manager::get_instance()->get_script_file_component(entity);
+        QString tmp= entity_manager_locator::get_instance()->get_script_file_component(entity);
         if(!tmp.isEmpty())
             loadFile(tmp);
 
