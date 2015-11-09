@@ -194,18 +194,31 @@ HEADERS  += version.hpp \
 #    ../power_supply_dll_system/power_supply_dll_wrapper.h
 
 #=====================================
-win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../qcustomplot/release/ -lqcustomplot
-else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../qcustomplot/debug/ -lqcustomplot
-else:unix: LIBS += -L$$OUT_PWD/../qcustomplot/ -lqcustomplot
+#win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../qcustomplot/release/ -lqcustomplot
+#else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../qcustomplot/debug/ -lqcustomplot
+#else:unix: LIBS += -L$$OUT_PWD/../qcustomplot/ -lqcustomplot
 
-INCLUDEPATH += $$PWD/../qcustomplot
-DEPENDPATH += $$PWD/../qcustomplot
+#INCLUDEPATH += $$PWD/../qcustomplot
+#DEPENDPATH += $$PWD/../qcustomplot
 
-win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../qcustomplot/release/libqcustomplot.a
-else:win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../qcustomplot/debug/libqcustomplot.a
-else:win32:!win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../qcustomplot/release/qcustomplot.lib
-else:win32:!win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../qcustomplot/debug/qcustomplot.lib
-else:unix: PRE_TARGETDEPS += $$OUT_PWD/../qcustomplot/libqcustomplot.a
+#win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../qcustomplot/release/libqcustomplot.a
+#else:win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../qcustomplot/debug/libqcustomplot.a
+#else:win32:!win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../qcustomplot/release/qcustomplot.lib
+#else:win32:!win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../qcustomplot/debug/qcustomplot.lib
+#else:unix: PRE_TARGETDEPS += $$OUT_PWD/../qcustomplot/libqcustomplot.a
+
+win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../../qcustomplot/release/ -lqcustomplot
+else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../../qcustomplot/debug/ -lqcustomplot
+else:unix: LIBS += -L$$OUT_PWD/../../qcustomplot/ -lqcustomplot
+
+INCLUDEPATH += $$PWD/../../qcustomplot
+DEPENDPATH += $$PWD/../../qcustomplot
+
+win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../../qcustomplot/release/libqcustomplot.a
+else:win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../../qcustomplot/debug/libqcustomplot.a
+else:win32:!win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../../qcustomplot/release/qcustomplot.lib
+else:win32:!win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../../qcustomplot/debug/qcustomplot.lib
+else:unix: PRE_TARGETDEPS += $$OUT_PWD/../../qcustomplot/libqcustomplot.a
 
 #=====================================
 

@@ -72,7 +72,7 @@ namespace talorion {
         COMPANYNAME_COMPONENT,
         UPDATERATE_COMPONENT,
         USER_DATA_COMPONENT,
-        USER_DATA_PATH_COMPONENT,
+        USER_DATA_PATH_COMPONENT
     } static_component_id;
 
     class entity_manager : public abstract_entity_manager

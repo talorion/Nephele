@@ -19,17 +19,20 @@ namespace talorion {
 
     void octave_worker::slot_eval_function(const QString &script, bool debug)
     {
+        Q_UNUSED(script);
+        Q_UNUSED(debug);
 
     }
 
     void octave_worker::slot_eval_file(const QString &script, bool debug)
     {
-
+        Q_UNUSED(script);
+        Q_UNUSED(debug);
     }
 
     void octave_worker::debug_script_file(const QString &script)
     {
-
+        Q_UNUSED(script);
     }
 
     void octave_worker::slot_abort_script()
