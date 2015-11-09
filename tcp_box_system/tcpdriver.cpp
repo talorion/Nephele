@@ -68,6 +68,8 @@ namespace talorion {
     tcpDriver::~tcpDriver()
     {
 
+        QTimer::singleShot(0,timeoutTimer,SLOT(stop()));
+        QTimer::singleShot(0,timeoutTimer,SLOT(deleteLater()));
     }
 
     bool tcpDriver::connectDevice(QString ip, qint32 port, int timeoutMs)

@@ -11,6 +11,8 @@
 
 #include "tcp_box_worker.hpp"
 
+#include <QTimer>
+
 namespace talorion {
 
     tcp_box_system::tcp_box_system(QObject *par):
@@ -33,9 +35,15 @@ namespace talorion {
     {
 //        if(config_wdg)
 //            delete config_wdg;
+
+        exit(0);
+        //QTimer::singleShot(0,this,SLOT(quit()));
+
+        //wait();
+
     }
 
-    void tcp_box_system::init_system()
+    void tcp_box_system::do_init_system()
     {
        //abstract_entity_manager* ent= entity_manager_locator::get_instance();
 
@@ -44,9 +52,12 @@ namespace talorion {
         connect(event_manager_locator::get_instance(),SIGNAL(application_aboutToQuit()),this,SLOT(quit()), Qt::QueuedConnection);
     }
 
-    void tcp_box_system::dispose_system()
+    void tcp_box_system::do_dispose_system()
     {
-        quit();
+        //QTimer::singleShot(0,this,SLOT(quit()));
+        //quit();
+        //wait();
+        exit(0);
     }
 
     void tcp_box_system::run()
@@ -63,6 +74,7 @@ namespace talorion {
         //connect_to_fc_box(box_id);
 
         tcp_box_worker* wrk = new tcp_box_worker();
+        connect(event_manager_locator::get_instance(),SIGNAL(application_aboutToQuit()),wrk,SLOT(deleteLater()), Qt::QueuedConnection);
 
         exec();
 
@@ -71,7 +83,9 @@ namespace talorion {
         //        }
         //        drivers.clear();
 
-        delete wrk;
+        //delete wrk;
+
+
     }
 
     //    void tcp_box_system::slot_connect_tcp_box(int entity)

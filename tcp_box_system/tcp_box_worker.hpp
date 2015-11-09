@@ -26,6 +26,9 @@ namespace talorion {
         void slot_connect_tcp_box(int entity);
         void slot_disconnect_tcp_box(int entity);
 
+        void disconnect_all_boxes();
+        void disconnect_all_backends();
+
     private:
         int new_box_id();
         void connect_to_fc_box(int box_id);

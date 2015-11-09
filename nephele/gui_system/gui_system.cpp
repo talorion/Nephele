@@ -31,14 +31,17 @@ namespace talorion{
     {
 //        if(window)
 //            delete window;
+
+
+
     }
 
-    void gui_system::init_system()
+    void gui_system::do_init_system()
     {
         connect(event_manager_locator::get_instance(),SIGNAL(fatal(QString)),this,SLOT(slot_open_info_dialog(QString)));
     }
 
-    void gui_system::dispose_system()
+    void gui_system::do_dispose_system()
     {
 
     }

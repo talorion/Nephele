@@ -25,8 +25,8 @@ namespace talorion{
         virtual ~abstract_system(){}
         Q_DISABLE_COPY(abstract_system)
 
-        virtual void init_system() =0;
-        virtual void dispose_system()=0;
+        void init_system(){return do_init_system();}
+        void dispose_system(){return do_dispose_system();}
 
         void start_system(){return do_start_system();}
         QString get_system_name(){return do_get_system_name();}
@@ -43,6 +43,9 @@ namespace talorion{
 //        virtual void register_event_manager(abstract_event_manager* event_manager=NULL){event_manager_locator::provide(event_manager);}
 
     private:
+        virtual void do_init_system()=0;
+        virtual void do_dispose_system()=0;
+
         virtual void do_start_system()=0;
         virtual QString do_get_system_name()=0;
         virtual abstract_configuration_widget* do_get_configuration_widget()=0;

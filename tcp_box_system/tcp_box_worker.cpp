@@ -8,6 +8,8 @@
 #include "flowcontrollerbackend.h"
 #include "rf_backend.hpp"
 
+#include <QTimer>
+
 namespace talorion {
 
     tcp_box_worker::tcp_box_worker(QObject *par) :
@@ -26,13 +28,16 @@ namespace talorion {
 
     tcp_box_worker::~tcp_box_worker()
     {
-        QMap<int, tcpDriver*>::iterator it;
-        for(it=boxes.begin();it !=boxes.end();it++){
-            tcpDriver* tmp= it.value();
-            if(tmp)
-                delete tmp;
-        }
-        boxes.clear();
+        QTimer::singleShot(0,this,SLOT(disconnect_all_boxes()));
+//        QMap<int, tcpDriver*>::iterator it;
+//        for(it=boxes.begin();it !=boxes.end();it++){
+//            tcpDriver* tmp= it.value();
+//            if(tmp){
+//                slot_disconnect_tcp_box(it.key());
+//                //delete tmp;
+//            }
+//        }
+//        boxes.clear();
 
         foreach (abstract_backend* var, bkends) {
             if(var)
@@ -81,6 +86,23 @@ namespace talorion {
         dev1->disconect();
         boxes.remove(entity);
         delete dev1;
+    }
+
+    void tcp_box_worker::disconnect_all_boxes()
+    {
+        //        QMap<int, tcpDriver*>::iterator it;
+        //        for(it=boxes.begin();it !=boxes.end();it++){
+        //            tcpDriver* tmp= it.value();
+        //            if(tmp){
+        //                slot_disconnect_tcp_box(it.key());
+        //                //delete tmp;
+        //            }
+        //        }
+    }
+
+    void tcp_box_worker::disconnect_all_backends()
+    {
+
     }
 
     int tcp_box_worker::new_box_id()

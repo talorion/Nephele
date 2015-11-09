@@ -11,8 +11,9 @@ DISTFILES += \
     misc/build_number_generator.bat \
     LICENSE.txt
 
-SUBDIRS +=    qcustomplot \
-    qtofdaq
+SUBDIRS +=    qcustomplot
+SUBDIRS +=    qtofdaq
+
 
 
 SUBDIRS +=    nephele_core
@@ -21,6 +22,7 @@ SUBDIRS +=    tcp_box_system
 SUBDIRS +=    data_aquisition_dll_system
 SUBDIRS +=    data_tools_dll_system
 SUBDIRS +=    power_supply_dll_system
+SUBDIRS +=    octave_system
 #======
 SUBDIRS +=    nephele
 
@@ -33,8 +35,7 @@ tcp_box_system.depends                  += nephele_core
 data_aquisition_dll_system.depends      += nephele_core
 data_tools_dll_system.depends           += nephele_core
 power_supply_dll_system.depends         += nephele_core
-#nephele.depends                        += tcp_box_system
-#nephele.depends                        += data_aquisition_dll_system
+octave_system.depends                   += nephele_core
 
 # build must be last:
 CONFIG += ordered

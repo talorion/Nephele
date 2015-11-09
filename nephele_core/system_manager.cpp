@@ -20,13 +20,11 @@ namespace talorion {
 
     system_manager::~system_manager()
     {
-        foreach (abstract_system* sys, m_systems) {
-            if(sys != NULL)
-                sys->dispose_system();
-            //delete sys;
-            //sys = NULL;
-        }
-        m_systems.clear();
+//        foreach (abstract_system* sys, m_systems) {
+//            if(sys != NULL)
+//                //sys->dispose_system();
+//        }
+//        m_systems.clear();
     }
 
     system_manager* system_manager::get_instance()

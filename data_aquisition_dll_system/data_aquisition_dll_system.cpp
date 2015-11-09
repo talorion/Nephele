@@ -6,6 +6,8 @@
 
 #include "data_aquisition_dll_worker.hpp"
 
+#include <QTimer>
+
 namespace talorion {
 
     data_aquisition_dll_system::data_aquisition_dll_system( QObject *par) :
@@ -20,17 +22,21 @@ namespace talorion {
     data_aquisition_dll_system::~data_aquisition_dll_system()
     {
         //delete config_wdg;
+        exit(0);
     }
 
-    void data_aquisition_dll_system::init_system()
+    void data_aquisition_dll_system::do_init_system()
     {
         config_wdg =  new dad_config_widget();
         connect(event_manager_locator::get_instance(),SIGNAL(application_aboutToQuit()),this,SLOT(quit()));
     }
 
-    void data_aquisition_dll_system::dispose_system()
+    void data_aquisition_dll_system::do_dispose_system()
     {
-        quit();
+        //QTimer::singleShot(0,this,SLOT(quit()));
+
+        //wait();
+        exit(0);
     }
 
     void data_aquisition_dll_system::run()

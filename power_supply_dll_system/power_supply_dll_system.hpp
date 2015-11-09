@@ -20,8 +20,6 @@ namespace talorion{
         ~power_supply_dll_system();
         Q_DISABLE_COPY(power_supply_dll_system)
 
-        virtual void init_system() Q_DECL_OVERRIDE;
-        virtual void dispose_system() Q_DECL_OVERRIDE;
 
         virtual void register_entity_manager(abstract_entity_manager* entity_manager=NULL) Q_DECL_OVERRIDE {entity_manager_locator::provide(entity_manager);}
         virtual void register_event_manager(abstract_event_manager* event_manager=NULL) Q_DECL_OVERRIDE {event_manager_locator::provide(event_manager);}
@@ -32,6 +30,9 @@ namespace talorion{
 
         // abstract_system interface
     private:
+        virtual void do_init_system() Q_DECL_OVERRIDE;
+        virtual void do_dispose_system() Q_DECL_OVERRIDE;
+
         virtual void do_start_system() Q_DECL_OVERRIDE;
         virtual QString do_get_system_name() Q_DECL_OVERRIDE {return "power_supply_dll_system";}
         virtual abstract_configuration_widget* do_get_configuration_widget() Q_DECL_OVERRIDE;

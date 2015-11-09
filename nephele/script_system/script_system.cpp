@@ -1,6 +1,8 @@
 #include "script_system.hpp"
 
 #include <QDebug>
+#include <QTimer>
+
 #include "scripting_worker.hpp"
 #include "event_manager/event_manager_locator.hpp"
 
@@ -22,18 +24,23 @@ namespace talorion {
     {
 //        if(config_wdg)
 //            delete config_wdg;
+        exit(0);
+
     }
 
-    void script_system::init_system()
+    void script_system::do_init_system()
     {
         config_wdg = new script_config_widget();
 
         connect(event_manager_locator::get_instance(),SIGNAL(application_aboutToQuit()),this,SLOT(quit()));
     }
 
-    void script_system::dispose_system()
+    void script_system::do_dispose_system()
     {
-        quit();
+//        QTimer::singleShot(0,this,SLOT(quit()));
+
+//        wait();
+        exit(0);
     }
 
 
