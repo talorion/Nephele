@@ -27,11 +27,59 @@ namespace talorion {
         {}
 
     private slots:
-        void myFirstTest()
-        { QVERIFY(1 == 1); }
 
-        void mySecondTest()
-        { QVERIFY(1 != 2); }
+        void contains_no_entities_after_creation(){
+            /*Arrange*/
+            entity_manager mng(0);
+            /*Act*/
+            auto all_entinites = mng.get_all_entities();
+            /*Assert*/
+            QCOMPARE(all_entinites.size(), 0);
+        }
+
+        void contains_no_components_after_creation(){
+            entity_manager mng(0);
+            auto all_components = mng.get_all_components();
+            QCOMPARE(all_components.size(), 0);
+        }
+
+        void entity_ids_start_after_reserved_ids(){
+            entity_manager mng(0);
+            auto id = mng.createNewEntity();
+            QVERIFY(id>entity_manager::reserverd_id_max);
+        }
+
+        void create_entity_results_in_valid_id(){
+            entity_manager mng(0);
+            auto id = mng.createNewEntity();
+            QVERIFY(entity_manager::is_valid(id));
+        }
+
+        void create_entity_results_in_non_reserved_id(){
+            entity_manager mng(0);
+            auto id = mng.createNewEntity();
+             QVERIFY(entity_manager::is_non_reserved(id));
+        }
+
+        void entity_exists_after_creation(){
+            entity_manager mng(0);
+            auto id = mng.createNewEntity();
+            QVERIFY(mng.entity_exists(id));
+        }
+
+        void cannot_create_invalid_entity(){
+            entity_manager mng(0);
+            mng.createNewEntity("", entity_manager::invalid_id);
+            QVERIFY(!mng.entity_exists(entity_manager::invalid_id));
+        }
+
+        void entity_doesnt_exist_after_deletion(){
+            entity_manager mng(0);
+            auto id = mng.createNewEntity();
+            mng.delete_entity(id);
+            QVERIFY(!mng.entity_exists(id));
+        }
+
 
     };
 

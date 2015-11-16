@@ -33,6 +33,8 @@ unix | win32-g++:{
     QMAKE_CXXFLAGS += -Wstrict-aliasing
 }
 
+CONFIG += c++11
+
 
 SOURCES += \
     entity_manager/entity_manager_test.cpp

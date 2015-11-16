@@ -42,6 +42,8 @@ namespace talorion {
     }entity_components_t;
 
     typedef enum static_component_id {
+        FIRST_STATIC_COMPONENT =1,
+
         IP_ADDRESS_COMPONENT,
         PORT_COMPONENT,
         NAME_COMPONENT,
@@ -72,7 +74,9 @@ namespace talorion {
         COMPANYNAME_COMPONENT,
         UPDATERATE_COMPONENT,
         USER_DATA_COMPONENT,
-        USER_DATA_PATH_COMPONENT
+        USER_DATA_PATH_COMPONENT,
+
+        NUM_OF_STATIC_COMPONENTS
     } static_component_id;
 
     class entity_manager : public abstract_entity_manager
@@ -85,16 +89,29 @@ namespace talorion {
         Q_DISABLE_COPY(entity_manager)
 
     public:
+        static const int invalid_id{0};
+        static const int default_entity{invalid_id};
+        static const int reserverd_id_max{254};
+
+    public:
+        static bool is_valid(int id){return id>invalid_id;}
+        static bool is_invalid(int id){return !is_valid(id);}
+        static bool is_reserved(int id){return  is_valid(id) && id<=reserverd_id_max;}
+        static bool is_non_reserved(int id){return !is_reserved(id);}
+
+    public:
 //        static entity_manager *get_instance();
 //        static void destroy();
 
         virtual void initialize() Q_DECL_OVERRIDE;
         virtual void dispose() Q_DECL_OVERRIDE;
 
+
         //=== DB Functions
-        virtual int createNewEntity(QString human_readable_label=QString(), int entity=-1, bool isSystem = false) Q_DECL_OVERRIDE;
+        virtual int createNewEntity(QString human_readable_label=QString(), int entity=invalid_id, bool isSystem = false) Q_DECL_OVERRIDE;
         virtual bool entity_exists(int entity_id) const Q_DECL_OVERRIDE;
         virtual void delete_entity(int entity_id) Q_DECL_OVERRIDE;
+        int create_component(int comp_id = invalid_id, QString official_name=QString(), QString human_readable_description=QString(), QString table_name=QString());
         void createComponentAndAddTo(static_component_id comp_id, int entity_id) ;
         virtual void createComponentAndAddTo(int comp_id, int entity_id) Q_DECL_OVERRIDE;
         virtual void removeComponentFrom(int comp_id, int entity_id) Q_DECL_OVERRIDE;
@@ -102,8 +119,11 @@ namespace talorion {
         virtual bool hasComponent(int comp_id, int entity_id) const Q_DECL_OVERRIDE;
         virtual QVariant getComponentDataForEntity(int component_id, int entity_id) const Q_DECL_OVERRIDE;
         virtual void setComponentDataForEntity(int component_id, int entity_id,  const QVariant &component_data) Q_DECL_OVERRIDE;
+        //===
 
         //===
+        //bool entity_exists(int entity_id)const;
+        //==
 
         //=== Factory methods
         virtual int createNewSystem(QUuid suid, QString nameVal, abstract_configuration_widget* sys_cfg_wdg) Q_DECL_OVERRIDE;
@@ -199,6 +219,8 @@ namespace talorion {
         virtual QList<int> get_all_entities()const Q_DECL_OVERRIDE;
         virtual QList<int> get_all_components_of_entity(int entity)const Q_DECL_OVERRIDE;
 
+        QList<int> get_all_components()const;
+
     public slots:
         virtual void slot_change_name_component(int entity, QString value) Q_DECL_OVERRIDE;
         virtual void slot_change_ip_address_component(int entity, QString value) Q_DECL_OVERRIDE;
@@ -246,6 +268,10 @@ namespace talorion {
         //void unregister_scritable_component(int);
 
     private:
+        int get_new_valid_component_id()const;
+        int get_new_valid_entity_id()const;
+        int create_default_entity();
+
         int createNewVersionInformation();
 
 

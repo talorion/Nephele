@@ -73,48 +73,52 @@ namespace talorion {
     {
     }
 
-//    entity_manager* entity_manager::get_instance()
-//    {
-//        if ( !_instance ){
-//            _mutex.lock();
-//            if (!_instance)
-//                _instance = new entity_manager();
-//            _mutex.unlock();
-//        }
-//        return _instance;
-//    }//end getInstance
+    //    entity_manager* entity_manager::get_instance()
+    //    {
+    //        if ( !_instance ){
+    //            _mutex.lock();
+    //            if (!_instance)
+    //                _instance = new entity_manager();
+    //            _mutex.unlock();
+    //        }
+    //        return _instance;
+    //    }//end getInstance
 
-//    void entity_manager::destroy()
-//    {
-//        _mutex.lock();
-//        if ( _instance )
-//            delete _instance;
-//        _instance = 0;
-//        _mutex.unlock();
-//    }
+    //    void entity_manager::destroy()
+    //    {
+    //        _mutex.lock();
+    //        if ( _instance )
+    //            delete _instance;
+    //        _instance = 0;
+    //        _mutex.unlock();
+    //    }
 
     void entity_manager::initialize()
     {
-        int zero_entity = createNewEntity("", 0);
-        createComponentAndAddTo(IP_ADDRESS_COMPONENT, zero_entity);
-        createComponentAndAddTo(PORT_COMPONENT, zero_entity);
-        createComponentAndAddTo( NAME_COMPONENT, zero_entity);
-        createComponentAndAddTo(UNITS_COMPONENT, zero_entity);
-        createComponentAndAddTo(SET_MIN_COMPONENT, zero_entity);
-        createComponentAndAddTo(SET_MAX_COMPONENT, zero_entity);
-        createComponentAndAddTo(ACT_MIN_COMPONENT, zero_entity);
-        createComponentAndAddTo(ACT_MAX_COMPONENT, zero_entity);
-        createComponentAndAddTo(ANALOG_SET_VALUE_COMPONENT, zero_entity);
-        createComponentAndAddTo(ANALOG_ACT_VALUE_COMPONENT, zero_entity);
-        createComponentAndAddTo(ID_COMPONENT, zero_entity);
-        createComponentAndAddTo(BOX_ID_COMPONENT, zero_entity);
-        createComponentAndAddTo(DIGITAL_SET_VALUE_COMPONENT, zero_entity);
-        createComponentAndAddTo(DIGITAL_ACT_VALUE_COMPONENT, zero_entity);
-        createComponentAndAddTo(SYSTEM_CONFIGURAION_WIDGET_COMPONENT, zero_entity);
-        createComponentAndAddTo(IS_SYSTEM_COMPONENT, zero_entity);
-        createComponentAndAddTo(CONNECTION_STATE_COMPONENT, zero_entity);
-        createComponentAndAddTo(SERIAL_VERSION_UID_COMPONENT, zero_entity);
-        createComponentAndAddTo(TCP_BOX_BACKEND_COMPONENT, zero_entity);
+        //        int zero_entity = createNewEntity("", 0);
+        //        createComponentAndAddTo(IP_ADDRESS_COMPONENT, zero_entity);
+        //        createComponentAndAddTo(PORT_COMPONENT, zero_entity);
+        //        createComponentAndAddTo( NAME_COMPONENT, zero_entity);
+        //        createComponentAndAddTo(UNITS_COMPONENT, zero_entity);
+        //        createComponentAndAddTo(SET_MIN_COMPONENT, zero_entity);
+        //        createComponentAndAddTo(SET_MAX_COMPONENT, zero_entity);
+        //        createComponentAndAddTo(ACT_MIN_COMPONENT, zero_entity);
+        //        createComponentAndAddTo(ACT_MAX_COMPONENT, zero_entity);
+        //        createComponentAndAddTo(ANALOG_SET_VALUE_COMPONENT, zero_entity);
+        //        createComponentAndAddTo(ANALOG_ACT_VALUE_COMPONENT, zero_entity);
+        //        createComponentAndAddTo(ID_COMPONENT, zero_entity);
+        //        createComponentAndAddTo(BOX_ID_COMPONENT, zero_entity);
+        //        createComponentAndAddTo(DIGITAL_SET_VALUE_COMPONENT, zero_entity);
+        //        createComponentAndAddTo(DIGITAL_ACT_VALUE_COMPONENT, zero_entity);
+        //        createComponentAndAddTo(SYSTEM_CONFIGURAION_WIDGET_COMPONENT, zero_entity);
+        //        createComponentAndAddTo(IS_SYSTEM_COMPONENT, zero_entity);
+        //        createComponentAndAddTo(CONNECTION_STATE_COMPONENT, zero_entity);
+        //        createComponentAndAddTo(SERIAL_VERSION_UID_COMPONENT, zero_entity);
+        //        createComponentAndAddTo(TCP_BOX_BACKEND_COMPONENT, zero_entity);
+        create_default_entity();
+        for(int i=FIRST_STATIC_COMPONENT; i<NUM_OF_STATIC_COMPONENTS;i++){
+            create_component(i);
+        }
 
         QSettings settings;
         //QStringList groups = settings.childGroups();
@@ -188,20 +192,22 @@ namespace talorion {
 
     int entity_manager::createNewEntity(QString human_readable_label, int entity, bool isSystem)
     {
-        int offset = 255;
+        int offset = reserverd_id_max+1;
 
         if(isSystem)
             offset = 0;
 
         //Q_UNUSED(human_readable_label);
         int entity_id;
-        if(entity<0){
+        //if(entity<0){
+        if(is_invalid(entity)){
+            //entity_id=get_new_valid_entity_id();
             do{
                 entity_id= offset + current_identity_id++;
             }while (entities.constFind(entity_id) != entities.constEnd());
-        }
-        else
+        }else{
             entity_id= entity;
+        }
         //entity_id= qMax(current_identity_id+1, entity+1);
 
         //current_identity_id = entity_id;
@@ -215,6 +221,9 @@ namespace talorion {
 
     bool entity_manager::entity_exists(int entity_id) const
     {
+        if(is_invalid(entity_id)){
+            return false;
+        }
         return entities.contains(entity_id);
     }
 
@@ -229,24 +238,57 @@ namespace talorion {
 
     }
 
-    void entity_manager::createComponentAndAddTo(int comp_id, int entity_id)
+    int entity_manager::create_component(int comp_id, QString official_name, QString human_readable_description, QString table_name)
     {
+        if(is_invalid(comp_id)){
+            comp_id = get_new_valid_component_id();
+        }
+
+        int entity_id = default_entity;
+
         if(!components.contains(comp_id)){
             comonent_t ct;
-            ct.component_id = comp_id;
-            ct.human_readable_description = QString();
-            ct.official_name = QString();
-            ct.table_name = QString();
+            ct.component_id                 = comp_id;
+            ct.human_readable_description   = human_readable_description;
+            ct.official_name                = official_name;
+            ct.table_name                   = table_name;
             components.insert(comp_id, ct);
         }
 
         int component_data_id = calc_enity_component_hash(comp_id, entity_id );
 
-        entity_components_t ect;
-        ect.component_data_id = component_data_id;
-        ect.component_id = comp_id;
-        ect.entity_id = entity_id;
-        entity_components.insert(component_data_id, ect);
+        if(!components.contains(component_data_id)){
+            entity_components_t ect;
+            ect.component_data_id = component_data_id;
+            ect.component_id = comp_id;
+            ect.entity_id = entity_id;
+            entity_components.insert(component_data_id, ect);
+        }
+
+        return comp_id;
+    }
+
+    void entity_manager::createComponentAndAddTo(int comp_id, int entity_id)
+    {
+        //        if(!components.contains(comp_id)){
+        //            comonent_t ct;
+        //            ct.component_id = comp_id;
+        //            ct.human_readable_description = QString();
+        //            ct.official_name = QString();
+        //            ct.table_name = QString();
+        //            components.insert(comp_id, ct);
+        //        }
+        create_component(comp_id);
+
+        int component_data_id = calc_enity_component_hash(comp_id, entity_id );
+
+        if(!components.contains(component_data_id)){
+            entity_components_t ect;
+            ect.component_data_id = component_data_id;
+            ect.component_id = comp_id;
+            ect.entity_id = entity_id;
+            entity_components.insert(component_data_id, ect);
+        }
 
     }
 
@@ -675,23 +717,23 @@ namespace talorion {
         return ((uid == get_DigitalInputValue_uid()) || (uid == get_DigitalOutputValue_uid()) || (uid == get_DigitalValue_uid()) );
     }
 
-//    QList<int> entity_manager::get_all_Values() const
-//    {
-//        QList<int> tmp= get_all_AnalogInputValues();
-//        tmp += get_all_AnalogOutputValues();
-//        tmp += get_all_AnalogValues();
+    //    QList<int> entity_manager::get_all_Values() const
+    //    {
+    //        QList<int> tmp= get_all_AnalogInputValues();
+    //        tmp += get_all_AnalogOutputValues();
+    //        tmp += get_all_AnalogValues();
 
-//        return tmp;
-//    }
+    //        return tmp;
+    //    }
 
-//    QList<int> entity_manager::get_all_DValues() const
-//    {
-//        QList<int> tmp= get_all_DigitalInputValues();
-//        tmp += get_all_DigitalOutputValues();
-//        tmp += get_all_DigitalValues();
+    //    QList<int> entity_manager::get_all_DValues() const
+    //    {
+    //        QList<int> tmp= get_all_DigitalInputValues();
+    //        tmp += get_all_DigitalOutputValues();
+    //        tmp += get_all_DigitalValues();
 
-//        return tmp;
-//    }
+    //        return tmp;
+    //    }
 
     QList<int> entity_manager::get_entities_with_scriptable_components() const
     {
@@ -890,6 +932,17 @@ namespace talorion {
                 ecs.append(ecit.value().component_id);
         }
         return ecs;
+    }
+
+    QList<int> entity_manager::get_all_components() const
+    {
+        QList<int> ecs;
+        QMap<int, comonent_t>::const_iterator ecit;
+        for(ecit=components.constBegin(); ecit !=components.constEnd(); ++ecit){
+            ecs.append(ecit.key());
+        }
+        return ecs;
+
     }
 
 
@@ -1099,6 +1152,40 @@ namespace talorion {
             set_tcp_box_backend_component(entity, value);
             //emit connection_state_component_changed(entity);
         }
+    }
+
+    int entity_manager::get_new_valid_component_id() const
+    {
+        int comp_id = invalid_id;
+        //QMap<int, comonent_t> components;
+        QMap<int, comonent_t>::const_iterator it;
+        for(it= components.constBegin(); it != components.constEnd(); ++it){
+            comp_id = qMax(comp_id, it.key());
+        }
+
+        return comp_id++;
+    }
+
+    int entity_manager::get_new_valid_entity_id() const
+    {
+        int entity_id = invalid_id;
+        QMap<int, entity_t>::const_iterator it;
+        for(it= entities.constBegin(); it != entities.constEnd(); ++it){
+            entity_id = qMax(entity_id, it.key());
+        }
+        return entity_id;
+    }
+
+    int entity_manager::create_default_entity()
+    {
+        int entity_id = default_entity;
+
+        entity_t et;
+        et.entity_id= entity_id;
+        et.human_readable_label =QString();
+        entities.insert(entity_id, et);
+
+        return entity_id;
     }
 
 
