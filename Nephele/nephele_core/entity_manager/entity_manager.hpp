@@ -92,6 +92,7 @@ namespace talorion {
         static const int invalid_id{0};
         static const int default_entity{invalid_id};
         static const int reserverd_id_max{254};
+        static const int id_max{std::numeric_limits<int>::max()};
 
     public:
         static bool is_valid(int id){return id>invalid_id;}
@@ -269,7 +270,7 @@ namespace talorion {
 
     private:
         int get_new_valid_component_id()const;
-        int get_new_valid_entity_id()const;
+        int get_new_valid_entity_id(int lower_bound=invalid_id, int upper_bound=id_max)const;
         int create_default_entity();
 
         int createNewVersionInformation();

@@ -195,27 +195,25 @@ namespace talorion {
         int offset = reserverd_id_max+1;
 
         if(isSystem)
-            offset = 0;
+            offset = invalid_id;
 
-        //Q_UNUSED(human_readable_label);
         int entity_id;
-        //if(entity<0){
+
         if(is_invalid(entity)){
-            //entity_id=get_new_valid_entity_id();
-            do{
-                entity_id= offset + current_identity_id++;
-            }while (entities.constFind(entity_id) != entities.constEnd());
+            entity_id=get_new_valid_entity_id(offset);
         }else{
             entity_id= entity;
         }
-        //entity_id= qMax(current_identity_id+1, entity+1);
 
-        //current_identity_id = entity_id;
+        if(is_invalid(entity_id))
+            return entity_id;
 
-        entity_t et;
-        et.entity_id= entity_id;
-        et.human_readable_label =human_readable_label;
-        entities.insert(entity_id, et);
+        if(!entities.contains(entity_id)){
+            entity_t et;
+            et.entity_id= entity_id;
+            et.human_readable_label =human_readable_label;
+            entities.insert(entity_id, et);
+        }
         return entity_id;
     }
 
@@ -358,9 +356,9 @@ namespace talorion {
     int entity_manager::createNewSystem(QUuid suid, QString nameVal, abstract_configuration_widget* sys_cfg_wdg)
     {
         QList<int> list =get_entity_by_systemVersionUID(suid);
-        int new_id = -1;
+        int new_id = invalid_id;
         if(list.empty()){
-            new_id = createNewEntity(nameVal,-1,true);
+            new_id = createNewEntity(nameVal,invalid_id,true);
 
             createComponentAndAddTo(SYSTEM_VERSION_UID_COMPONENT, new_id);
             createComponentAndAddTo(NAME_COMPONENT, new_id);
@@ -640,7 +638,7 @@ namespace talorion {
     int entity_manager::createQtScriptEngine(QString nameVal, QScriptEngine *engine)
     {
         QList<int> list =get_all_Qt_Script_Engines(); // allow only one QtScriptEngine
-        int new_id = -1;
+        int new_id = invalid_id;
         if(list.empty()){
             new_id = createNewEntity();
             createComponentAndAddTo( NAME_COMPONENT, new_id );
@@ -748,13 +746,13 @@ namespace talorion {
     //    int entity_manager::add_scriptable_component(int entity, abstract_scriptable_object *comp)
     //    {
     //        if(!comp)
-    //            return -1;
+    //            return invalid_id;
 
     //        if(!entity_exists(entity))
-    //            return -1;
+    //            return invalid_id;
 
     //        if(hasComponent(SCRIPTABLE_OBJECT_COMPONENT, entity))
-    //            return -1;
+    //            return invalid_id;
 
     //        createComponentAndAddTo( SCRIPTABLE_OBJECT_COMPONENT, entity );
     //        set_scriptable_object_component(entity, comp);
@@ -765,10 +763,10 @@ namespace talorion {
     //    int entity_manager::remove_scriptable_component(int entity)
     //    {
     //        if(!entity_exists(entity))
-    //            return -1;
+    //            return invalid_id;
 
     //        if(!hasComponent(SCRIPTABLE_OBJECT_COMPONENT, entity))
-    //            return -1;
+    //            return invalid_id;
 
     //        removeComponentFrom(SCRIPTABLE_OBJECT_COMPONENT, entity);
     //        emit unregister_scritable_component(entity);
@@ -1166,13 +1164,17 @@ namespace talorion {
         return comp_id++;
     }
 
-    int entity_manager::get_new_valid_entity_id() const
+    int entity_manager::get_new_valid_entity_id(int lower_bound, int upper_bound) const
     {
-        int entity_id = invalid_id;
+        int entity_id = lower_bound;
         QMap<int, entity_t>::const_iterator it;
         for(it= entities.constBegin(); it != entities.constEnd(); ++it){
             entity_id = qMax(entity_id, it.key());
         }
+        entity_id++;
+        if(entity_id>upper_bound)
+            entity_id= invalid_id;
+
         return entity_id;
     }
 

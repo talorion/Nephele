@@ -2,6 +2,7 @@
 #include <QObject>
 
 #include <entity_manager/entity_manager.hpp>
+#include <limits>
 
 namespace talorion {
 
@@ -55,10 +56,34 @@ namespace talorion {
             QVERIFY(entity_manager::is_valid(id));
         }
 
+        void create_entity_overloads_results_in_valid_id_data(){
+            QTest::addColumn<QString>("human_readable_label");
+            QTest::addColumn<int>("entity");
+            QTest::addColumn<bool>("isSystem");
+
+            QTest::newRow("zero")       << QString() << 0 << false;
+            QTest::newRow("one")        << "a" << 1 << false;
+            QTest::newRow("many")       << QString() << 255 << false;
+            QTest::newRow("boundary")   << QString() << std::numeric_limits<int>::max() << false;
+            QTest::newRow("exceptional")<< QString() << std::numeric_limits<int>::min() << false;
+        }
+
+        void create_entity_overloads_results_in_valid_id(){
+            entity_manager mng(0);
+
+            QFETCH(QString, human_readable_label);
+            QFETCH(int, entity);
+            QFETCH(bool, isSystem);
+
+            auto id = mng.createNewEntity(human_readable_label, entity, isSystem );
+
+            QVERIFY(entity_manager::is_valid(id));
+        }
+
         void create_entity_results_in_non_reserved_id(){
             entity_manager mng(0);
             auto id = mng.createNewEntity();
-             QVERIFY(entity_manager::is_non_reserved(id));
+            QVERIFY(entity_manager::is_non_reserved(id));
         }
 
         void entity_exists_after_creation(){
