@@ -117,7 +117,7 @@ namespace talorion {
         //        createComponentAndAddTo(TCP_BOX_BACKEND_COMPONENT, zero_entity);
         create_default_entity();
         for(int i=FIRST_STATIC_COMPONENT; i<NUM_OF_STATIC_COMPONENTS;i++){
-            create_component(i);
+            createNewComponent(i);
         }
 
         QSettings settings;
@@ -236,7 +236,7 @@ namespace talorion {
 
     }
 
-    int entity_manager::create_component(int comp_id, QString official_name, QString human_readable_description, QString table_name)
+    int entity_manager::createNewComponent(int comp_id, QString official_name, QString human_readable_description, QString table_name)
     {
         if(is_invalid(comp_id)){
             comp_id = get_new_valid_component_id();
@@ -276,7 +276,7 @@ namespace talorion {
         //            ct.table_name = QString();
         //            components.insert(comp_id, ct);
         //        }
-        create_component(comp_id);
+        createNewComponent(comp_id);
 
         int component_data_id = calc_enity_component_hash(comp_id, entity_id );
 
@@ -1155,13 +1155,13 @@ namespace talorion {
     int entity_manager::get_new_valid_component_id() const
     {
         int comp_id = invalid_id;
-        //QMap<int, comonent_t> components;
         QMap<int, comonent_t>::const_iterator it;
         for(it= components.constBegin(); it != components.constEnd(); ++it){
             comp_id = qMax(comp_id, it.key());
         }
+        comp_id++;
 
-        return comp_id++;
+        return comp_id;
     }
 
     int entity_manager::get_new_valid_entity_id(int lower_bound, int upper_bound) const

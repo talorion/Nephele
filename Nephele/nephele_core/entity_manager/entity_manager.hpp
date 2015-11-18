@@ -112,7 +112,7 @@ namespace talorion {
         virtual int createNewEntity(QString human_readable_label=QString(), int entity=invalid_id, bool isSystem = false) Q_DECL_OVERRIDE;
         virtual bool entity_exists(int entity_id) const Q_DECL_OVERRIDE;
         virtual void delete_entity(int entity_id) Q_DECL_OVERRIDE;
-        int create_component(int comp_id = invalid_id, QString official_name=QString(), QString human_readable_description=QString(), QString table_name=QString());
+        int createNewComponent(int comp_id = invalid_id, QString official_name=QString(), QString human_readable_description=QString(), QString table_name=QString());
         void createComponentAndAddTo(static_component_id comp_id, int entity_id) ;
         virtual void createComponentAndAddTo(int comp_id, int entity_id) Q_DECL_OVERRIDE;
         virtual void removeComponentFrom(int comp_id, int entity_id) Q_DECL_OVERRIDE;

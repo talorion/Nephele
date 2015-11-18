@@ -105,6 +105,12 @@ namespace talorion {
             QVERIFY(!mng.entity_exists(id));
         }
 
+        void create_component_results_in_valid_id(){
+            entity_manager mng(0);
+            auto id = mng.createNewComponent();
+            QVERIFY(entity_manager::is_valid(id));
+        }
+
 
     };
 
