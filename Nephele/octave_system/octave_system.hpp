@@ -5,6 +5,8 @@
 
 #include "abstract_system.hpp"
 
+#include "octave_config_widget/octave_config_widget.hpp"
+
 namespace talorion {
 
 
@@ -36,7 +38,7 @@ namespace talorion {
         virtual abstract_configuration_widget* do_get_configuration_widget() Q_DECL_OVERRIDE;
 
     private:
-
+        octave_config_widget* config_wdg;
     };
 
 } // namespace talorion

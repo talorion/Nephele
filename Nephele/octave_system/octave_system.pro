@@ -17,11 +17,13 @@ else:unix: CONFIG(debug, debug|release): DESTDIR += $$OUT_PWD/../debug/plugins
 
 SOURCES += \
     octave_system.cpp \
-    octave_worker.cpp
+    octave_worker.cpp \
+    octave_config_widget/octave_config_widget.cpp
 
 HEADERS += \
     octave_system.hpp \
-    octave_worker.hpp
+    octave_worker.hpp \
+    octave_config_widget/octave_config_widget.hpp
 
 unix {
     target.path = /usr/lib
@@ -177,9 +179,6 @@ OCT_BLAS =                 $$OCT_BLAS_LIBS
 QMAKE_CXXFLAGS +=   $$OCT_ALL_CXXFLAGS
 QMAKE_LFLAGS +=     $$OCT_ALL_LDFLAGS
 LIBS += $$OCT_LFLAGS $$OCT_OCTAVE_LIBS $$OCT_LIBS $$OCT_BLAS
-#LIBS += $$OCT_DL_LDFLAGS $$OCT_OCTAVE_LIBS $$OCT_LIBS $$OCT_BLAS
-#QMAKE_CXXFLAGS += $$system($$MKOCTFILE -p ALL_CXXFLAGS)
-#QMAKE_LFLAGS += $$system($$MKOCTFILE -p ALL_LDFLAGS)
 ### ==============================================================
 
 DISTFILES += \

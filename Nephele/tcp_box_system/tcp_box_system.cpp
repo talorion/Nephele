@@ -36,7 +36,7 @@ namespace talorion {
 //        if(config_wdg)
 //            delete config_wdg;
 
-        exit(0);
+        //exit(0);
         //QTimer::singleShot(0,this,SLOT(quit()));
 
         //wait();
@@ -57,7 +57,7 @@ namespace talorion {
         //QTimer::singleShot(0,this,SLOT(quit()));
         //quit();
         //wait();
-        exit(0);
+        //exit(0);
     }
 
     void tcp_box_system::run()

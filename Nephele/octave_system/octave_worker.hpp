@@ -14,12 +14,20 @@ namespace talorion {
         Q_DISABLE_COPY(octave_worker)
 
         void initialize();
+        void dispose();
+
+    signals:
+        void eval_finished();
+
+        void abort_all_dialoges();
 
     private slots:
         void slot_eval_function(const QString &script, bool debug=false);
         void slot_eval_file(const QString &script, bool debug=false);
         void debug_script_file(const QString &script);
         void slot_abort_script();
+
+        void slot_register_octave_component(int ent);
     };
 
 } // namespace talorion

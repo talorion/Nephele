@@ -111,6 +111,32 @@ namespace talorion {
             QVERIFY(entity_manager::is_valid(id));
         }
 
+        void create_component_overloads_results_in_valid_id_data(){
+            QTest::addColumn<int>("comp_id");
+            QTest::addColumn<QString>("official_name");
+            QTest::addColumn<QString>("human_readable_description");
+            QTest::addColumn<QString>("table_name");
+
+
+            QTest::newRow("zero")       << 0 << "" << "" << "";
+            QTest::newRow("one")        << 1 << "a" << "a" << "a";
+            QTest::newRow("many")       << 255 << "bbbbb" << "bbbbb" << "bbbbbb";
+            QTest::newRow("boundary")   << std::numeric_limits<int>::max() << "ccccc" << "cccccc" << "ccccccc";
+            QTest::newRow("exceptional")<< std::numeric_limits<int>::min() << "dddddddddddddd" << "ddddddddddddd" << "ddddddddddddddddd";
+        }
+
+        void create_component_overloads_results_in_valid_id(){
+            entity_manager mng(0);
+
+            QFETCH(int, comp_id);
+            QFETCH(QString, official_name);
+            QFETCH(QString, human_readable_description);
+            QFETCH(QString, table_name);
+
+            auto id = mng.createNewComponent(comp_id, official_name, human_readable_description,  table_name);
+
+            QVERIFY(entity_manager::is_valid(id));
+        }
 
     };
 
