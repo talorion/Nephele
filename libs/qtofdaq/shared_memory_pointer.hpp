@@ -14,7 +14,7 @@ typedef qint64 __int64;
 #define TOFWERK_DAQ_API Q_DECL_IMPORT
 #endif
 #endif
-#include <TofDaqDll.h>
+//#include <TofDaqDll.h>
 
 namespace talorion{
     class shared_memory_pointer: public QObject
@@ -27,10 +27,10 @@ namespace talorion{
         Q_DISABLE_COPY(shared_memory_pointer)
 
         //TSharedMemoryPointer* data()const{return m_data;}
-        TSharedMemoryPointer* current_data()const{return m_current_data;}
-        TSharedMemoryPointer* next_data()const{return m_next_data;}
+        //TSharedMemoryPointer* current_data()const{return m_current_data;}
+        //TSharedMemoryPointer* next_data()const{return m_next_data;}
 
-        bool is_null()const{return m_current_data==0;}
+        //bool is_null()const{return m_current_data==0;}
 
         int NbrSamples() const;
 
@@ -38,12 +38,12 @@ namespace talorion{
 
     private:
         //void init(TSharedMemoryPointer* m_data, int NbrSamples, int NbrPeaks, int NbrSegments, int NbrBufs, int NbrWrites);
-        void cleanup(TSharedMemoryPointer* dat, int NbrBufs);
+        //void cleanup(TSharedMemoryPointer* dat, int NbrBufs);
 
     private:
         //TSharedMemoryPointer* m_data;
-        TSharedMemoryPointer* m_current_data;
-        TSharedMemoryPointer* m_next_data;
+        //TSharedMemoryPointer* m_current_data;
+        //TSharedMemoryPointer* m_next_data;
         const int m_NbrSamples;
         const int m_NbrPeaks;
         const int m_NbrSegments;

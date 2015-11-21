@@ -14,7 +14,7 @@ typedef qint64 __int64;
 #define TOFWERK_DAQ_API Q_DECL_IMPORT
 #endif
 #endif
-#include <TofDaqDll.h>
+//#include <TofDaqDll.h>
 
 
 namespace talorion {
@@ -27,10 +27,10 @@ namespace talorion {
         ~shared_memory_descriptor();
         Q_DISABLE_COPY(shared_memory_descriptor)
 
-        TSharedMemoryDesc* current_data()const{return m_current_data;}
-        TSharedMemoryDesc* next_data()const{return m_next_data;}
+        //TSharedMemoryDesc* current_data()const{return m_current_data;}
+        //TSharedMemoryDesc* next_data()const{return m_next_data;}
 
-        bool is_null()const{return m_current_data==0;}
+        //bool is_null()const{return m_current_data==0;}
 
         void swap();
 
@@ -40,8 +40,8 @@ namespace talorion {
 
     private:
         //TSharedMemoryDesc* m_data;
-        TSharedMemoryDesc* m_current_data;
-        TSharedMemoryDesc* m_next_data;
+        //TSharedMemoryDesc* m_current_data;
+        //TSharedMemoryDesc* m_next_data;
     };
     //Q_DECLARE_METATYPE(shared_memory_descriptor)
 }

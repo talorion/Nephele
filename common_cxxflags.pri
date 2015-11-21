@@ -4,6 +4,7 @@ unix | win32-g++:{
     QMAKE_CXXFLAGS += -isystem $$[QT_INSTALL_HEADERS]/QtGui
     QMAKE_CXXFLAGS += -isystem $$[QT_INSTALL_HEADERS]/QtScript
     QMAKE_CXXFLAGS += -isystem $$[QT_INSTALL_HEADERS]/QtWidgets
+    QMAKE_CXXFLAGS += -isystem $$[QT_INSTALL_HEADERS]/QtTest
     QMAKE_CXXFLAGS += -Wall
     QMAKE_CXXFLAGS += -Wextra
     QMAKE_CXXFLAGS += -ansi

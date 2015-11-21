@@ -367,8 +367,12 @@ namespace talorion{
 
     int TofDaqDll::wait_for_new_data(int Timeout, shared_memory_descriptor &pBufDesc, shared_memory_pointer &pShMem, bool WaitForEventReset)
     {
+        Q_UNUSED(Timeout)
+        Q_UNUSED(pBufDesc)
+        Q_UNUSED(pShMem)
+        Q_UNUSED(WaitForEventReset)
         if(m_WaitForNewData){
-            return twErrChk(m_WaitForNewData(Timeout, pBufDesc.next_data(), pShMem.next_data(), WaitForEventReset));
+            //return twErrChk(m_WaitForNewData(Timeout, pBufDesc.next_data(), pShMem.next_data(), WaitForEventReset));
         }
         return -1;
     }

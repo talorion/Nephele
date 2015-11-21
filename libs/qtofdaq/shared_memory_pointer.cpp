@@ -5,8 +5,8 @@ namespace talorion{
     shared_memory_pointer::shared_memory_pointer(QObject *par):
         QObject(par),
         //m_data(0),
-        m_current_data(NULL),
-        m_next_data(NULL),
+        //m_current_data(NULL),
+        //m_next_data(NULL),
         m_NbrSamples(0),
         m_NbrPeaks(0),
         m_NbrSegments(0),
@@ -33,53 +33,54 @@ namespace talorion{
 
     shared_memory_pointer::~shared_memory_pointer()
     {
-        cleanup(m_current_data, m_NbrBufs);
-        cleanup(m_next_data, m_NbrBufs);
+        //cleanup(m_current_data, m_NbrBufs);
+        //cleanup(m_next_data, m_NbrBufs);
     }
 
-    void shared_memory_pointer::cleanup(TSharedMemoryPointer *dat, int NbrBufs)
-    {
-        if(dat->SumSpectrum){
-            delete[] dat->SumSpectrum;
-            dat->SumSpectrum = 0;
-        }
+//    void shared_memory_pointer::cleanup(TSharedMemoryPointer *dat, int NbrBufs)
+//    {
+//        if(dat->SumSpectrum){
+//            delete[] dat->SumSpectrum;
+//            dat->SumSpectrum = 0;
+//        }
 
-        if(dat->SumSpectrum2){
-            delete[] dat->SumSpectrum2;
-            dat->SumSpectrum2 = 0;
-        }
+//        if(dat->SumSpectrum2){
+//            delete[] dat->SumSpectrum2;
+//            dat->SumSpectrum2 = 0;
+//        }
 
-        if(dat->TofData){
-            for(int i=0; i<NbrBufs;++i){delete[] dat->TofData[i];dat->TofData[i]=0;}
-            delete[] dat->TofData;
-            dat->TofData = 0;
-        }
+//        if(dat->TofData){
+//            for(int i=0; i<NbrBufs;++i){delete[] dat->TofData[i];dat->TofData[i]=0;}
+//            delete[] dat->TofData;
+//            dat->TofData = 0;
+//        }
 
-        if(dat->TofData2){
-            for(int i=0; i<NbrBufs;++i){delete[] dat->TofData2[i];dat->TofData2[i]=0;}
-            delete[] dat->TofData2;
-            dat->TofData2 = 0;
-        }
+//        if(dat->TofData2){
+//            for(int i=0; i<NbrBufs;++i){delete[] dat->TofData2[i];dat->TofData2[i]=0;}
+//            delete[] dat->TofData2;
+//            dat->TofData2 = 0;
+//        }
 
 
-        if(dat->PeakData){
-            delete[] dat->PeakData;
-            dat->PeakData = 0;
-        }
+//        if(dat->PeakData){
+//            delete[] dat->PeakData;
+//            dat->PeakData = 0;
+//        }
 
-        if(dat->PeakData2){
-            delete[] dat->PeakData2;
-            dat->PeakData2 = 0;
-        }
+//        if(dat->PeakData2){
+//            delete[] dat->PeakData2;
+//            dat->PeakData2 = 0;
+//        }
 
-        if(dat->Timing){
-            delete[] dat->Timing;
-            dat->Timing = 0;
-        }
+//        if(dat->Timing){
+//            delete[] dat->Timing;
+//            dat->Timing = 0;
+//        }
 
-        delete dat;
-        dat = 0;
-    }
+//        delete dat;
+//        dat = 0;
+//    }
+
     int shared_memory_pointer::NbrSamples() const
     {
         return m_NbrSamples;
@@ -87,9 +88,9 @@ namespace talorion{
 
     void shared_memory_pointer::swap()
     {
-        TSharedMemoryPointer* temp    = m_current_data;
-        m_current_data                 = m_next_data;
-        m_next_data                    = temp;
+        //TSharedMemoryPointer* temp    = m_current_data;
+        //m_current_data                 = m_next_data;
+        //m_next_data                    = temp;
     }
 
 

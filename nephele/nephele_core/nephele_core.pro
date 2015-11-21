@@ -6,6 +6,8 @@ CONFIG += staticlib
 
 include(../../common_cxxflags.pri)
 
-HEADERS +=
+HEADERS += \
+    entity_manager/entity_manager.hpp
 
-SOURCES +=
+SOURCES += \
+    entity_manager/entity_manager.cpp
