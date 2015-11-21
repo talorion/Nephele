@@ -1,25 +1,32 @@
 #ifndef TALORION_ENTITY_MANAGER_HPP
 #define TALORION_ENTITY_MANAGER_HPP
 
-#include <QMap>
+
 #include <QObject>
+#include <QScopedPointer>
 
 namespace talorion {
+
+    class entity_manager_db;
 
     class entity_manager : public QObject
     {
         Q_OBJECT
     public:     //typedefs
-        typedef int entity_id_t;
-        typedef int component_id_t;
-        typedef int component_data_id_t;
+        typedef int id_t;
+        typedef id_t entity_id_t;
+        typedef id_t component_id_t;
+        typedef id_t component_data_id_t;
 
     public:     //constants
-        static const int invalid_id{0};
-        //static const int default_entity{invalid_id};
+        static const id_t invalid_id{0};
+        //static const entity_id_t default_entity{0};
+        static const entity_id_t max_entity_id{997};    //for component_data_id hash should ba a prime
+        static const entity_id_t max_component_id{997}; //for component_data_id hash should ba a prime
 
     public:     //convenient fnctions
-        static bool is_valid(int id){return id>invalid_id;}
+        static bool is_valid(id_t id){return id > invalid_id;}
+        static component_data_id_t get_component_data_id(entity_id_t entity_id, component_id_t component_id){return (component_id*max_entity_id + entity_id)*max_component_id;}
 
     public:
         explicit entity_manager(QObject *par = 0);
@@ -30,19 +37,31 @@ namespace talorion {
         QList<component_id_t> get_all_components() const;
 
         entity_id_t create_new_entity();
+        bool entity_exists(entity_id_t entity_id) const;
 
-    signals:
+        component_id_t create_new_component(component_id_t component_id=invalid_id);
+        component_id_t create_component_and_add_to(component_id_t component_id, entity_id_t entity_id);
+        bool component_exists(component_id_t component_id) const;
 
-    public slots:
+        bool entity_has_component(entity_id_t entity_id, component_id_t component_id) const;
+
+        void remove_entity(entity_id_t entity_id);
+
+        void remove_all_components_from_entity(entity_id_t entity_id);
+        void remove_component_from_entity(component_id_t component_id, entity_id_t entity_id);
+
+        QList<component_id_t> get_all_components_of_entity(entity_id_t entity_id)const;
+
+        // QVariant get_component_data_for_entity(component_id_t component_id, entity_id_t entity_id) const;
+        // void set_component_data_for_entity(component_id_t component_id, entity_id_t entity_id,  const QVariant &component_data);
 
     private:
+        id_t get_next_id_from(const QList<id_t>& container)const;
+        entity_id_t get_next_entity_id()const;
+        component_id_t get_next_component_id()const;
 
-        QMap<entity_id_t, QString> entities;                                //entity_id     | human-readable label
-        QMap<component_id_t, QString> components;                           //component_id  | official name          ///| human-readable description | table-name
-
-        // QMultiMap<entity_id_t, component_data_id_t> entity_components;      //entity_id 	| component_id |  component_data_id
-        //QMap<component_data_id_t, QVariant> component_data_table;           //component_data_id                  /// | [1..M columns, one column for each piece of data in your component]
-
+    private:
+        QScopedPointer<entity_manager_db> const db_ptr;
     };
 
 } // namespace talorion
