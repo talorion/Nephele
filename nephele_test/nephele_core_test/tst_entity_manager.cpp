@@ -124,6 +124,26 @@ private slots:
         QVERIFY(!mng.entity_has_component(entity_id, component_id));
     }
 
+    void component_data_is_invalid_after_creation(){
+        entity_manager mng(0);
+        auto entity_id = mng.create_new_entity();
+        auto component_id   = mng.create_new_component();
+        mng.create_component_and_add_to(component_id, entity_id);
+        auto component_data =mng.get_component_data_for_entity(component_id, entity_id);
+        QVERIFY(!entity_manager::is_valid(component_data));
+    }
+
+    void component_data_can_be_set(){
+        entity_manager mng(0);
+        auto entity_id = mng.create_new_entity();
+        auto component_id   = mng.create_new_component();
+        mng.create_component_and_add_to(component_id, entity_id);
+        QVariant data(0);
+        mng.set_component_data_for_entity(component_id, entity_id, data);
+        auto component_data =mng.get_component_data_for_entity(component_id, entity_id);
+        QVERIFY(entity_manager::is_valid(component_data));
+    }
+
 };
 
 

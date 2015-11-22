@@ -2,13 +2,23 @@
 
 #include "entity_manager_db.hpp"
 
+#include <QUuid>
+
+
 namespace talorion {
 
-    entity_manager::entity_manager(QObject *par) :
-        QObject(par),
-        db_ptr(new entity_manager_db())
-    {
-    }
+     const entity_manager::component_data_t entity_manager::invalid_data= QVariant();//Constructs an invalid variant.
+     bool entity_manager::is_valid(const entity_manager::component_data_t &component_data){return component_data.isValid();}
+
+     //alternative implementation
+     //const entity_manager::component_data_t entity_manager::invalid_data= QVariant(QUuid::createUuid());
+     //bool entity_manager::is_valid(const entity_manager::component_data_t &component_data){return component_data == invalid_data;}
+
+     entity_manager::entity_manager(QObject *par) :
+         QObject(par),
+         db_ptr(new entity_manager_db())
+     {
+     }
 
     entity_manager::~entity_manager()
     {
@@ -53,7 +63,7 @@ namespace talorion {
         component_id =create_new_component(component_id);  //make sure we have a valid component
         component_data_id_t component_data_id = get_component_data_id(entity_id,component_id);
 
-        db_ptr->add_component_to_entity(entity_id, component_id, component_data_id);
+        db_ptr->add_component_to_entity(entity_id, component_id, component_data_id, invalid_data);
         return component_id;
     }
 
@@ -92,7 +102,20 @@ namespace talorion {
 
     QList<entity_manager::component_id_t> entity_manager::get_all_components_of_entity(entity_manager::entity_id_t entity_id) const
     {
-       return db_ptr->entity_components().values(entity_id);
+        return db_ptr->entity_components().values(entity_id);
+    }
+
+    void entity_manager::set_component_data_for_entity(entity_manager::component_id_t component_id, entity_manager::entity_id_t entity_id, const entity_manager::component_data_t &component_data)
+    {
+        component_data_id_t component_data_id = get_component_data_id(entity_id,component_id);
+        db_ptr->set_data(component_data_id, component_data);
+    }
+
+    QVariant entity_manager::get_component_data_for_entity(entity_manager::component_id_t component_id, entity_manager::entity_id_t entity_id) const
+    {
+        component_data_id_t component_data_id = get_component_data_id(entity_id,component_id);
+        auto data = db_ptr->component_data_table().value(component_data_id, invalid_data);
+        return data;
     }
 
     entity_manager::id_t entity_manager::get_next_id_from(const QList<id_t> &container) const

@@ -27,10 +27,11 @@ namespace talorion {
         m_components.insert(component_id, official_name);
     }
 
-    void entity_manager_db::add_component_to_entity(entity_manager::entity_id_t entity_id, entity_manager::component_id_t component_id, entity_manager::component_data_id_t component_data_id)
+    void entity_manager_db::add_component_to_entity(entity_manager::entity_id_t entity_id, entity_manager::component_id_t component_id, entity_manager::component_data_id_t component_data_id, const entity_manager::component_data_t &component_data)
     {
         m_entity_components.insert(entity_id, component_id);
-        m_component_data_table.insert(component_data_id, QVariant());
+        set_data(component_data_id, component_data);
+        //m_component_data_table.insert(component_data_id, component_data);
     }
 
     void entity_manager_db::delete_entity(entity_manager::entity_id_t entity_id)
@@ -47,5 +48,10 @@ namespace talorion {
     {
         m_entity_components.remove(entity_id);
         m_component_data_table.remove(component_data_id);
+    }
+
+    void entity_manager_db::set_data(entity_manager::component_data_id_t component_data_id, const entity_manager::component_data_t &component_data)
+    {
+        m_component_data_table.insert(component_data_id, component_data);
     }
 }
