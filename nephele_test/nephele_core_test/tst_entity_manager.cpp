@@ -6,9 +6,6 @@
 using namespace talorion;
 
 
-
-
-
 //QTEST_APPLESS_MAIN(entity_manager)
 //QTEST_MAIN(entity_manager_test)
 //#include "tst_entity_manager.moc"
