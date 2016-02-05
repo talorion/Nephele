@@ -3,16 +3,19 @@
 
 #include "tst_entity_manager.hpp"
 #include "tst_system_manager.hpp"
+#include "tst_system.hpp"
 
 int main(int argc, char *argv[])
 {
     //QCoreApplication app(argc, argv);
 
-    entity_manager_test test1;
-    tst_system_manager test2;
+    entity_manager_test tst_ent_mng;
+    tst_system_manager tst_sys_mng;
+    tst_system tst_sys;
 
-    QTest::qExec(&test1, argc, argv);
-    QTest::qExec(&test2, argc, argv);
+    QTest::qExec(&tst_ent_mng, argc, argv);
+    QTest::qExec(&tst_sys_mng, argc, argv);
+    QTest::qExec(&tst_sys, argc, argv);
 
     //return app.exec();
     return 0;

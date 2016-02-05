@@ -89,7 +89,8 @@ namespace talorion {
     void entity_manager::remove_all_components_from_entity(entity_manager::entity_id_t entity_id)
     {
         QList<component_id_t> component_ids = db_ptr->entity_components().values(entity_id);
-        for(auto component_id : component_ids){
+        //for(auto component_id : component_ids){
+        foreach (auto component_id, component_ids) {
             remove_component_from_entity(component_id, entity_id);
         }
     }
@@ -121,7 +122,8 @@ namespace talorion {
     entity_manager::id_t entity_manager::get_next_id_from(const QList<id_t> &container) const
     {
         id_t next_id = invalid_id;
-        for(auto e : container)     {next_id = qMax(next_id, e);}
+        //for(auto e : container)     {next_id = qMax(next_id, e);}
+        foreach (auto e, container){next_id = qMax(next_id, e);}
         next_id++;
         return next_id;
     }

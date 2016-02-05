@@ -20,7 +20,8 @@ include(../../common_cxxflags.pri)
 SOURCES += tst_entity_manager.cpp \
     main.cpp \
     tst_system_manager.cpp \
-    system_dummy.cpp
+    system_dummy.cpp \
+    tst_system.cpp
 DEFINES += SRCDIR=\\\"$$PWD/\\\"
 
 win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../../nephele/nephele_core/release/ -lnephele_core
@@ -39,4 +40,5 @@ else:unix: PRE_TARGETDEPS += $$OUT_PWD/../../nephele/nephele_core/libnephele_cor
 HEADERS += \
     tst_entity_manager.hpp \
     tst_system_manager.hpp \
-    system_dummy.hpp
+    system_dummy.hpp \
+    tst_system.hpp

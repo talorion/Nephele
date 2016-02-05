@@ -27,6 +27,8 @@ private slots:
 
     void system_manager_can_register_systems();
 
+    //void registering_system_creates_it();
+
     //void only_abstract_system_drivates_can_be_registered();
 
     //void systems_are_created_only_by_registering();

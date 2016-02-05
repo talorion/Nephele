@@ -25,10 +25,13 @@ namespace talorion {
         typedef QVariant component_data_t;
 
     public:     //constants
-        static const id_t invalid_id{0};
+        //static const id_t invalid_id{0};
+        static const id_t invalid_id=0;
         //static const entity_id_t default_entity{0};
-        static const entity_id_t max_entity_id{997};    //for component_data_id hash should ba a prime
-        static const entity_id_t max_component_id{1009}; //for component_data_id hash should ba a prime
+        //static const entity_id_t max_entity_id{997};    //for component_data_id hash should ba a prime
+        static const entity_id_t max_entity_id=997;    //for component_data_id hash should ba a prime
+        //static const entity_id_t max_component_id{1009}; //for component_data_id hash should ba a prime
+        static const entity_id_t max_component_id=1009; //for component_data_id hash should ba a prime
 
         static const component_data_t invalid_data;
 

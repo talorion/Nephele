@@ -17,6 +17,10 @@ public:
 signals:
 
 public slots:
+
+private:
+    virtual state_trans_ret_t do_initialize() Q_DECL_OVERRIDE;
+  virtual state_trans_ret_t do_start() Q_DECL_OVERRIDE;
 };
 }
 
