@@ -9,7 +9,7 @@ class tst_system: public QObject
     Q_OBJECT
 public:
     tst_system(QObject *par = 0);
-    ~tst_system();
+    ~tst_system() = default;
 
 private slots:
     void initTestCase();
@@ -23,9 +23,7 @@ private slots:
 private slots:
     void system_is_in_undefined_state_after_creation();
     void initalize_changes_system_state();
-    //void start_changes_system_state();
-    //void stop_changes_system_state();
-    //void dispose_changes_system_state();
+    void configuration_widget_is_null_after_creation();
 
 };
 

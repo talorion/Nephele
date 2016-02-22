@@ -9,8 +9,8 @@ class entity_manager_test : public QObject
     Q_OBJECT
 
 public:
-    explicit entity_manager_test(QObject *par = 0);
-    ~entity_manager_test();
+    explicit entity_manager_test(QObject *par = nullptr);
+    ~entity_manager_test()=default;
 
 private:
     // predicate, which returns whether an integer is a prime number

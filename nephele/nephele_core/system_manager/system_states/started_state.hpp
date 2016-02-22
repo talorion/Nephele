@@ -9,8 +9,9 @@ namespace talorion {
   {
     Q_OBJECT
   public:
-    explicit started_state(QObject *par = 0);
-    ~started_state();
+    explicit started_state(QObject *par = nullptr);
+    virtual ~started_state()=default;
+  private:
     Q_DISABLE_COPY(started_state)
 
     // abstract_system_state interface
@@ -18,7 +19,7 @@ namespace talorion {
     virtual abstract_system_state *state_transition(abstract_system *sys, abstract_system::state_input_t input)Q_DECL_OVERRIDE;
     virtual void enter(abstract_system *sys) Q_DECL_OVERRIDE{Q_UNUSED(sys);}
     virtual void exit(abstract_system *sys) Q_DECL_OVERRIDE{Q_UNUSED(sys);}
-    virtual abstract_system::state_t type() const Q_DECL_OVERRIDE{return abstract_system::SYSTEM_STATE_STARTED;}
+    virtual abstract_system::state_t type() const Q_DECL_OVERRIDE{return abstract_system::state_t::SYSTEM_STATE_STARTED;}
   };
 
 } // namespace talorion

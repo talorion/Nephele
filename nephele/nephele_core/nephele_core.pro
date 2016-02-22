@@ -1,4 +1,6 @@
 QT       -= gui
+QT       -= widget
+
 
 TARGET = nephele_core
 TEMPLATE = lib
@@ -16,7 +18,8 @@ HEADERS += \
     system_manager/system_states/initialized_state.hpp \
     system_manager/system_states/disposed_state.hpp \
     system_manager/system_states/started_state.hpp \
-    system_manager/system_states/error_state.hpp
+    system_manager/system_states/error_state.hpp \
+    system_manager/configuration_widget/abstract_configuration_widget.hpp
 
 SOURCES += \
     entity_manager/entity_manager.cpp \
@@ -28,4 +31,5 @@ SOURCES += \
     system_manager/system_states/initialized_state.cpp \
     system_manager/system_states/disposed_state.cpp \
     system_manager/system_states/started_state.cpp \
-    system_manager/system_states/error_state.cpp
+    system_manager/system_states/error_state.cpp \
+    system_manager/configuration_widget/abstract_configuration_widget.cpp

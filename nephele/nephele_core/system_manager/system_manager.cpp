@@ -7,8 +7,6 @@ system_manager::system_manager(QObject *par) :
     m_all_systems()
 {}
 
-system_manager::~system_manager(){}
-
 system_manager::system_container_t system_manager::get_all_systems() const
 {
     return m_all_systems;

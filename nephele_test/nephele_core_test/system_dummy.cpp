@@ -7,11 +7,6 @@ namespace talorion{
 
   }
 
-  system_dummy::~system_dummy()
-  {
-
-  }
-
   system_dummy::state_trans_ret_t system_dummy::do_initialize()
   {
     return 0;

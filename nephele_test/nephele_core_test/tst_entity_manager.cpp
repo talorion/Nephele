@@ -14,9 +14,6 @@ using namespace talorion;
 entity_manager_test::entity_manager_test(QObject *par):QObject(par){}
 
 
-entity_manager_test::~entity_manager_test(){}
-
-
 bool entity_manager_test::isPrime(int n)
 {
     int i, flag=0;
@@ -42,28 +39,28 @@ void entity_manager_test::cleanup()              //will be called after every te
 
 
 void entity_manager_test::entity_manager_has_zero_entities_after_creation(){
-    entity_manager mng(0);                          /*Arrange*/
+    entity_manager mng;                          /*Arrange*/
     auto all_entinites = mng.get_all_entities();    /*Act*/
     QCOMPARE(all_entinites.size(), 0);              /*Assert*/
 }
 
 
 void entity_manager_test::create_new_entity_results_in_valid_id(){
-    entity_manager mng(0);
+    entity_manager mng;
     auto entity_id = mng.create_new_entity();
     QVERIFY(entity_manager::is_valid(entity_id));
 }
 
 
 void entity_manager_test::created_entity_exists_after_creation(){
-    entity_manager mng(0);
+    entity_manager mng;
     auto entity_id = mng.create_new_entity();
     QVERIFY(mng.entity_exists(entity_id));
 }
 
 
 void entity_manager_test::create_new_entity_results_different_ids(){
-    entity_manager mng(0);
+    entity_manager mng;
     auto entity_id = mng.create_new_entity();
     auto other_entity_id = mng.create_new_entity();
     QVERIFY(entity_id != other_entity_id);
@@ -71,28 +68,28 @@ void entity_manager_test::create_new_entity_results_different_ids(){
 
 
 void entity_manager_test::entity_manager_has_zero_components_after_creation(){
-    entity_manager mng(0);                          /*Arrange*/
+    entity_manager mng;                          /*Arrange*/
     auto all_components = mng.get_all_components(); /*Act*/
     QCOMPARE(all_components.size(), 0);             /*Assert*/
 }
 
 
 void entity_manager_test::create_new_component_results_in_valid_id(){
-    entity_manager mng(0);
+    entity_manager mng;
     auto component_id   = mng.create_new_component();
     QVERIFY(entity_manager::is_valid(component_id));
 }
 
 
 void entity_manager_test::created_component_exists_after_creation(){
-    entity_manager mng(0);
+    entity_manager mng;
     auto component_id   = mng.create_new_component();
     QVERIFY(mng.component_exists(component_id));
 }
 
 
 void entity_manager_test::created_component_is_added_to_entity(){
-    entity_manager mng(0);
+    entity_manager mng;
     auto entity_id      = mng.create_new_entity();
     auto component_id   = mng.create_new_component();
     mng.create_component_and_add_to(component_id, entity_id);

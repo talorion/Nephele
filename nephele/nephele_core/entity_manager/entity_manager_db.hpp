@@ -13,10 +13,12 @@ namespace talorion {
     {
         Q_OBJECT
     public:
-        explicit entity_manager_db(QObject *par = 0);
-        ~entity_manager_db();
+        explicit entity_manager_db(QObject *par = nullptr);
+        virtual ~entity_manager_db()=default;
+    private:
         Q_DISABLE_COPY(entity_manager_db)
 
+    public:
         const QMap<entity_manager::entity_id_t, QString>& entities()const{return m_entities;}
         const QMap<entity_manager::component_id_t, QString>& components() const{return m_components;}
         const QMultiMap<entity_manager::entity_id_t, entity_manager::component_id_t>& entity_components() const{return m_entity_components;}

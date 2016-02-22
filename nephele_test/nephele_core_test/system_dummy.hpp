@@ -10,8 +10,8 @@ class system_dummy : public abstract_system
 {
     Q_OBJECT
 public:
-    explicit system_dummy(QObject *par = 0);
-    ~system_dummy();
+    explicit system_dummy(QObject *par = nullptr);
+    ~system_dummy()=default;
     Q_DISABLE_COPY(system_dummy)
 
 signals:

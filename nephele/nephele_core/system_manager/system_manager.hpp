@@ -13,12 +13,14 @@ namespace talorion {
   {
     Q_OBJECT
   public:
-    typedef QSharedPointer<abstract_system> abstract_system_t;
-    typedef QList<abstract_system_t> system_container_t;
+    using abstract_system_t=QSharedPointer<abstract_system> ;
+    using system_container_t=QList<abstract_system_t> ;
 
   public:
-    explicit system_manager(QObject *par = 0);
-    ~system_manager();
+    explicit system_manager(QObject *par = nullptr);
+    virtual ~system_manager()=default;
+
+  private:
     Q_DISABLE_COPY(system_manager)
 
   signals:

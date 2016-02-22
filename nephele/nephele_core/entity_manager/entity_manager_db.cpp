@@ -12,11 +12,6 @@ namespace talorion {
 
     }
 
-    entity_manager_db::~entity_manager_db()
-    {
-
-    }
-
     void entity_manager_db::add_entity(entity_manager::entity_id_t entity_id, QString human_readable_label)
     {
         m_entities.insert(entity_id, human_readable_label);

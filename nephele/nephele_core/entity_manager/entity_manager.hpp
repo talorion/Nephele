@@ -5,6 +5,8 @@
 #include <QScopedPointer>
 #include <QVariant>
 
+//#include "entity_manager_db.hpp"
+
 //QT_BEGIN_NAMESPACE
 //class QVariant;
 //QT_END_NAMESPACE
@@ -17,20 +19,17 @@ namespace talorion {
     {
         Q_OBJECT
     public:     //typedefs
-        typedef int id_t;
-        typedef id_t entity_id_t;
-        typedef id_t component_id_t;
-        typedef id_t component_data_id_t;
+        using id_t=int;
+        using entity_id_t=id_t ;
+        using component_id_t=id_t ;
+        using component_data_id_t=id_t ;
 
-        typedef QVariant component_data_t;
+        using component_data_t=QVariant;
 
     public:     //constants
-        //static const id_t invalid_id{0};
-        static const id_t invalid_id=0;
-        //static const entity_id_t default_entity{0};
-        //static const entity_id_t max_entity_id{997};    //for component_data_id hash should ba a prime
+        static const id_t invalid_id=-1;
+
         static const entity_id_t max_entity_id=997;    //for component_data_id hash should ba a prime
-        //static const entity_id_t max_component_id{1009}; //for component_data_id hash should ba a prime
         static const entity_id_t max_component_id=1009; //for component_data_id hash should ba a prime
 
         static const component_data_t invalid_data;
@@ -42,10 +41,13 @@ namespace talorion {
         static bool is_valid(const component_data_t& component_data);
 
     public:
-        explicit entity_manager(QObject *par = 0);
-        ~entity_manager();
+        explicit entity_manager(QObject *par = nullptr);
+        virtual ~entity_manager();
+
+    private:
         Q_DISABLE_COPY(entity_manager)
 
+    public:
         QList<entity_id_t> get_all_entities()const;
         QList<component_id_t> get_all_components() const;
 

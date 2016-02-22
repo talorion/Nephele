@@ -7,8 +7,6 @@ using namespace talorion;
 
 tst_system_manager::tst_system_manager(QObject *par):QObject(par){}
 
-tst_system_manager::~tst_system_manager(){}
-
 void tst_system_manager::initTestCase(){}
 
 void tst_system_manager::cleanupTestCase(){}

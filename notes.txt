@@ -1,0 +1,28 @@
+== systems ==
+    co2sensor
+    configuration
+    gui
+    logging
+    octave
+    plotting
+    scripting
+    tcpbox
+    tofdaqdll
+    twtooldll
+    twtps
+
+== data ==
+system polls data
+system changes data
+system provides data for
+
+
+== script ==
+system executes script
+system provides data for script
+system provides methods for script
+
+
+
+== logging ==
+system logs

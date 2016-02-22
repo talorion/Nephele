@@ -10,19 +10,15 @@ namespace talorion {
      const entity_manager::component_data_t entity_manager::invalid_data= QVariant();//Constructs an invalid variant.
      bool entity_manager::is_valid(const entity_manager::component_data_t &component_data){return component_data.isValid();}
 
-     //alternative implementation
-     //const entity_manager::component_data_t entity_manager::invalid_data= QVariant(QUuid::createUuid());
-     //bool entity_manager::is_valid(const entity_manager::component_data_t &component_data){return component_data == invalid_data;}
-
      entity_manager::entity_manager(QObject *par) :
          QObject(par),
          db_ptr(new entity_manager_db())
      {
      }
 
-    entity_manager::~entity_manager()
-    {
-    }
+     entity_manager::~entity_manager(){
+
+     }
 
     QList<entity_manager::entity_id_t> entity_manager::get_all_entities() const
     {

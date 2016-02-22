@@ -2,17 +2,16 @@
 
 #include "system_states/abstract_system_state.hpp"
 #include "system_states/undefined_state.hpp"
+#include "configuration_widget/abstract_configuration_widget.hpp"
+
 
 namespace talorion {
+
+
 
   abstract_system::abstract_system(QObject *par) :
     QObject(par),
     m_state(new undefined_state())
-  {
-
-  }
-
-  abstract_system::~abstract_system()
   {
 
   }
@@ -22,7 +21,7 @@ namespace talorion {
   }
 
   void abstract_system::initialize(){
-    state_transition(SYSTEM_INPUT_INITIALIZE);
+    state_transition(state_input_t::SYSTEM_INPUT_INITIALIZE);
   }
 
   void abstract_system::start()
@@ -33,7 +32,7 @@ namespace talorion {
   void abstract_system::state_transition(state_input_t input)
   {
     abstract_system_state * st =m_state->state_transition(this, input);
-    if (st != NULL){
+    if (st != nullptr){
         m_state->exit(this);
         delete m_state;
         m_state = st;
@@ -41,6 +40,11 @@ namespace talorion {
         m_state->enter(this);
       }
 
+  }
+
+  abstract_configuration_widget *abstract_system::do_get_configuration_widget() const
+  {
+    return nullptr;
   }
 
 

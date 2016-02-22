@@ -9,14 +9,15 @@ namespace talorion {
   {
     Q_OBJECT
   public:
-    undefined_state(QObject *par = 0);
-    ~undefined_state();
+    undefined_state(QObject *par = nullptr);
+    virtual ~undefined_state()=default;
+  private:
     Q_DISABLE_COPY(undefined_state)
 
     // abstract_system_state interface
   public:
     virtual abstract_system_state* state_transition(abstract_system* sys, abstract_system::state_input_t input)Q_DECL_OVERRIDE;
-    virtual abstract_system::state_t type() const Q_DECL_OVERRIDE{return abstract_system::SYSTEM_STATE_UNDEFINED;}
+    virtual abstract_system::state_t type() const Q_DECL_OVERRIDE;
     virtual void enter(abstract_system *sys) Q_DECL_OVERRIDE{Q_UNUSED(sys);}
     virtual void exit(abstract_system *sys) Q_DECL_OVERRIDE{Q_UNUSED(sys);}
   };

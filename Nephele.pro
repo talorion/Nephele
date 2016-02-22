@@ -1,6 +1,7 @@
 TEMPLATE = subdirs
 
 DISTFILES += Licence.txt \
+               notes.txt \
 		README.md
 
 SUBDIRS +=    libs

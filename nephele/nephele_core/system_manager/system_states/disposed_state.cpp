@@ -10,15 +10,11 @@ namespace talorion {
 
   }
 
-  disposed_state::~disposed_state()
-  {
-
-  }
 
   abstract_system_state *disposed_state::state_transition(abstract_system *sys, abstract_system::state_input_t input)
   {
     Q_UNUSED(sys);
-    if(input == abstract_system::SYSTEM_INPUT_INITIALIZE){
+    if(input == abstract_system::state_input_t::SYSTEM_INPUT_INITIALIZE){
         //sys->do_initialize();
         return new initialized_state();
       }
