@@ -17,4 +17,14 @@ namespace talorion{
     return 0;
   }
 
+  abstract_system::state_trans_ret_t system_dummy::do_dispose()
+  {
+    return 0;
+  }
+
+  abstract_configuration_widget *system_dummy::do_get_configuration_widget() const
+  {
+    return nullptr;
+  }
+
 }

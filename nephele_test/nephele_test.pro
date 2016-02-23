@@ -1,9 +1,6 @@
 TEMPLATE = subdirs
 
-SUBDIRS += nephele_core_test \
-    logging_system_test
-
-
+SUBDIRS += nephele_core_test
 
 # build must be last:
 CONFIG += ordered

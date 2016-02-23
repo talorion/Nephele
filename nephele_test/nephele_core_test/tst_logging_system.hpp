@@ -22,6 +22,16 @@ private slots:
 
 private slots:
   void log_is_empty_after_creation();
+
+  void initialize_changes_global_message_handler();
+
+  void dispose_restores_global_message_handler();
+
+  void qDebug_adds_log_entry();
+
+  void log_is_empty_after_dispose();
+
+  void number_of_entries_is_restricted();
 };
 
 #endif // TST_LOGGING_SYSTEM_HPP

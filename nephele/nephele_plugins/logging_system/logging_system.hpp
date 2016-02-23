@@ -1,8 +1,7 @@
 #ifndef TALORION_LOGGING_SYSTEM_HPP
 #define TALORION_LOGGING_SYSTEM_HPP
 
-//#include "system_manager/abstract_system.hpp"
-#include "../../nephele_core/system_manager/abstract_system.hpp"
+#include "system_manager/abstract_system.hpp"
 
 #include <QStringList>
 
@@ -23,16 +22,25 @@ namespace talorion {
   public slots:
 
   public:
-    QStringList get_all_entries()const{return m_entries;}
+    QStringList get_all_entries()const;
+
+     int max_num_entries()const;
+    void set_max_num_entries( int mne);
 
     // abstract_system interface
   private:
     virtual state_trans_ret_t do_initialize() Q_DECL_OVERRIDE;
+    virtual state_trans_ret_t do_dispose() Q_DECL_OVERRIDE;
     virtual state_trans_ret_t do_start() Q_DECL_OVERRIDE;
     virtual abstract_configuration_widget *do_get_configuration_widget() const Q_DECL_OVERRIDE;
 
+    static void myMessageOutput(QtMsgType type, const QMessageLogContext &context, const QString &msg);
+
   private:
-    QStringList m_entries;
+    static QStringList m_entries;
+    QtMessageHandler m_orig_msg_hdl;
+    static  int m_max_num_entries;
+
   };
 
 } // namespace talorion

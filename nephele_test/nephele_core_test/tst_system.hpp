@@ -21,9 +21,6 @@ private slots:
     void cleanup();
 
 private slots:
-    void system_is_in_undefined_state_after_creation();
-    void initalize_changes_system_state();
-    void configuration_widget_is_null_after_creation();
 
 };
 
