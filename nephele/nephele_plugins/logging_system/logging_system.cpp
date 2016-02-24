@@ -5,8 +5,8 @@
 
 namespace talorion {
 
-  QStringList logging_system::m_entries= QStringList();
-  int logging_system::m_max_num_entries= 100;
+  QStringList logging_system::s_entries= QStringList();
+  int logging_system::s_max_num_entries= 100;
 
   logging_system::logging_system(QObject *par) :
     abstract_system(par),
@@ -22,18 +22,18 @@ namespace talorion {
 
   QStringList logging_system::get_all_entries() const
   {
-    return m_entries;
+    return s_entries;
   }
 
   int logging_system::max_num_entries() const
   {
-    return m_max_num_entries;
+    return s_max_num_entries;
   }
 
   void logging_system::set_max_num_entries( int mne)
   {
     if(mne>0){
-        m_max_num_entries=mne;
+        s_max_num_entries=mne;
         qDebug()<<"changed max number of log messages to"<<mne;
       }
   }
@@ -48,7 +48,7 @@ namespace talorion {
   abstract_system::state_trans_ret_t logging_system::do_dispose()
   {
     qInstallMessageHandler(m_orig_msg_hdl);
-    m_entries.clear();
+    s_entries.clear();
     return 0;
   }
 
@@ -57,10 +57,6 @@ namespace talorion {
     return 0;
   }
 
-  abstract_configuration_widget *logging_system::do_get_configuration_widget() const
-  {
-    return nullptr;
-  }
 
   void logging_system::myMessageOutput(QtMsgType type, const QMessageLogContext &context, const QString &msg)
   {
@@ -90,9 +86,9 @@ namespace talorion {
 
     QString enh_msg=timestring+"\t"+severity_string+"\t"+msg;
 
-    while(m_entries.size() >= m_max_num_entries)
-      m_entries.pop_front();
-    m_entries<<msg;
+    while(s_entries.size() >= s_max_num_entries)
+      s_entries.pop_front();
+    s_entries<<msg;
 
     QByteArray enh_msg_raw=enh_msg.toLocal8Bit();
     fprintf(stderr, "%s\n", enh_msg_raw.constData());

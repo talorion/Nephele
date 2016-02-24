@@ -2,6 +2,8 @@
 
 #include "tcpbox_system.hpp"
 
+
+
 namespace talorion {
 
   tcpbox_factory::tcpbox_factory(QObject *par) : QObject(par)
@@ -21,11 +23,31 @@ namespace talorion {
     return myInstance;
   }
 
-  void tcpbox_factory::create_new_tcpbox(tcpbox_system& sys)
+  entity_manager::entity_id_t tcpbox_factory::create_new_tcpbox(tcpbox_system& sys) const
   {
-    tcpbox_system::tcpbox box=42;
+    entity_manager& mng = sys.get_entity_manager();
+    tcpbox_system::tcpbox new_id=mng.create_new_entity();
 
-    sys.add_box(box);
+    //mng.create_component_and_add_to(NAME_COMPONENT, new_id);
+//    createComponentAndAddTo(NAME_COMPONENT, new_id );
+//    createComponentAndAddTo(BOX_ID_COMPONENT, new_id );
+//    createComponentAndAddTo(IP_ADDRESS_COMPONENT, new_id );
+//    createComponentAndAddTo(PORT_COMPONENT, new_id );
+//    createComponentAndAddTo(CONNECTION_STATE_COMPONENT, new_id );
+//    createComponentAndAddTo(SERIAL_VERSION_UID_COMPONENT, new_id);
+//    createComponentAndAddTo(TCP_BOX_BACKEND_COMPONENT, new_id);
+
+//    setComponentDataForEntity(NAME_COMPONENT,               new_id, nameVal);
+//    setComponentDataForEntity(BOX_ID_COMPONENT,             new_id, new_id);
+//    setComponentDataForEntity(IP_ADDRESS_COMPONENT,         new_id, ip);
+//    setComponentDataForEntity(PORT_COMPONENT,               new_id, port);
+//    setComponentDataForEntity(CONNECTION_STATE_COMPONENT,   new_id, false);
+//    setComponentDataForEntity(SERIAL_VERSION_UID_COMPONENT, new_id, get_TcpBox_uid());
+//    setComponentDataForEntity(TCP_BOX_BACKEND_COMPONENT, new_id, 0);
+
+    sys.add_box(new_id);
+
+    return new_id;
   }
 
 } // namespace talorion

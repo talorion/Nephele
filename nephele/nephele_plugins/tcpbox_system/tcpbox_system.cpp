@@ -36,11 +36,6 @@ namespace talorion {
     return 0;
   }
 
-  abstract_configuration_widget *tcpbox_system::do_get_configuration_widget() const
-  {
-    return nullptr;
-  }
-
   void tcpbox_system::add_box(tcpbox_system::tcpbox box)
   {
     m_configured_boxes.append(box);

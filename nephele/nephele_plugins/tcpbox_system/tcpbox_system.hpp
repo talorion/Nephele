@@ -32,7 +32,6 @@ namespace talorion {
     virtual state_trans_ret_t do_initialize() Q_DECL_OVERRIDE;
     virtual state_trans_ret_t do_dispose() Q_DECL_OVERRIDE;
     virtual state_trans_ret_t do_start() Q_DECL_OVERRIDE;
-    virtual abstract_configuration_widget *do_get_configuration_widget() const Q_DECL_OVERRIDE;
 
     void add_box(tcpbox box);
 

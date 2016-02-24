@@ -54,9 +54,14 @@ namespace talorion {
         entity_id_t create_new_entity();
         bool entity_exists(entity_id_t entity_id) const;
 
-        component_id_t create_new_component(component_id_t component_id=invalid_id);
+        component_id_t create_new_component(component_id_t component_id=invalid_id, QString component_name=QString());
+        component_id_t create_new_component(const QString& component_name);
         component_id_t create_component_and_add_to(component_id_t component_id, entity_id_t entity_id);
+
+        component_id_t get_component_by_name(const QString& component_name)const;
+
         bool component_exists(component_id_t component_id) const;
+        bool component_exists(QString component_name) const;
 
         bool entity_has_component(entity_id_t entity_id, component_id_t component_id) const;
 

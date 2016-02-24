@@ -161,3 +161,11 @@ void entity_manager_test::component_data_can_be_set(){
     auto component_data =mng.get_component_data_for_entity(component_id, entity_id);
     QVERIFY(entity_manager::is_valid(component_data));
 }
+
+void entity_manager_test::component_can_be_created_by_name()
+{
+  entity_manager mng(0);
+  QString comp_name("some_component");
+  mng.create_new_component(comp_name);
+  QVERIFY(mng.component_exists(comp_name));
+}

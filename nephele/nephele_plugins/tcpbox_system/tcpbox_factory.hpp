@@ -3,6 +3,8 @@
 
 #include <QObject>
 
+#include"entity_manager/entity_manager.hpp"
+
 namespace talorion {
 
   class tcpbox_system;
@@ -22,7 +24,7 @@ namespace talorion {
   public:
     static tcpbox_factory& get_instance();
 
-    void create_new_tcpbox(tcpbox_system &sys);
+    entity_manager::entity_id_t create_new_tcpbox(tcpbox_system &sys)const;
 
     //int createNewTcpBox(QString nameVal="New Box", QString ip="localhost", quint16 port=2701);
 

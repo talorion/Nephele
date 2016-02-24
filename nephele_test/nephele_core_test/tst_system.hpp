@@ -21,6 +21,7 @@ private slots:
     void cleanup();
 
 private slots:
+    void initialize_adds_default_components();
 
 };
 
