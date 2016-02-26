@@ -16,6 +16,11 @@ namespace talorion {
 
 
   void abstract_system::initialize(){
+
+    for(auto comp_nme: get_default_components()){
+        get_entity_manager().create_new_component(comp_nme);
+      }
+
     do_initialize();
   }
 
@@ -36,7 +41,11 @@ namespace talorion {
 
   QStringList abstract_system::get_default_components() const
   {
-    return do_get_default_components();
+    QStringList tmp{""};
+
+    tmp.append(do_get_default_components());
+
+    return tmp;
   }
 
 }

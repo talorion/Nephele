@@ -48,6 +48,10 @@ namespace talorion {
         component_id = get_next_component_id();
       }
 
+    if(!component_name.isNull() && component_exists(component_name)){
+        component_id= get_component_by_name(component_name);
+      }
+
     if(!component_exists(component_id)){
         db_ptr->add_component(component_id, component_name);
       }

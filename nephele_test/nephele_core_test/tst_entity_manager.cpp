@@ -169,3 +169,30 @@ void entity_manager_test::component_can_be_created_by_name()
   mng.create_new_component(comp_name);
   QVERIFY(mng.component_exists(comp_name));
 }
+
+void entity_manager_test::component_names_are_unique()
+{
+  entity_manager mng(0);
+  QString comp_name("some_component");
+  auto first_component_id   =mng.create_new_component(comp_name);
+  auto second_component_id  =mng.create_new_component(comp_name);
+  QCOMPARE(first_component_id, second_component_id);
+}
+
+void entity_manager_test::null_component_names_are_not_unique()
+{
+  entity_manager mng(0);
+  QString comp_name;
+  auto first_component_id   =mng.create_new_component(comp_name);
+  auto second_component_id  =mng.create_new_component(comp_name);
+  QVERIFY(first_component_id != second_component_id);
+}
+
+void entity_manager_test::empty_component_names_are_unique()
+{
+  entity_manager mng(0);
+  QString comp_name("");
+  auto first_component_id   =mng.create_new_component(comp_name);
+  auto second_component_id  =mng.create_new_component(comp_name);
+  QCOMPARE(first_component_id, second_component_id);
+}

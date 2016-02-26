@@ -18,6 +18,13 @@ void tst_system::init(){}
 
 void tst_system::cleanup(){}
 
+void tst_system::default_component_is_not_empty_after_creation()
+{
+  system_dummy sys;
+
+  QVERIFY(!sys.get_default_components().isEmpty());
+}
+
 void tst_system::initialize_adds_default_components()
 {
   system_dummy sys;
@@ -25,7 +32,7 @@ void tst_system::initialize_adds_default_components()
 
   entity_manager& mng = sys.get_entity_manager();
   bool result=true;
-  foreach (auto comp_name, sys.get_default_components()) {
+  for (auto comp_name : sys.get_default_components()) {
     result= result && mng.component_exists(comp_name);
     }
   QVERIFY(result);

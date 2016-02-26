@@ -59,6 +59,12 @@ private slots:
 
     void component_can_be_created_by_name();
 
+    void component_names_are_unique();
+
+    void null_component_names_are_not_unique();
+
+    void empty_component_names_are_unique();
+
 };
 
 #endif // TST_ENTITY_MANAGER_HPP
