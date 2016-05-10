@@ -6,6 +6,7 @@
 #include "tst_system.hpp"
 #include "tst_logging_system.hpp"
 #include "tst_tcpbox_system.hpp"
+#include "tst_tcpbox_hw.hpp"
 
 int main(int argc, char *argv[])
 {
@@ -16,12 +17,15 @@ int main(int argc, char *argv[])
     tst_system tst_sys;
     tst_logging_system tst_log;
     tst_tcpbox_system tst_tcpbox;
+    tst_tcpbox_hw tst_tcpbox_hardware;
 
     QTest::qExec(&tst_ent_mng, argc, argv);
     QTest::qExec(&tst_sys_mng, argc, argv);
     QTest::qExec(&tst_sys, argc, argv);
     QTest::qExec(&tst_log, argc, argv);
     QTest::qExec(&tst_tcpbox, argc, argv);
+    //works only with hardware
+    QTest::qExec(&tst_tcpbox_hardware, argc, argv);
 
     //return app.exec();
     return 0;

@@ -7,6 +7,7 @@
 QT       += testlib
 
 QT       -= gui
+QT   += network
 
 TARGET = tst_entity_manager
 CONFIG   += console
@@ -23,7 +24,8 @@ SOURCES += tst_entity_manager.cpp \
     system_dummy.cpp \
     tst_system.cpp \
     tst_logging_system.cpp \
-    tst_tcpbox_system.cpp
+    tst_tcpbox_system.cpp \
+    tst_tcpbox_hw.cpp
 
 DEFINES += SRCDIR=\\\"$$PWD/\\\"
 
@@ -33,7 +35,8 @@ HEADERS += \
     system_dummy.hpp \
     tst_system.hpp \
     tst_logging_system.hpp \
-    tst_tcpbox_system.hpp
+    tst_tcpbox_system.hpp \
+    tst_tcpbox_hw.hpp
 
 # ===========================
 win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../../nephele/nephele_core/release/ -lnephele_core

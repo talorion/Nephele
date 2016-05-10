@@ -13,7 +13,8 @@ HEADERS += \
     entity_manager/entity_manager_db.hpp \
     system_manager/system_manager.hpp \
     system_manager/abstract_system.hpp \
-    system_manager/configuration_widget/abstract_configuration_widget.hpp
+    system_manager/configuration_widget/abstract_configuration_widget.hpp \
+    entity_manager/static_components.hpp
 
 SOURCES += \
     entity_manager/entity_manager.cpp \

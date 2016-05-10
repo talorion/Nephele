@@ -1,8 +1,9 @@
 #include "tcpbox_factory.hpp"
 
 #include "tcpbox_system.hpp"
+#include "tcpbox_client.hpp"
 
-
+#include"entity_manager/static_components.hpp"
 
 namespace talorion {
 
@@ -23,31 +24,48 @@ namespace talorion {
     return myInstance;
   }
 
-  entity_manager::entity_id_t tcpbox_factory::create_new_tcpbox(tcpbox_system& sys) const
+  tcpbox_factory::tcpbox_t tcpbox_factory::create_new_tcpbox(tcpbox_system& sys,const QString &box_name, const QString &host_name, quint16 port, qint32 box_id) const
   {
     entity_manager& mng = sys.get_entity_manager();
-    tcpbox_system::tcpbox new_id=mng.create_new_entity();
+    tcpbox_t tcpbox=mng.create_new_entity();
 
-    //mng.create_component_and_add_to(NAME_COMPONENT, new_id);
-//    createComponentAndAddTo(NAME_COMPONENT, new_id );
-//    createComponentAndAddTo(BOX_ID_COMPONENT, new_id );
-//    createComponentAndAddTo(IP_ADDRESS_COMPONENT, new_id );
-//    createComponentAndAddTo(PORT_COMPONENT, new_id );
-//    createComponentAndAddTo(CONNECTION_STATE_COMPONENT, new_id );
-//    createComponentAndAddTo(SERIAL_VERSION_UID_COMPONENT, new_id);
-//    createComponentAndAddTo(TCP_BOX_BACKEND_COMPONENT, new_id);
+    mng.create_component_and_add_to(NAME_COMPONENT, tcpbox);
+    mng.create_component_and_add_to(HOST_NAME_COMPONENT, tcpbox);
+    mng.create_component_and_add_to(PORT_COMPONENT, tcpbox);
+    mng.create_component_and_add_to(BOX_ID_COMPONENT, tcpbox);
 
-//    setComponentDataForEntity(NAME_COMPONENT,               new_id, nameVal);
-//    setComponentDataForEntity(BOX_ID_COMPONENT,             new_id, new_id);
-//    setComponentDataForEntity(IP_ADDRESS_COMPONENT,         new_id, ip);
-//    setComponentDataForEntity(PORT_COMPONENT,               new_id, port);
-//    setComponentDataForEntity(CONNECTION_STATE_COMPONENT,   new_id, false);
-//    setComponentDataForEntity(SERIAL_VERSION_UID_COMPONENT, new_id, get_TcpBox_uid());
-//    setComponentDataForEntity(TCP_BOX_BACKEND_COMPONENT, new_id, 0);
 
-    sys.add_box(new_id);
+    mng.set_component_data_for_entity(NAME_COMPONENT,               tcpbox, box_name);
+    mng.set_component_data_for_entity(HOST_NAME_COMPONENT,          tcpbox, host_name);
+    mng.set_component_data_for_entity(PORT_COMPONENT,               tcpbox, port);
+    mng.set_component_data_for_entity(BOX_ID_COMPONENT,             tcpbox, box_id);
 
-    return new_id;
+    //if(mng.is_valid(tcpbox)){
+    sys.add_box(tcpbox);
+    //}
+
+    return tcpbox;
+  }
+
+  tcpbox_client* tcpbox_factory::create_new_tcpbox_client(tcpbox_system& sys, tcpbox_factory::tcpbox_t tcpbox) const
+  {
+    tcpbox_client* client=Q_NULLPTR;
+    entity_manager& mng = sys.get_entity_manager();
+
+    if(mng.is_valid(tcpbox)){
+      client=new tcpbox_client(tcpbox, sys);
+    }
+
+    //auto was_added = false;
+    //if(client != Q_NULLPTR)
+      auto was_added = sys.add_client(client);
+
+    if(!was_added){
+        delete client;
+        client=Q_NULLPTR;
+      }
+
+    return client;
   }
 
 } // namespace talorion

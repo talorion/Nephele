@@ -18,11 +18,13 @@ include(../../../common_cxxflags.pri)
 
 HEADERS += \
     tcpbox_system.hpp \
-    tcpbox_factory.hpp
+    tcpbox_factory.hpp \
+    tcpbox_client.hpp
 
 SOURCES += \
     tcpbox_system.cpp \
-    tcpbox_factory.cpp
+    tcpbox_factory.cpp \
+    tcpbox_client.cpp
 
 
 ## ================
