@@ -4,6 +4,9 @@
 #include <QString>
 #include <QtTest>
 
+#include "tcpbox_system.hpp"
+#include "tcpbox_factory.hpp"
+
 class tst_tcpbox_system: public QObject
 {
   Q_OBJECT
@@ -37,7 +40,17 @@ private slots:
   void contains_no_configured_boxes_after_delete_all();
   void starting_tcpbox_system_starts_its_thread();
   void disposing_tcpbox_system_stops_its_thread();
+  void all_test_have_configured_tcpbox();
+  void connections_are_not_connected_after_creation();
+  void connections_are_not_connected_after_close();
+  void clients_support_help_command_after_creation();
+  void clients_do_not_send_empty_commands();
+  void clients_do_not_send_commands_when_not_connected();
+  void ecmd_help_returns_all_avaiable_commands();
 
+private:
+  talorion::tcpbox_system sys;
+  talorion::tcpbox_factory::tcpbox_t tcpbox;
 
 };
 

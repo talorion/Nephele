@@ -25,23 +25,13 @@ private slots:
 
 
 private slots:
-  void all_test_have_configured_tcpbox();
 
-  void connections_are_not_connected_after_creation();
 
   void clients_can_open_tcp_connection();
 
-  void connections_are_not_connected_after_close();
-
-  void clients_support_help_command_after_creation();
-
   void clients_communicate_via_Ethersex_Command_protocol();
 
-  void clients_do_not_send_empty_commands();
 
-  void clients_do_not_send_commands_when_not_connected();
-
-  void ecmd_help_returns_all_avaiable_commands();
 
   //  d
   //  fuse
