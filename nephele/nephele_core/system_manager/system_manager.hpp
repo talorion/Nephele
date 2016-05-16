@@ -17,7 +17,7 @@ namespace talorion {
     using system_container_t=QList<abstract_system_t> ;
 
   public:
-    explicit system_manager(QObject *par = nullptr);
+    explicit system_manager(QObject *par = Q_NULLPTR);
     virtual ~system_manager()=default;
 
   private:

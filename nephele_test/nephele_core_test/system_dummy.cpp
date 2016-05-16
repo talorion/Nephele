@@ -1,5 +1,7 @@
 #include "system_dummy.hpp"
 
+#include "event_manager/event_manager.hpp"
+
 namespace talorion{
 
   system_dummy::system_dummy(QObject *par) : abstract_system(par)

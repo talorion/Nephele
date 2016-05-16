@@ -1,28 +1,55 @@
 #include "tcpbox_system.hpp"
 
+#include <QDateTime>
+
 
 
 namespace talorion {
 
   tcpbox_system::tcpbox_system(QObject *par) :
     abstract_system(par),
-    m_configured_boxes(),
-    m_tcpbox_clients()
+    m_tcpbox_clients(),
+    m_thread(new tcpbox_system_thread(*this))
   {
 
   }
 
   tcpbox_system::~tcpbox_system()
   {
+    if(!m_thread.isNull()){
+        m_thread->quit();
+      }
+  }
 
+
+  bool tcpbox_system::contains_tcpbox(const tcpbox_container::value_type &tcpbox) const
+  {
+    return m_tcpbox_clients.contains(tcpbox);
+    //return m_thread->contains_tcpbox(tcpbox);
+  }
+
+  void tcpbox_system::delete_box(const tcpbox_container::value_type &tcpbox)
+  {
+    //m_thread->delete_box(tcpbox);
+    get_entity_manager().remove_entity(tcpbox);
+    m_tcpbox_clients.removeAll(tcpbox);
+  }
+
+  void tcpbox_system::delete_all_boxes()
+  {
+    m_tcpbox_clients.clear();
+    //m_thread->delete_all_boxes();
+  }
+
+  Qt::HANDLE tcpbox_system::thread_id()
+  {
+    if(m_thread.isNull()){
+        return QThread::currentThreadId();
+      }
+    return m_thread->thread_id();
   }
 
   tcpbox_system::tcpbox_container tcpbox_system::get_configured_boxes() const
-  {
-    return m_configured_boxes;
-  }
-
-  tcpbox_system::tcpbox_client_container tcpbox_system::get_tcpbox_clients() const
   {
     return m_tcpbox_clients;
   }
@@ -34,35 +61,52 @@ namespace talorion {
 
   abstract_system::state_trans_ret_t tcpbox_system::do_dispose()
   {
+    m_thread->quit();
+    m_thread->wait();
+    delete m_thread;
+
     return 0;
   }
 
   abstract_system::state_trans_ret_t tcpbox_system::do_start()
   {
+    m_thread->start();
+
+
+
+    QTime myTimer;
+    myTimer.start();
+    do{
+        QThread::currentThread()->msleep(100);
+      }while(!(m_thread->isRunning()) || myTimer.elapsed()>1000 ) ;
     return 0;
   }
 
-  void tcpbox_system::add_box(const tcpbox_container::value_type &box)
+  QStringList tcpbox_system::do_get_default_components() const
   {
-    m_configured_boxes.append(box);
+    QStringList tmp;
+
+    tmp.append("NAME_COMPONENT");
+    tmp.append("HOST_NAME_COMPONENT");
+    tmp.append("PORT_COMPONENT");
+    tmp.append("BOX_ID_COMPONENT");
+
+    return tmp;
+
   }
 
-  bool tcpbox_system::add_client(const tcpbox_client_container::mapped_type &client)
+  void tcpbox_system::add_box(const tcpbox_container::value_type &tcpbox)
   {
-    if(client == Q_NULLPTR)
-      return false;
+    if(!(get_entity_manager().is_valid(tcpbox)))
+      return;
 
-    const tcpbox_client_container::key_type & tcpbox = client->tcpbox();
-    tcpbox_system::tcpbox_client_container::iterator it= m_tcpbox_clients.find(tcpbox);
+    if(contains_tcpbox(tcpbox))
+      return;
 
-    bool was_added=false;
-    if(it == m_tcpbox_clients.end()){
-        it = m_tcpbox_clients.insert(tcpbox, client);
-        was_added = true;
-      }
+    m_tcpbox_clients.append(tcpbox);
 
-    return was_added;
-
+    //return m_thread->add_box(tcpbox);
   }
+
 
 } // namespace talorion

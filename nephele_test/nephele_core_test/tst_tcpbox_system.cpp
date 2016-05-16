@@ -5,6 +5,7 @@
 #include "tcpbox_factory.hpp"
 #include "entity_manager/entity_manager.hpp"
 #include "entity_manager/static_components.hpp"
+#include "event_manager/event_manager.hpp"
 
 using namespace talorion;
 
@@ -94,21 +95,59 @@ void tst_tcpbox_system::created_box_has_box_id()
   QVERIFY(mng.entity_has_component(entity_id, BOX_ID_COMPONENT));
 }
 
-void tst_tcpbox_system::box_clients_are_created_by_a_factory()
+void tst_tcpbox_system::configured_box_needs_host_port_and_id()
 {
   tcpbox_system sys;
-  auto tcpbox=tcpbox_factory::get_instance().create_new_tcpbox(sys);
-  tcpbox_factory::get_instance().create_new_tcpbox_client(sys, tcpbox);
-  auto all_clients = sys.get_tcpbox_clients();
-  QCOMPARE(all_clients.size(), 1);              /*Assert*/
+  auto tcpbox= tcpbox_factory::get_instance().create_new_tcpbox(sys);
+  QScopedPointer<tcpbox_client> client(new tcpbox_client(tcpbox,sys));
+  client->set_host_name("10.0.1.93");
+  client->set_port(2701);
+  client->set_box_id(1);
+  QVERIFY(client->is_configured());            /*Assert*/
 }
 
-void tst_tcpbox_system::duplicate_box_clients_are_not_added()
+void tst_tcpbox_system::delete_box_deletes_its_entity()
 {
   tcpbox_system sys;
-  auto tcpbox=tcpbox_factory::get_instance().create_new_tcpbox(sys);
-  tcpbox_factory::get_instance().create_new_tcpbox_client(sys, tcpbox);
-  tcpbox_factory::get_instance().create_new_tcpbox_client(sys, tcpbox);
-  auto all_clients = sys.get_tcpbox_clients();
-  QCOMPARE(all_clients.size(), 1);              /*Assert*/
+  auto tcpbox= tcpbox_factory::get_instance().create_new_tcpbox(sys);
+  sys.delete_box(tcpbox);
+  QVERIFY((sys.get_entity_manager().entity_exists(tcpbox) == false));
+
+}
+
+void tst_tcpbox_system::deleted_box_are_removed_from_system()
+{
+  tcpbox_system sys;
+  auto tcpbox= tcpbox_factory::get_instance().create_new_tcpbox(sys);
+  sys.delete_box(tcpbox);
+  QVERIFY(sys.contains_tcpbox(tcpbox) == false);
+}
+
+void tst_tcpbox_system::contains_no_configured_boxes_after_delete_all()
+{
+  tcpbox_system sys;
+  for(int i=0;i<10;i++){tcpbox_factory::get_instance().create_new_tcpbox(sys);}
+  sys.delete_all_boxes();
+
+  auto cfg_boxes = sys.get_configured_boxes();
+  QCOMPARE(cfg_boxes.size(), 0);              /*Assert*/
+}
+
+void tst_tcpbox_system::starting_tcpbox_system_starts_its_thread()
+{
+  tcpbox_system sys;
+  auto thread_id= QThread::currentThreadId();
+  sys.start();
+
+  QVERIFY(thread_id != sys.thread_id());
+}
+
+void tst_tcpbox_system::disposing_tcpbox_system_stops_its_thread()
+{
+  tcpbox_system sys;
+  auto thread_id= QThread::currentThreadId();
+  sys.start();
+  sys.dispose();
+
+  QVERIFY(thread_id == sys.thread_id());
 }

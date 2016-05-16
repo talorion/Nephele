@@ -1,15 +1,9 @@
-
 #include "tst_entity_manager.hpp"
 
 #include "entity_manager/entity_manager.hpp"
+#include "event_manager/event_manager.hpp"
 
 using namespace talorion;
-
-
-//QTEST_APPLESS_MAIN(entity_manager)
-//QTEST_MAIN(entity_manager_test)
-//#include "tst_entity_manager.moc"
-
 
 entity_manager_test::entity_manager_test(QObject *par):QObject(par){}
 

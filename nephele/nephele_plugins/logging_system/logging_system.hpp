@@ -11,7 +11,7 @@ namespace talorion {
   {
     Q_OBJECT
   public:
-    explicit logging_system(QObject *par = nullptr);
+    explicit logging_system(QObject *par = Q_NULLPTR);
     virtual ~logging_system();
 
   //private:

@@ -10,7 +10,7 @@ namespace talorion{
   {
     Q_OBJECT
   public:
-    explicit system_dummy(QObject *par = nullptr);
+    explicit system_dummy(QObject *par = Q_NULLPTR);
     ~system_dummy()=default;
     Q_DISABLE_COPY(system_dummy)
 

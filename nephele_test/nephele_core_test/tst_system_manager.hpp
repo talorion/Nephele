@@ -8,7 +8,7 @@ class tst_system_manager : public QObject
 {
     Q_OBJECT
 public:
-    tst_system_manager(QObject *par = nullptr);
+    tst_system_manager(QObject *par = Q_NULLPTR);
     ~tst_system_manager()=default;
 
 private slots:

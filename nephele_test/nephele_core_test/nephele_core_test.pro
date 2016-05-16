@@ -4,14 +4,14 @@
 #
 #-------------------------------------------------
 
-QT       += testlib
+QT          += testlib
+QT          -= gui
+QT          += network
 
-QT       -= gui
-QT   += network
-
-TARGET = tst_entity_manager
+TARGET    = tst_entity_manager
 CONFIG   += console
 CONFIG   -= app_bundle
+CONFIG   += testcase
 
 TEMPLATE = app
 

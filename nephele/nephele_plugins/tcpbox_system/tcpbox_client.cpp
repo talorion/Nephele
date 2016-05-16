@@ -1,18 +1,22 @@
 #include "tcpbox_client.hpp"
 
 //#include <QTcpSocket>
+#include "tcpbox_system_thread.hpp"
 #include "tcpbox_system.hpp"
-#include"entity_manager/static_components.hpp"
+#include "entity_manager/static_components.hpp"
+#include "event_manager/event_manager.hpp"
+
+#include <QDebug>
 
 namespace talorion {
 
   tcpbox_client::tcpbox_client(tcpbox_factory::tcpbox_t tcpbox_id, const tcpbox_system& sys,  QObject *par) :
     QObject(par),
     m_tcpbox(tcpbox_id),
-    m_tcpsocket(new QTcpSocket(this)),
+    m_connection(new ecmd_connection(this)),
     m_sys(sys)
   {
-
+    connect(this,SIGNAL(connect_box(entity_manager::entity_id_t)), &(m_sys.get_event_manager()), SIGNAL(connect_box(entity_manager::entity_id_t)));
   }
 
   void tcpbox_client::set_box_name(const QString &bx_name)
@@ -33,6 +37,11 @@ namespace talorion {
   void tcpbox_client::set_box_id(const quint32 bx_id)
   {
     entity_mng().set_component_data_for_entity(BOX_ID_COMPONENT, tcpbox(), bx_id);
+  }
+
+  void tcpbox_client::set_timeout(const int to)
+  {
+    entity_mng().set_component_data_for_entity(TIMEOUT_COMPONENT, tcpbox(), to);
   }
 
   tcpbox_factory::tcpbox_t tcpbox_client::tcpbox() const
@@ -70,25 +79,71 @@ namespace talorion {
     return ret;
   }
 
-  bool tcpbox_client::is_configured()
+  int tcpbox_client::timeout() const
   {
-    //bool ret = !box_name().isEmpty() && !box_name().isNull();
-    bool ret = !host_name().isEmpty() && !box_name().isNull();
+    int ret=0;
+    bool ok;
+    int tmp = entity_mng().get_component_data_for_entity(TIMEOUT_COMPONENT, tcpbox()).toInt(&ok);
+    if(ok)
+      ret=tmp;
+    return ret;
+  }
+
+  bool tcpbox_client::is_deleted() const
+  {
+    return (entity_mng().entity_exists(tcpbox()) == false);
+  }
+
+  bool tcpbox_client::is_configured() const
+  {
+    bool ret = !host_name().isEmpty() && !host_name().isNull();
     ret = ret && (port() > 0);
     ret = ret && (box_id() > 0);
+    ret = ret && (timeout() > 0);
 
     return ret;
   }
 
   void tcpbox_client::open_connection()
   {
-    m_tcpsocket->abort();
-    m_tcpsocket->connectToHost(host_name(), port());
+    emit connect_box(tcpbox());
+
+    m_connection->abort();
+    m_connection->connectToHost(host_name(), port());
+
+    if (!(m_connection->waitForConnected(timeout()))) {
+        return;
+      }
   }
+
+  void tcpbox_client::close_connection()
+  {
+
+    m_connection->disconnectFromHost();
+
+    if(state() == QAbstractSocket::UnconnectedState)
+      return;
+
+    if (!(m_connection->waitForDisconnected(timeout()))){
+        m_connection->abort();
+        return;
+      }
+  }
+
+  bool tcpbox_client::send_command(const QString &cmd)
+  {
+    return m_connection->send_command(cmd);
+  }
+
+  bool tcpbox_client::is_command_supported(const QString &cmd)const
+  {
+    return m_connection->is_command_supported(cmd);
+  }
+
 
   QAbstractSocket::SocketState tcpbox_client::state() const
   {
-    return m_tcpsocket->state();
+    return m_connection->state();
   }
 
   entity_manager &tcpbox_client::entity_mng() const

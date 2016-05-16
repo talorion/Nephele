@@ -8,7 +8,7 @@ namespace talorion{
   {
     Q_OBJECT
   public:
-    explicit abstract_configuration_widget(QWidget *par = nullptr );
+    explicit abstract_configuration_widget(QWidget *par = Q_NULLPTR );
     virtual ~abstract_configuration_widget()=default;
 
   private:

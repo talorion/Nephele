@@ -10,7 +10,7 @@ namespace talorion {
 
   logging_system::logging_system(QObject *par) :
     abstract_system(par),
-    m_orig_msg_hdl(nullptr)
+    m_orig_msg_hdl(0)
   {
 
   }

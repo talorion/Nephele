@@ -14,6 +14,7 @@
 namespace talorion {
 
     class entity_manager_db;
+    class event_manager;
 
     class entity_manager : public QObject
     {
@@ -41,7 +42,7 @@ namespace talorion {
         static bool is_valid(const component_data_t& component_data);
 
     public:
-        explicit entity_manager(QObject *par = nullptr);
+        explicit entity_manager(QObject *par = Q_NULLPTR);
         virtual ~entity_manager();
 
     private:

@@ -13,7 +13,7 @@ namespace talorion {
     {
         Q_OBJECT
     public:
-        explicit entity_manager_db(QObject *par = nullptr);
+        explicit entity_manager_db(QObject *par = Q_NULLPTR);
         virtual ~entity_manager_db()=default;
     private:
         Q_DISABLE_COPY(entity_manager_db)

@@ -9,7 +9,7 @@ class entity_manager_test : public QObject
     Q_OBJECT
 
 public:
-    explicit entity_manager_test(QObject *par = nullptr);
+    explicit entity_manager_test(QObject *par = Q_NULLPTR);
     ~entity_manager_test()=default;
 
 private:

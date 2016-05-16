@@ -1,6 +1,7 @@
 #include "tst_system_manager.hpp"
 
 #include "system_manager/system_manager.hpp"
+#include "event_manager/event_manager.hpp"
 #include "system_dummy.hpp"
 
 using namespace talorion;
@@ -17,9 +18,9 @@ void tst_system_manager::cleanup(){}
 
 void tst_system_manager::system_manager_exists()
 {
-    system_manager* mng= nullptr;               /*Arrange*/
+    system_manager* mng= Q_NULLPTR;               /*Arrange*/
     mng= new system_manager(0);                 /*Act*/
-    QVERIFY(mng != nullptr);                     /*Assert*/
+    QVERIFY(mng != Q_NULLPTR);                     /*Assert*/
 }
 
 void tst_system_manager::system_manager_has_zero_systems_after_creation()

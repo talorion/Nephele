@@ -1,5 +1,7 @@
 #include "tst_logging_system.hpp"
 
+#include "event_manager/event_manager.hpp"
+
 #include "logging_system.hpp"
 #include <QDebug>
 
@@ -8,11 +10,11 @@ using namespace talorion;
 tst_logging_system::tst_logging_system(QObject *par):QObject(par){}
 
 void tst_logging_system::initTestCase(){
-  qInstallMessageHandler(nullptr);
+  qInstallMessageHandler(0);
 }
 
 void tst_logging_system::cleanupTestCase(){
-  qInstallMessageHandler(nullptr);
+  qInstallMessageHandler(0);
 }
 
 void tst_logging_system::init(){}
@@ -29,9 +31,9 @@ void tst_logging_system::log_is_empty_after_creation()
 void tst_logging_system::initialize_changes_global_message_handler()
 {
     logging_system sys;
-    QtMessageHandler old_hdl  = qInstallMessageHandler(nullptr);
+    QtMessageHandler old_hdl  = qInstallMessageHandler(0);
     sys.initialize();
-    QtMessageHandler new_hdl  = qInstallMessageHandler(nullptr);
+    QtMessageHandler new_hdl  = qInstallMessageHandler(0);
     QVERIFY(old_hdl != new_hdl);
 
 }
@@ -39,10 +41,10 @@ void tst_logging_system::initialize_changes_global_message_handler()
 void tst_logging_system::dispose_restores_global_message_handler()
 {
   logging_system sys;
-  QtMessageHandler old_hdl  = qInstallMessageHandler(nullptr);
+  QtMessageHandler old_hdl  = qInstallMessageHandler(0);
   sys.initialize();
   sys.dispose();
-  QtMessageHandler new_hdl  = qInstallMessageHandler(nullptr);
+  QtMessageHandler new_hdl  = qInstallMessageHandler(0);
   QVERIFY(old_hdl == new_hdl);
 }
 
@@ -77,3 +79,4 @@ void tst_logging_system::number_of_entries_is_restricted()
   auto all_entries = sys.get_all_entries();
   QCOMPARE(all_entries.size(), max_num_entries);              /*Assert*/
 }
+

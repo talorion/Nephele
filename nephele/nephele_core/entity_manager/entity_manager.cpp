@@ -1,5 +1,7 @@
 #include "entity_manager.hpp"
 
+#include "event_manager/event_manager.hpp"
+
 #include "entity_manager_db.hpp"
 
 #include <QUuid>

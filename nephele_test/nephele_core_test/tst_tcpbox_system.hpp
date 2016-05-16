@@ -8,7 +8,7 @@ class tst_tcpbox_system: public QObject
 {
   Q_OBJECT
 public:
-  tst_tcpbox_system(QObject *par = nullptr);
+  tst_tcpbox_system(QObject *par = Q_NULLPTR);
   ~tst_tcpbox_system()=default;
 
 private slots:
@@ -29,8 +29,14 @@ private slots:
   void created_box_has_host_name();
   void created_box_has_port();
   void created_box_has_box_id();
-  void box_clients_are_created_by_a_factory();
-  void duplicate_box_clients_are_not_added();
+  //void box_clients_are_created_for_every_added_box();
+  void configured_box_needs_host_port_and_id();
+  void delete_box_deletes_its_entity();
+//  void delete_box_deletes_its_client();
+  void deleted_box_are_removed_from_system();
+  void contains_no_configured_boxes_after_delete_all();
+  void starting_tcpbox_system_starts_its_thread();
+  void disposing_tcpbox_system_stops_its_thread();
 
 
 };

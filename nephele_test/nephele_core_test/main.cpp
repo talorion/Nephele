@@ -1,5 +1,6 @@
 #include <QTest>
 #include <QCoreApplication>
+#include <QTimer>
 
 #include "tst_entity_manager.hpp"
 #include "tst_system_manager.hpp"
@@ -10,7 +11,7 @@
 
 int main(int argc, char *argv[])
 {
-    //QCoreApplication app(argc, argv);
+    QCoreApplication a(argc, argv);
 
     entity_manager_test tst_ent_mng;
     tst_system_manager tst_sys_mng;
@@ -27,6 +28,5 @@ int main(int argc, char *argv[])
     //works only with hardware
     QTest::qExec(&tst_tcpbox_hardware, argc, argv);
 
-    //return app.exec();
     return 0;
 }

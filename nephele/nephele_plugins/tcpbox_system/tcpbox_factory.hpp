@@ -4,8 +4,8 @@
 #include <QObject>
 
 //find a way to forward declare entity_manager::entity_id_t
-#include"entity_manager/entity_manager.hpp"
-//
+#include "entity_manager/entity_manager.hpp"
+
 
 namespace talorion {
 
@@ -32,8 +32,6 @@ namespace talorion {
     static tcpbox_factory& get_instance();
 
     tcpbox_t create_new_tcpbox(tcpbox_system &sys, const QString &box_name=QString(), const QString &host_name=QString(), quint16 port=0, qint32 box_id=0)const;
-
-    tcpbox_client *create_new_tcpbox_client(tcpbox_system& sys, tcpbox_t tcpbox)const;
 
   signals:
 
