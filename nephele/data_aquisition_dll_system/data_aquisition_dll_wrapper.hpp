@@ -37,6 +37,8 @@ namespace talorion {
     typedef int     (*SetParameterFloat_prototype)(char* Parameter, float Value);
     typedef int     (*SetParameterInt64_prototype)(char* Parameter, qint64 Value);
     typedef int     (*SetParameterDouble_prototype)(char* Parameter, double Value);
+    typedef int     (*GetRegUserDataSources_prototype)(int* arrayLength, char* location, int* nbrElements, int* type);
+    typedef int     (*TofDaqRunning_prototype)();
 
     class data_aquisition_dll_wrapper: public abstract_scriptable_object
     {
@@ -56,9 +58,13 @@ namespace talorion {
         int start_aquisition() const;
         int stop_aquisition() const;
         bool aquisition_active() const;
+        bool tof_daq_running() const;
         int register_user_data(const QStringList& value_names, const QString& path = "/USER_DATA", int cmp_lvl =0) const;
         int UpdateUserData(QVector<double>& Data, const QString& path = "/USER_DATA") const;
         int unregister_user_data(const QString& path) const;
+        //int read_reg_user_date(QStringList& value_names, QVector<double>& Data);
+        int get_reg_user_data_sources(QStringList& locations, QVector<int>& nbrElements, QVector<int>& type);
+
 
         int read_spectrum(QVector<float>& buffer_Spectrum, int BufIndex, int SegmentIndex = -1, int SegmentEndIndex = -1,bool Normalize = false) const;
         int read_average_spectrum(QVector<double>& buffer_avg_spectrum, bool Normalize = false) const;
@@ -111,6 +117,9 @@ namespace talorion {
         SetParameterFloat_prototype m_SetParameterFloat;
         SetParameterInt64_prototype m_SetParameterInt64;
         SetParameterDouble_prototype m_SetParameterDouble;
+        //ReadRegUserData_prototype m_ReadRegUserData;
+        GetRegUserDataSources_prototype m_GetRegUserDataSources;
+        TofDaqRunning_prototype m_TofDaqRunning;
 
         QLibrary* m_data_aquisition_dll;
         QString m_dll_name;

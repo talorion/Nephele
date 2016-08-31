@@ -10,7 +10,7 @@ namespace talorion {
 
     script_dialoges_handler::script_dialoges_handler(QObject *par) :
         abstract_scriptable_object("gui", par),
-        m_tmp_num(NAN),
+        m_tmp_num(0),
         m_tmp_str()
     {
         connect(this,SIGNAL(open_numeric_dialog()),event_manager::get_instance(),SIGNAL(open_numeric_dialog()));
@@ -34,7 +34,7 @@ namespace talorion {
 
     double script_dialoges_handler::showNumericDialog()
     {
-        m_tmp_num=NAN;
+        m_tmp_num=0;
 
         QEventLoop loop;
         connect(this,SIGNAL(dialog_finished()),&loop, SLOT(quit()));

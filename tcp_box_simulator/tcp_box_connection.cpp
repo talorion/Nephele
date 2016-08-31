@@ -173,7 +173,7 @@ bool tcp_box_connection::parseArguments()
     if(args.length()==2){
         int id= args[0].toInt();
         double val = args[1].toDouble();
-        if(val != NAN)
+        if(val != -1)
             m_box->set(id, val);
         write("OK\r\n");
     }

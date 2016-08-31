@@ -14,18 +14,28 @@ namespace talorion {
         QObject(par),
         curr_box_id(0),
         boxes(),
-        bkends()
+        bkends(),
+        reconnectTimer(Q_NULLPTR)
     {
         connect(event_manager::get_instance(),SIGNAL(connect_tcp_box(int)),this,SLOT(slot_connect_tcp_box(int)), Qt::QueuedConnection);
         connect(event_manager::get_instance(),SIGNAL(disconnect_tcp_box(int)),this,SLOT(slot_disconnect_tcp_box(int)), Qt::QueuedConnection);
 
+        connect(this,SIGNAL(tcp_box_disconnected(int)),event_manager::get_instance(),SIGNAL(disconnect_tcp_box(int)), Qt::QueuedConnection);
+
         foreach (int box, entity_manager::get_instance()->get_all_tcpBoxes()) {
             slot_connect_tcp_box(box);
         }
+
+        reconnectTimer = new QTimer();
+        reconnectTimer->setInterval(10000);
+        connect(reconnectTimer,SIGNAL(timeout()),this,SLOT(reconnect_all_boxes()));
+        reconnectTimer->start();
     }
 
     tcp_box_worker::~tcp_box_worker()
     {
+        reconnectTimer->stop();
+
         QMap<int, tcpDriver*>::iterator it;
         for(it=boxes.begin();it !=boxes.end();it++){
             tcpDriver* tmp= it.value();
@@ -59,7 +69,9 @@ namespace talorion {
             //                connect_to_fc_box(entity);
             //            else
             //                connect_to_av_box(entity);
-        }
+        }else{
+            reconnect_tcp_box(entity);
+          }
         //        else{
         //            tcpDriver* dev1 = it.value();
         //            if(!dev1)
@@ -83,6 +95,34 @@ namespace talorion {
         delete dev1;
     }
 
+    void tcp_box_worker::slot_tcp_box_disconnected(int entity)
+    {
+      foreach(int val, entity_manager::get_instance()->get_all_DValues()){
+          int box_id= entity_manager::get_instance()->get_box_id_component(val);
+          if(box_id == entity)
+            entity_manager::get_instance()->delete_entity(val);
+        }
+
+      foreach(int val, entity_manager::get_instance()->get_all_Values()){
+          int box_id= entity_manager::get_instance()->get_box_id_component(val);
+          if(box_id == entity)
+            entity_manager::get_instance()->delete_entity(val);
+        }
+
+
+      entity_manager::get_instance()->slot_connection_state_component(entity, false);
+      emit tcp_box_disconnected(entity);
+    }
+
+    void tcp_box_worker::reconnect_all_boxes()
+    {
+      foreach (int box, entity_manager::get_instance()->get_all_tcpBoxes()) {
+          bool is_box_connected = entity_manager::get_instance()->get_connection_state_component(box);
+          if(!is_box_connected)
+            slot_connect_tcp_box(box);
+      }
+    }
+
     int tcp_box_worker::new_box_id()
     {
         return curr_box_id++;
@@ -104,6 +144,8 @@ namespace talorion {
 
 
         entity_manager::get_instance()->slot_connection_state_component(box_id, co);
+
+        connect(dev1, SIGNAL(disconnected(int)),this,SLOT(slot_tcp_box_disconnected(int)));
 
         if(co)
             boxes.insert(box_id,dev1);
@@ -150,7 +192,25 @@ namespace talorion {
         if(co)
             boxes.insert(box_id,dev1);
         else
-            delete dev1;
+          delete dev1;
+    }
+
+    void tcp_box_worker::reconnect_tcp_box(int box_id)
+    {
+      QMap<int, tcpDriver*>::iterator it = boxes.find(box_id);
+      if(it == boxes.end())
+          return;
+
+      tcpDriver* dev1 = it.value();
+      if(!dev1)
+          return;
+
+      QString ip = entity_manager::get_instance()->get_ip_address_component(box_id);
+      quint16 port = entity_manager::get_instance()->get_port_component(box_id);
+
+      bool co = dev1->connectDevice(ip, port);
+      entity_manager::get_instance()->slot_connection_state_component(box_id, co);
+
     }
 
 } // namespace talorion

@@ -47,6 +47,8 @@ namespace talorion {
         connect(event_manager::get_instance(),SIGNAL(newDigitalValue(int)),this, SLOT(addDIOV(int)));
 
 
+        connect(event_manager::get_instance(),SIGNAL(disconnect_tcp_box(int)),this, SLOT(disconnect_tcp_box(int)));
+
     }
 
     tcp_box_view::~tcp_box_view()
@@ -78,6 +80,31 @@ namespace talorion {
             return false;
 
         return true;
+    }
+
+    void tcp_box_view::disconnect_tcp_box(int entity)
+    {
+      if(belogs_to_box(entity)){
+
+          QMap<int, analogView* >::iterator ait;
+          for(ait = ana_views.begin(); ait != ana_views.end();ait++){
+             analogView* tmp = ait.value();
+             m_layout->removeWidget(tmp);
+             delete tmp;
+             tmp =NULL;
+          }
+          ana_views.clear();
+
+          QMap<int, digital_view* >::iterator dit;
+          for(dit = dig_views.begin(); dit != dig_views.end();dit++){
+              digital_view* tmp = dit.value();
+              m_layout->removeWidget(tmp);
+              delete tmp;
+              tmp =NULL;
+          }
+          dig_views.clear();
+
+        }
     }
 
     void tcp_box_view::addAIV(int entity)

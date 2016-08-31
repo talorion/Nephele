@@ -47,12 +47,15 @@ namespace talorion {
         connect(this,SIGNAL(error(QString)),event_manager::get_instance(),SIGNAL(error(QString)));
         connect(this,SIGNAL(receivedCustomData(QString)),event_manager::get_instance(),SIGNAL(receivedCustomData(QString)));
 
+
+
         getInfoCommand_val = getInfoCommand;
         getMinimalSetActCommand_val = getMinimalSetActCommand;
         tcpSocket = new QTcpSocket();
         queue = new tcpCommandQueue();
         connect(tcpSocket, SIGNAL(readyRead()), this, SLOT(parsePackage()));
         connect(tcpSocket, SIGNAL(error(QAbstractSocket::SocketError)), this, SLOT(tcpError(QAbstractSocket::SocketError)));
+        connect(tcpSocket, SIGNAL(disconnected()), this, SLOT(tcpSocket_disconnected()));
         timeoutTimer = new QTimer();
         timeoutTimer->setSingleShot(true);
         connect(timeoutTimer, SIGNAL(timeout()),this,SLOT(timeoutCheck()));
@@ -67,6 +70,12 @@ namespace talorion {
 
     tcpDriver::~tcpDriver()
     {
+      timeoutTimer->stop();
+      pollTimer->stop();
+
+      if(m_back)
+           delete m_back;
+       m_back = Q_NULLPTR;
 
     }
 
@@ -129,6 +138,17 @@ namespace talorion {
         requestCounter++;
 
     }
+
+    void tcpDriver::tcpSocket_disconnected()
+    {
+
+
+
+      timeoutTimer->stop();
+      pollTimer->stop();
+      emit disconnected(getBox_id());
+    }
+
     int tcpDriver::getBox_id() const
     {
         return box_id;

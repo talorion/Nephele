@@ -41,12 +41,16 @@ namespace talorion {
         void error(QString errorString, int box_id=0);
 
         void connected(int box_id=0);
+        void disconnected(int box_id=0);
         void setDataError(QString errorString, int box_id=0);
 
     private:
         void recheckConnection();
         bool waitTransmissionFinish();
         void sendCommand(QByteArray cmd, tcpDriverDataTypes::dataType type);
+
+    private slots:
+        void tcpSocket_disconnected();
 
     private:
         QTcpSocket* tcpSocket;

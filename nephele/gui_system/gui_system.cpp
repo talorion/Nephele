@@ -40,7 +40,7 @@ namespace talorion{
         double d = QInputDialog::getDouble(NULL, tr("QInputDialog::getDouble()"), tr("Amount:"), 37.56, -10000, 10000, 2, &ok);
 
         if (!ok)
-            d=NAN;
+            d=-1;
 
         emit dialog_finished(d);
     }

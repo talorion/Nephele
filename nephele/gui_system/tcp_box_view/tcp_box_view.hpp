@@ -26,6 +26,8 @@ namespace talorion {
         bool belogs_to_box(int entity);
 
     private slots:
+        void disconnect_tcp_box(int entity);
+
         void addAIV(int entity);
         void addAOV(int entity);
         void addAV(int entity);

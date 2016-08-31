@@ -151,6 +151,12 @@ namespace talorion{
         meth = "TwSetDaqParameterDouble";
         m_SetParameterDouble = resolve_method<SetParameterDouble_prototype>(meth);
 
+        meth = "TwGetRegUserDataSources";
+        m_GetRegUserDataSources = resolve_method<GetRegUserDataSources_prototype>(meth);
+
+        meth = "TwTofDaqRunning";
+        m_TofDaqRunning = resolve_method<TofDaqRunning_prototype>(meth);
+
         int in = initialize_dll();
         if( in == 4)
             return 0;
@@ -187,6 +193,8 @@ namespace talorion{
         m_SetParameterFloat = NULL;
         m_SetParameterInt64 = NULL;
         m_SetParameterDouble = NULL;
+        m_GetRegUserDataSources =NULL;
+        m_TofDaqRunning =NULL;
 
         if(m_data_aquisition_dll){
 
@@ -238,6 +246,14 @@ namespace talorion{
         return false;
     }
 
+    bool data_aquisition_dll_wrapper::tof_daq_running() const
+    {
+      if(m_TofDaqRunning){
+          return m_TofDaqRunning();
+      }
+      return false;
+    }
+
     int  data_aquisition_dll_wrapper::register_user_data(const QStringList& value_names, const QString& path , int cmp_lvl) const
     {
         if(m_RegisterUserDat){
@@ -283,6 +299,54 @@ namespace talorion{
         }
         return -1;
     }
+
+    int data_aquisition_dll_wrapper::get_reg_user_data_sources(QStringList& locations, QVector<int>& nbrElements, QVector<int>& type)
+    {
+      if(m_GetRegUserDataSources){
+              int arrayLength =0;
+              //Can be used to query the number of data sources by setting *arrayLength to 0 and passing NULL for location, nbrElements and type.
+              int ret = m_GetRegUserDataSources(&arrayLength, NULL, NULL, NULL);
+
+              if(ret== 9){
+                  ret = 4;
+                }
+
+              if(ret == 4  && arrayLength>0){
+                  //QVector<float>& location;
+                  //QStringList& locations;
+                  char *location = new char[arrayLength*256];
+                  //QVector<int>& nbrElements;
+                  //QVector<int>& type;
+
+                  //location.resize(arrayLength);
+                  nbrElements.resize(arrayLength);
+                  type.resize(arrayLength);
+
+                  ret = twErrChk(m_GetRegUserDataSources(&arrayLength, location, nbrElements.data(), type.data()));
+
+                  QString tmp;
+                  for(int i=0; i<arrayLength; ++i){
+                      tmp = QString(location[i*256]);
+                      locations.append(tmp);
+                    }
+
+                  delete[] location;
+
+              }
+
+              return ret;
+        }
+      return -1;
+    }
+
+//    int data_aquisition_dll_wrapper::read_reg_user_date(QStringList &value_names, QVector<double> &Data)
+//    {
+//      if(m_ReadRegUserData){
+//          int ret = twErrChk(m_ReadRegUserData());
+//          return ret;
+//        }
+//      return -1;
+//    }
 
     int data_aquisition_dll_wrapper::read_spectrum(QVector<float>& buffer_Spectrum, int BufIndex , int SegmentIndex, int SegmentEndIndex, bool Normalize) const
     {
