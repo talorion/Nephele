@@ -28,6 +28,8 @@ namespace talorion{
         void slot_open_info_dialog(const QString &msg);
         void slot_open_plot_dialog();
 
+        void slot_box_disconnected(int boxId);
+
     private:
         virtual void do_start_system() Q_DECL_OVERRIDE;
         virtual QString do_get_system_name() Q_DECL_OVERRIDE {return "gui_system";}

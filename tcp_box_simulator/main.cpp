@@ -20,18 +20,18 @@ int main(int argc, char *argv[])
     tcp_box_simulator w(fc_box);
     w.show();
 
-    simulated_av_box* av_box = new simulated_av_box();
-    tcp_box_simulator t(av_box, 4414);
-    t.show();
+    //simulated_av_box* av_box = new simulated_av_box();
+    //tcp_box_simulator t(av_box, 4414);
+    //t.show();
 
-    simulated_ao_box* ao_box = new simulated_ao_box();
-    tcp_box_simulator d(ao_box, 4223);
-    d.show();
+    //simulated_ao_box* ao_box = new simulated_ao_box();
+    //tcp_box_simulator d(ao_box, 4223);
+    //d.show();
 
     int ret = a.exec();
 
     delete fc_box;
-    delete av_box;
+    //delete av_box;
 
     return ret;
 }

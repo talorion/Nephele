@@ -24,6 +24,8 @@ namespace talorion {
         QString boxname =  entity_manager::get_instance()->get_name_component(entity);
         setWindowTitle(boxname);
 
+        setObjectName(boxname);
+
         m_layout = new QGridLayout();
 
         //m_group_box = new QGroupBox();

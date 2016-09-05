@@ -72,7 +72,13 @@ namespace talorion{
 
     void gui_system::slot_open_plot_dialog()
     {
-        QMessageBox::critical(NULL, tr("Plot Dilaog"),tr("Plot Dialog not implemented"));
+      QMessageBox::critical(NULL, tr("Plot Dilaog"),tr("Plot Dialog not implemented"));
+    }
+
+    void gui_system::slot_box_disconnected(int boxId)
+    {
+      QString boxname =  entity_manager::get_instance()->get_name_component(boxId);
+      QMessageBox::warning(NULL, "Plot Dilaog", "WARNING!!!! BOX "+boxname+" DISCONNECTED!!!! ADD DATA MAYBE CHANGED!!!!");
     }
 
     void talorion::gui_system::do_start_system()
@@ -109,6 +115,7 @@ namespace talorion{
 
         window->resize(W, H);
         window->move( x, y );
+        window->readSettings();
         window->show();
 
         splash.finish(window);
@@ -123,6 +130,8 @@ namespace talorion{
         connect(this, SIGNAL(dialog_finished(double)),event_manager::get_instance(),SIGNAL(dialog_finished(double)));
         connect(this, SIGNAL(dialog_finished(QString)),event_manager::get_instance(),SIGNAL(dialog_finished(QString)));
         connect(this, SIGNAL(dialog_finished()),event_manager::get_instance(),SIGNAL(dialog_finished()));
+
+        connect(event_manager::get_instance(),SIGNAL(disconnect_tcp_box(int)),this,SLOT(slot_box_disconnected(int)));
 
         // connect dialoges
     }

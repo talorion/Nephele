@@ -509,7 +509,22 @@ namespace talorion {
     }
     void nephele_main_window::setCfg_hdl(config_file *value)
     {
-        cfg_hdl = value;
+      cfg_hdl = value;
+    }
+
+    void nephele_main_window::readSettings()
+    {
+      QSettings settings;
+      restoreGeometry(settings.value("geometry").toByteArray());
+      restoreState(settings.value("windowState").toByteArray());
+    }
+
+    void nephele_main_window::closeEvent(QCloseEvent *event)
+    {
+      QSettings settings;
+      settings.setValue("geometry", saveGeometry());
+      settings.setValue("windowState", saveState());
+      QMainWindow::closeEvent(event);
     }
 
 
@@ -582,11 +597,13 @@ namespace talorion {
     void nephele_main_window::createToolBars()
     {
         fileToolBar = addToolBar(tr("File"));
+        fileToolBar->setObjectName("fileToolBar");
         fileToolBar->addAction(newAct);
         fileToolBar->addAction(openAct);
         fileToolBar->addAction(saveAct);
 
         scriptToolBar = addToolBar(tr("Script"));
+        scriptToolBar->setObjectName("scriptToolBar");
         scriptToolBar->addAction(scriptEditAct);
     }
 

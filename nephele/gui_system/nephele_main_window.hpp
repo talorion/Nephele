@@ -8,6 +8,7 @@
 #include <QLineEdit>
 #include <QLabel>
 #include <QMap>
+#include <QtCore>
 
 
 namespace talorion {
@@ -29,11 +30,15 @@ namespace talorion {
         Q_DISABLE_COPY(nephele_main_window)
 
         void setCfg_hdl(config_file *value);
+        void readSettings();
 
     signals:
         void send_custom_command(const QString& cm);
 
         void change_set_value(int m_entity, double value);
+
+    protected:
+        virtual void closeEvent(QCloseEvent *event) Q_DECL_OVERRIDE;
 
     private:
         void createActions();
