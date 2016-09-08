@@ -2,6 +2,7 @@
 #define TALORION_TCPBOX_FACTORY_HPP
 
 #include <QObject>
+#include <QUuid>
 
 //find a way to forward declare entity_manager::entity_id_t
 #include "entity_manager/entity_manager.hpp"
@@ -17,6 +18,7 @@ namespace talorion {
     Q_OBJECT
   public:
     using tcpbox_t = entity_manager::entity_id_t;
+    using tcpbox_container_t = QList<tcpbox_t>;
 
   private:
     explicit tcpbox_factory(QObject *par = Q_NULLPTR);
@@ -29,8 +31,19 @@ namespace talorion {
     tcpbox_factory& operator=(tcpbox_factory &&) = delete;      // Move assign
 
   public:
+    static entity_manager::component_id_t name_component_id();
+    static entity_manager::component_id_t host_name_component_id();
+    static entity_manager::component_id_t port_component_id();
+    static entity_manager::component_id_t box_id_component_id();
+    static entity_manager::component_id_t timeout_component_id();
+    static entity_manager::component_id_t connection_state_component_id();
+    static entity_manager::component_id_t serial_version_uid_component_id();
+
     static tcpbox_factory& get_instance();
 
+public:
+    QUuid get_TcpBox_uid()const ;
+    tcpbox_container_t get_all_tcpboxes(const tcpbox_system &sys)const;
     tcpbox_t create_new_tcpbox(tcpbox_system &sys, const QString &box_name=QString(), const QString &host_name=QString(), quint16 port=0, qint32 box_id=0)const;
 
   signals:

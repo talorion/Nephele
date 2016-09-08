@@ -3,6 +3,7 @@
 
 #include <QObject>
 #include <QScopedPointer>
+#include <QPointer>
 #include <QVariant>
 
 //#include "entity_manager_db.hpp"
@@ -26,6 +27,8 @@ namespace talorion {
         using component_data_id_t=id_t ;
 
         using component_data_t=QVariant;
+
+
 
     public:     //constants
         static const id_t invalid_id=-1;
@@ -76,13 +79,24 @@ namespace talorion {
         component_data_t get_component_data_for_entity(component_id_t component_id, entity_id_t entity_id) const;
         void set_component_data_for_entity(component_id_t component_id, entity_id_t entity_id,  const component_data_t &component_data);
 
+        bool is_connected_to_event_manager()const;
+        void connect_to_event_manager(event_manager* evt_mng);
+        event_manager* get_event_manager()const;
+
+        QList<entity_id_t> get_entities_by_components_value(component_id_t component_id, component_data_t component_data)const;
+
     private:
         id_t get_next_id_from(const QList<id_t>& container)const;
         entity_id_t get_next_entity_id()const;
         component_id_t get_next_component_id()const;
 
+    private slots:
+        void slot_change_component_data_for_entity(entity_manager::component_id_t component_id, entity_manager::entity_id_t entity_id,  const entity_manager::component_data_t &component_data);
+
+
     private:
         QScopedPointer<entity_manager_db> const db_ptr;
+        QPointer<event_manager> m_evt_mng;
     };
 
 } // namespace talorion

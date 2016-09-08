@@ -7,6 +7,7 @@
 #include <QUuid>
 
 
+
 namespace talorion {
 
   const entity_manager::component_data_t entity_manager::invalid_data= QVariant();//Constructs an invalid variant.
@@ -14,8 +15,11 @@ namespace talorion {
 
   entity_manager::entity_manager(QObject *par) :
     QObject(par),
-    db_ptr(new entity_manager_db())
+    db_ptr(new entity_manager_db()),
+    m_evt_mng()
   {
+    m_evt_mng.clear();
+
   }
 
   entity_manager::~entity_manager(){
@@ -140,6 +144,51 @@ namespace talorion {
     db_ptr->set_data(component_data_id, component_data);
   }
 
+  bool entity_manager::is_connected_to_event_manager() const
+  {
+    return !(m_evt_mng.isNull());
+  }
+
+  void entity_manager::connect_to_event_manager(event_manager *evt_mng)
+  {
+    //    if(evt_mng==Q_NULLPTR){
+    //      m_evt_mng.clear();
+    //      return;
+    //      }
+
+    if(is_connected_to_event_manager())
+      return;
+
+    m_evt_mng = evt_mng;
+
+    connect(m_evt_mng.data(),SIGNAL(change_component_data_for_entity(entity_manager::component_id_t,entity_manager::entity_id_t,entity_manager::component_data_t)),this,SLOT(slot_change_component_data_for_entity(entity_manager::component_id_t,entity_manager::entity_id_t,entity_manager::component_data_t)));
+
+  }
+
+  event_manager *entity_manager::get_event_manager() const
+  {
+    if(!is_connected_to_event_manager())
+      return Q_NULLPTR;
+
+    return m_evt_mng.data();
+  }
+
+  QList<entity_manager::entity_id_t> entity_manager::get_entities_by_components_value(entity_manager::component_id_t component_id,  entity_manager::component_data_t component_data) const
+  {
+    QList<entity_manager::entity_id_t> ents;
+    auto tmp_cont=get_all_entities();
+    foreach (entity_id_t id, tmp_cont) {
+        if(entity_has_component(id, component_id)){
+            auto data = get_component_data_for_entity(id,component_id);
+            if(data == component_data){
+                ents<<id;
+              }
+          }
+      }
+
+    return ents;
+  }
+
   QVariant entity_manager::get_component_data_for_entity(entity_manager::component_id_t component_id, entity_manager::entity_id_t entity_id) const
   {
     component_data_id_t component_data_id = get_component_data_id(entity_id,component_id);
@@ -170,6 +219,11 @@ namespace talorion {
     if(next_id>max_component_id)
       next_id = invalid_id;
     return next_id;
+  }
+
+  void entity_manager::slot_change_component_data_for_entity(component_id_t component_id, entity_id_t entity_id, const component_data_t &component_data)
+  {
+    set_component_data_for_entity(component_id, entity_id, component_data);
   }
 
 } // namespace talorion

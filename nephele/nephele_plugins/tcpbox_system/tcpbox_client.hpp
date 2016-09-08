@@ -4,7 +4,7 @@
 //find a way to forward declare entity_manager::entity_id_t
 #include"entity_manager/entity_manager.hpp"
 #include "tcpbox_factory.hpp"
-#include "ecmd_connection.hpp"
+#include "ecmd_connection/ecmd_connection.hpp"
 
 #include <QObject>
 
@@ -27,6 +27,9 @@ namespace talorion {
 
   signals:
     void connect_box(entity_manager::entity_id_t tcpbox_id);
+    void disconnect_box(entity_manager::entity_id_t tcpbox_id);
+
+    void send_command_to_box(entity_manager::entity_id_t tcpbox_id, const QString& cmd);
 
   public slots:
     void set_box_name(const QString& bx_name);
@@ -34,6 +37,7 @@ namespace talorion {
     void set_port(const quint16 prt);
     void set_box_id(const quint32 bx_id);
     void set_timeout(const int to);
+    void set_state(QAbstractSocket::SocketState st);
 
   public:
     tcpbox_factory::tcpbox_t tcpbox() const;
@@ -42,6 +46,7 @@ namespace talorion {
     quint16 port()const;
     qint32 box_id()const;
     int timeout()const;
+    QUuid serial_version_uid()const;
 
     bool is_deleted()const;
     bool is_configured()const;
@@ -52,7 +57,7 @@ namespace talorion {
     bool send_command(const QString& cmd);
     bool is_command_supported(const QString& cmd) const;
 
-    QTcpSocket::SocketState state()const;
+    QAbstractSocket::SocketState state()const;
 
   private:
     entity_manager& entity_mng()const;
@@ -60,7 +65,7 @@ namespace talorion {
 
   private:
     const tcpbox_factory::tcpbox_t m_tcpbox;
-    QScopedPointer<ecmd_connection> m_connection;
+    //QScopedPointer<ecmd_connection> m_connection;
     const tcpbox_system& m_sys;
   };
 }

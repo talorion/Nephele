@@ -20,21 +20,23 @@ HEADERS += \
     tcpbox_system.hpp \
     tcpbox_factory.hpp \
     tcpbox_client.hpp \
-    ecmd_connection.hpp \
     commands/ecmd_help.hpp \
     commands/abstract_ecmd_command.hpp \
     commands/emcd_version.hpp \
-    tcpbox_system_thread.hpp
+    tcpbox_system_thread.hpp \
+    ecmd_connection/ecmd_connection.hpp \
+    ecmd_connection/ecmd_connection_manager.hpp
 
 SOURCES += \
     tcpbox_system.cpp \
     tcpbox_factory.cpp \
     tcpbox_client.cpp \
-    ecmd_connection.cpp \
     commands/ecmd_help.cpp \
     commands/abstract_ecmd_command.cpp \
     commands/emcd_version.cpp \
-    tcpbox_system_thread.cpp
+    tcpbox_system_thread.cpp \
+    ecmd_connection/ecmd_connection.cpp \
+    ecmd_connection/ecmd_connection_manager.cpp
 
 
 ## ================

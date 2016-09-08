@@ -7,12 +7,15 @@
 
 namespace talorion {
 
-  entity_manager abstract_system::s_ent_mng;
-  event_manager abstract_system::s_evt_mng;
+  event_manager abstract_system::s_evt_mng(Q_NULLPTR);
+  entity_manager abstract_system::s_ent_mng(Q_NULLPTR);
+
 
   abstract_system::abstract_system(QObject *par) :
     QObject(par)
   {
+    if(!s_ent_mng.is_connected_to_event_manager())
+      s_ent_mng.connect_to_event_manager(&s_evt_mng);
 
   }
 

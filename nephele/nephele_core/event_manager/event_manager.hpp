@@ -17,8 +17,13 @@ namespace talorion {
     explicit event_manager(QObject *par = Q_NULLPTR);
 
   signals:
-    void connect_box(entity_manager::entity_id_t);
+    void change_component_data_for_entity(entity_manager::component_id_t component_id, entity_manager::entity_id_t entity_id,  const entity_manager::component_data_t &component_data);
 
+    void new_tcpbox(entity_manager::entity_id_t);
+    void delete_tcpbox(entity_manager::entity_id_t);
+    void connect_box(entity_manager::entity_id_t);
+    void disconnect_box(entity_manager::entity_id_t tcpbox_id);
+    void send_command_to_box(entity_manager::entity_id_t tcpbox_id, const QString& cmd);
 
   };
 

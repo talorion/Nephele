@@ -13,7 +13,7 @@ namespace talorion {
   tcpbox_client::tcpbox_client(tcpbox_factory::tcpbox_t tcpbox_id, const tcpbox_system& sys,  QObject *par) :
     QObject(par),
     m_tcpbox(tcpbox_id),
-    m_connection(new ecmd_connection(this)),
+    //m_connection(new ecmd_connection(this)),
     m_sys(sys)
   {
     connect(this,SIGNAL(connect_box(entity_manager::entity_id_t)), &(m_sys.get_event_manager()), SIGNAL(connect_box(entity_manager::entity_id_t)));
@@ -21,27 +21,33 @@ namespace talorion {
 
   void tcpbox_client::set_box_name(const QString &bx_name)
   {
-    entity_mng().set_component_data_for_entity(NAME_COMPONENT, tcpbox(), bx_name);
+
+    entity_mng().set_component_data_for_entity(tcpbox_factory::name_component_id(), tcpbox(), bx_name);
   }
 
   void tcpbox_client::set_host_name(const QString &hst_name)
   {
-    entity_mng().set_component_data_for_entity(HOST_NAME_COMPONENT, tcpbox(), hst_name);
+    entity_mng().set_component_data_for_entity(tcpbox_factory::host_name_component_id(), tcpbox(), hst_name);
   }
 
   void tcpbox_client::set_port(const quint16 prt)
   {
-    entity_mng().set_component_data_for_entity(PORT_COMPONENT, tcpbox(), prt);
+    entity_mng().set_component_data_for_entity(tcpbox_factory::port_component_id(), tcpbox(), prt);
   }
 
   void tcpbox_client::set_box_id(const quint32 bx_id)
   {
-    entity_mng().set_component_data_for_entity(BOX_ID_COMPONENT, tcpbox(), bx_id);
+    entity_mng().set_component_data_for_entity(tcpbox_factory::box_id_component_id(), tcpbox(), bx_id);
   }
 
   void tcpbox_client::set_timeout(const int to)
   {
-    entity_mng().set_component_data_for_entity(TIMEOUT_COMPONENT, tcpbox(), to);
+    entity_mng().set_component_data_for_entity(tcpbox_factory::timeout_component_id(), tcpbox(), to);
+  }
+
+  void tcpbox_client::set_state(QAbstractSocket::SocketState st)
+  {
+    entity_mng().set_component_data_for_entity(tcpbox_factory::connection_state_component_id(), tcpbox(), st);
   }
 
   tcpbox_factory::tcpbox_t tcpbox_client::tcpbox() const
@@ -51,19 +57,19 @@ namespace talorion {
 
   QString tcpbox_client::box_name() const
   {
-    return entity_mng().get_component_data_for_entity(NAME_COMPONENT, tcpbox()).toString();
+    return entity_mng().get_component_data_for_entity(tcpbox_factory::name_component_id(), tcpbox()).toString();
   }
 
   QString tcpbox_client::host_name() const
   {
-    return entity_mng().get_component_data_for_entity(HOST_NAME_COMPONENT, tcpbox()).toString();
+    return entity_mng().get_component_data_for_entity(tcpbox_factory::host_name_component_id(), tcpbox()).toString();
   }
 
   quint16 tcpbox_client::port() const
   {
     int ret=0;
     bool ok;
-    int tmp = entity_mng().get_component_data_for_entity(PORT_COMPONENT, tcpbox()).toInt(&ok);
+    int tmp = entity_mng().get_component_data_for_entity(tcpbox_factory::port_component_id(), tcpbox()).toInt(&ok);
     if(ok)
       ret=tmp;
     return ret;
@@ -73,7 +79,7 @@ namespace talorion {
   {
     int ret=0;
     bool ok;
-    int tmp = entity_mng().get_component_data_for_entity(BOX_ID_COMPONENT, tcpbox()).toInt(&ok);
+    int tmp = entity_mng().get_component_data_for_entity(tcpbox_factory::box_id_component_id(), tcpbox()).toInt(&ok);
     if(ok)
       ret=tmp;
     return ret;
@@ -83,10 +89,15 @@ namespace talorion {
   {
     int ret=0;
     bool ok;
-    int tmp = entity_mng().get_component_data_for_entity(TIMEOUT_COMPONENT, tcpbox()).toInt(&ok);
+    int tmp = entity_mng().get_component_data_for_entity(tcpbox_factory::timeout_component_id(), tcpbox()).toInt(&ok);
     if(ok)
       ret=tmp;
     return ret;
+  }
+
+  QUuid tcpbox_client::serial_version_uid() const
+  {
+    return entity_mng().get_component_data_for_entity(tcpbox_factory::serial_version_uid_component_id(), tcpbox()).toUuid();
   }
 
   bool tcpbox_client::is_deleted() const
@@ -100,6 +111,7 @@ namespace talorion {
     ret = ret && (port() > 0);
     ret = ret && (box_id() > 0);
     ret = ret && (timeout() > 0);
+    ret = ret && (serial_version_uid() == tcpbox_factory::get_instance().get_TcpBox_uid());
 
     return ret;
   }
@@ -107,43 +119,34 @@ namespace talorion {
   void tcpbox_client::open_connection()
   {
     emit connect_box(tcpbox());
-
-    m_connection->abort();
-    m_connection->connectToHost(host_name(), port());
-
-    if (!(m_connection->waitForConnected(timeout()))) {
-        return;
-      }
   }
 
   void tcpbox_client::close_connection()
   {
-
-    m_connection->disconnectFromHost();
-
-    if(state() == QAbstractSocket::UnconnectedState)
-      return;
-
-    if (!(m_connection->waitForDisconnected(timeout()))){
-        m_connection->abort();
-        return;
-      }
+    emit disconnect_box(tcpbox());
   }
 
   bool tcpbox_client::send_command(const QString &cmd)
   {
-    return m_connection->send_command(cmd);
+    emit send_command_to_box(tcpbox(),cmd);
+    return false;
   }
 
   bool tcpbox_client::is_command_supported(const QString &cmd)const
   {
-    return m_connection->is_command_supported(cmd);
+    //return m_connection->is_command_supported(cmd);
+    Q_UNUSED(cmd);
+    return false;
   }
 
 
   QAbstractSocket::SocketState tcpbox_client::state() const
   {
-    return m_connection->state();
+    auto tmp = entity_mng().get_component_data_for_entity(tcpbox_factory::connection_state_component_id(), tcpbox());
+    auto tmp_val=QAbstractSocket::UnconnectedState;
+    if(tmp.canConvert<QAbstractSocket::SocketState>())
+      tmp_val =tmp.value<QAbstractSocket::SocketState>();
+    return tmp_val;
   }
 
   entity_manager &tcpbox_client::entity_mng() const

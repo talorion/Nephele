@@ -6,13 +6,11 @@
 
 namespace talorion {
 
-  tcpbox_system_thread::tcpbox_system_thread(const tcpbox_system& sys,QObject *par) :
+  tcpbox_system_thread::tcpbox_system_thread(const tcpbox_system &sys, QObject *par) :
     QThread(par),
     m_sys(sys),
-    //m_tcpbox_clients(),
     m_thread_id(Q_NULLPTR),
-    m_mutex(),
-    m_connections()
+    m_mutex()
   {
 
   }
@@ -27,24 +25,22 @@ namespace talorion {
     return m_thread_id;
   }
 
-  void tcpbox_system_thread::slot_connect_box(entity_manager::entity_id_t tcpbox_id)
-  {
-    QMutexLocker locker(&m_mutex);
-
-    ecmd_connection* tmp_con=new ecmd_connection();
-    tmp_con->moveToThread(this);
-
-  }
-
   void tcpbox_system_thread::run()
   {
     m_mutex.lock();
     m_thread_id = QThread::currentThreadId();
-    connect(&(m_sys.get_event_manager()), SIGNAL(connect_box(entity_manager::entity_id_t)),this,SLOT(slot_connect_box(entity_manager::entity_id_t)));
+
+    QScopedPointer<ecmd_connection_manager> m_con_mng(new ecmd_connection_manager(m_sys));
+    connect(&(m_sys.get_event_manager()), SIGNAL(new_tcpbox(entity_manager::entity_id_t)),m_con_mng.data(), SLOT(slot_new_tcpbox(entity_manager::entity_id_t)));
+    connect(&(m_sys.get_event_manager()), SIGNAL(delete_tcpbox(entity_manager::entity_id_t)),m_con_mng.data(), SLOT(slot_delete_tcpbox(entity_manager::entity_id_t)));
+    connect(&(m_sys.get_event_manager()), SIGNAL(connect_box(entity_manager::entity_id_t)), m_con_mng.data(), SLOT(slot_connect_box(entity_manager::entity_id_t)), Qt::QueuedConnection);
+    connect(&(m_sys.get_event_manager()), SIGNAL(disconnect_box(entity_manager::entity_id_t)), m_con_mng.data(), SLOT(slot_disconnect_box(entity_manager::entity_id_t)), Qt::QueuedConnection);
+    connect(&(m_sys.get_event_manager()), SIGNAL(send_command_to_box(entity_manager::entity_id_t,QString)), m_con_mng.data(), SLOT(slot_send_command_to_box(entity_manager::entity_id_t,QString)), Qt::QueuedConnection);
 
     m_mutex.unlock();
 
     exec();
+
   }
 
 } // namespace talorion

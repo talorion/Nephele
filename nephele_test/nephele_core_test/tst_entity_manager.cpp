@@ -190,3 +190,60 @@ void entity_manager_test::empty_component_names_are_unique()
   auto second_component_id  =mng.create_new_component(comp_name);
   QCOMPARE(first_component_id, second_component_id);
 }
+
+void entity_manager_test::entity_manager_starts_with_no_event_manager_connected()
+{
+  entity_manager mng;
+  auto is_connected = mng.is_connected_to_event_manager();
+  QVERIFY(!is_connected);
+}
+
+void entity_manager_test::entity_manager_is_connected_after_event_manager_connected()
+{
+  entity_manager mng;
+  event_manager evt_mng;
+  mng.connect_to_event_manager(&evt_mng);
+  QVERIFY(mng.is_connected_to_event_manager());
+}
+
+void entity_manager_test::entity_manager_can_only_be_connected_once()
+{
+  entity_manager mng;
+  event_manager* evt_mng1 = new event_manager();
+  event_manager* evt_mng2 = new event_manager();
+  mng.connect_to_event_manager(evt_mng1);
+  mng.connect_to_event_manager(evt_mng2);
+  QVERIFY(mng.get_event_manager() == evt_mng1);
+}
+
+void entity_manager_test::entity_manager_can_find_entities_by_components_value()
+{
+  entity_manager mng(0);
+  auto entity_id = mng.create_new_entity();
+  auto component_id   = mng.create_new_component("unique_id");
+  mng.create_component_and_add_to(component_id, entity_id);
+  QUuid data("{340c5f10-6d53-4c15-8fc4-4c559580cfbc}");
+  QUuid data2("{340c5f10-6d53-4c15-8fc4-4c559580cfbc}");
+  mng.set_component_data_for_entity(component_id, entity_id, data);
+  //auto component_data =mng.get_component_data_for_entity(component_id, entity_id);
+  auto found_ids = mng.get_entities_by_components_value(component_id, data2);
+  QVERIFY(found_ids.contains(entity_id));
+}
+
+void entity_manager_test::entity_manager_can_find_entities_by_components_value_only()
+{
+  entity_manager mng(0);
+  auto entity_id = mng.create_new_entity();
+  auto component_id   = mng.create_new_component("unique_id");
+  mng.create_component_and_add_to(component_id, entity_id);
+  QUuid data("{340c5f10-6d53-4c15-8fc4-4c559580cfbc}");
+  mng.set_component_data_for_entity(component_id, entity_id, data);
+
+  auto entity_id2 = mng.create_new_entity();
+  mng.create_component_and_add_to(component_id, entity_id2);
+  QUuid data2("{99060fb8-676f-47d8-b9f1-c9c492721009}");
+  mng.set_component_data_for_entity(component_id, entity_id2, data2);
+
+  auto found_ids = mng.get_entities_by_components_value(component_id, data);
+  QVERIFY(found_ids.contains(entity_id) && !found_ids.contains(entity_id2));
+}

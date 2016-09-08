@@ -20,7 +20,9 @@ namespace talorion {
     friend class tcpbox_factory;
 
   public:
-    using tcpbox_container = tcpbox_system_thread::tcpbox_container;
+    using tcpbox_container = tcpbox_factory::tcpbox_container_t;
+    //using tcpbox_container = QList<tcpbox_factory::tcpbox_t>;
+    //using tcpbox_container = tcpbox_system_thread::tcpbox_container;
 
   private:
       Q_DISABLE_COPY(tcpbox_system)
@@ -29,8 +31,10 @@ namespace talorion {
     explicit tcpbox_system(QObject *par = Q_NULLPTR);
     virtual ~tcpbox_system();
 
-  //signals:
-  //  void connect_tcp_box(const tcpbox_container::value_type & tcpbox);
+  signals:
+    //void connect_tcp_box(const tcpbox_container::value_type & tcpbox);
+    void new_tcpbox(entity_manager::entity_id_t);
+    void delete_tcpbox(entity_manager::entity_id_t);
 
   public slots:
 
@@ -54,7 +58,6 @@ namespace talorion {
     void add_box(const tcpbox_container::value_type & tcpbox);
 
   private:
-    tcpbox_container m_tcpbox_clients;
     QPointer<tcpbox_system_thread> m_thread;
 
   };

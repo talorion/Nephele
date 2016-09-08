@@ -29,13 +29,7 @@ void tst_tcpbox_system::cleanupTestCase()
 
 void tst_tcpbox_system::init()
 {
-  tcpbox = tcpbox_factory::get_instance().create_new_tcpbox(sys);
-  //auto client = sys.get_client(tcpbox);
-  QScopedPointer<tcpbox_client> client(new tcpbox_client(tcpbox,sys));
-  client->set_box_name("box1");
-  client->set_host_name("10.0.1.93");
-  client->set_port(2701);
-  client->set_box_id(1);
+
 }
 
 void tst_tcpbox_system::cleanup()
@@ -74,7 +68,7 @@ void tst_tcpbox_system::created_box_has_name()
   auto entity_id=tcpbox_factory::get_instance().create_new_tcpbox(sys);
 
   entity_manager& mng = sys.get_entity_manager();
-  QVERIFY(mng.entity_has_component(entity_id, NAME_COMPONENT));
+  QVERIFY(mng.entity_has_component(entity_id, tcpbox_factory::name_component_id()));
 }
 
 void tst_tcpbox_system::created_box_has_host_name()
@@ -83,7 +77,7 @@ void tst_tcpbox_system::created_box_has_host_name()
   auto entity_id=tcpbox_factory::get_instance().create_new_tcpbox(sys);
 
   entity_manager& mng = sys.get_entity_manager();
-  QVERIFY(mng.entity_has_component(entity_id, HOST_NAME_COMPONENT));
+  QVERIFY(mng.entity_has_component(entity_id, tcpbox_factory::host_name_component_id()));
 }
 
 void tst_tcpbox_system::created_box_has_port()
@@ -92,7 +86,7 @@ void tst_tcpbox_system::created_box_has_port()
   auto entity_id=tcpbox_factory::get_instance().create_new_tcpbox(sys);
 
   entity_manager& mng = sys.get_entity_manager();
-  QVERIFY(mng.entity_has_component(entity_id, PORT_COMPONENT));
+  QVERIFY(mng.entity_has_component(entity_id, tcpbox_factory::port_component_id()));
 }
 
 void tst_tcpbox_system::created_box_has_box_id()
@@ -101,13 +95,13 @@ void tst_tcpbox_system::created_box_has_box_id()
   auto entity_id=tcpbox_factory::get_instance().create_new_tcpbox(sys);
 
   entity_manager& mng = sys.get_entity_manager();
-  QVERIFY(mng.entity_has_component(entity_id, BOX_ID_COMPONENT));
+  QVERIFY(mng.entity_has_component(entity_id, tcpbox_factory::box_id_component_id()));
 }
 
 void tst_tcpbox_system::configured_box_needs_host_port_and_id()
 {
   //tcpbox_system sys;
-  //auto tcpbox= tcpbox_factory::get_instance().create_new_tcpbox(sys);
+  tcpbox= tcpbox_factory::get_instance().create_new_tcpbox(sys);
   QScopedPointer<tcpbox_client> client(new tcpbox_client(tcpbox,sys));
   client->set_host_name("10.0.1.93");
   client->set_port(2701);
@@ -161,37 +155,12 @@ void tst_tcpbox_system::disposing_tcpbox_system_stops_its_thread()
   QVERIFY(thread_id == sys.thread_id());
 }
 
-void tst_tcpbox_system::all_test_have_configured_tcpbox()
-{
-  QScopedPointer<tcpbox_client> client(new tcpbox_client(tcpbox,sys));
-  QVERIFY(client->is_configured());            /*Assert*/
-}
+
 
 void tst_tcpbox_system::connections_are_not_connected_after_creation()
 {
   QScopedPointer<tcpbox_client> client(new tcpbox_client(tcpbox,sys));
   QVERIFY(client->state() != QAbstractSocket::ConnectedState);
-}
-
-void tst_tcpbox_system::connections_are_not_connected_after_close()
-{
-  QScopedPointer<tcpbox_client> client(new tcpbox_client(tcpbox,sys));
-  client->open_connection();
-  client->close_connection();
-  QVERIFY(client->state()!=QAbstractSocket::ConnectedState);
-}
-
-void tst_tcpbox_system::clients_support_help_command_after_creation()
-{
-  QScopedPointer<tcpbox_client> client(new tcpbox_client(tcpbox,sys));
-  QVERIFY(client->is_command_supported("help"));
-}
-
-void tst_tcpbox_system::clients_do_not_send_empty_commands()
-{
-  QScopedPointer<tcpbox_client> client(new tcpbox_client(tcpbox,sys));
-  client->open_connection();
-  QVERIFY(client->send_command(QString())==false);
 }
 
 void tst_tcpbox_system::clients_do_not_send_commands_when_not_connected()
@@ -201,10 +170,4 @@ void tst_tcpbox_system::clients_do_not_send_commands_when_not_connected()
   QVERIFY(con_res == false);
 }
 
-void tst_tcpbox_system::ecmd_help_returns_all_avaiable_commands()
-{
-  QScopedPointer<tcpbox_client> client(new tcpbox_client(tcpbox,sys));
-  client->open_connection();
-  client->send_command("help");
-//  QVERIFY(client->is_command_supported("version"));
-}
+

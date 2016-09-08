@@ -1,14 +1,13 @@
 #include "tcpbox_system.hpp"
 
 #include <QDateTime>
-
+#include "event_manager/event_manager.hpp"
 
 
 namespace talorion {
 
   tcpbox_system::tcpbox_system(QObject *par) :
     abstract_system(par),
-    m_tcpbox_clients(),
     m_thread(new tcpbox_system_thread(*this))
   {
 
@@ -24,21 +23,21 @@ namespace talorion {
 
   bool tcpbox_system::contains_tcpbox(const tcpbox_container::value_type &tcpbox) const
   {
-    return m_tcpbox_clients.contains(tcpbox);
-    //return m_thread->contains_tcpbox(tcpbox);
+    return get_configured_boxes().contains(tcpbox);
   }
 
   void tcpbox_system::delete_box(const tcpbox_container::value_type &tcpbox)
   {
-    //m_thread->delete_box(tcpbox);
     get_entity_manager().remove_entity(tcpbox);
-    m_tcpbox_clients.removeAll(tcpbox);
+    emit delete_tcpbox(tcpbox);
   }
 
   void tcpbox_system::delete_all_boxes()
   {
-    m_tcpbox_clients.clear();
-    //m_thread->delete_all_boxes();
+    auto tmp_con= get_configured_boxes();
+    foreach (auto tcpbox,  tmp_con){
+        delete_box(tcpbox);
+      }
   }
 
   Qt::HANDLE tcpbox_system::thread_id()
@@ -51,16 +50,20 @@ namespace talorion {
 
   tcpbox_system::tcpbox_container tcpbox_system::get_configured_boxes() const
   {
-    return m_tcpbox_clients;
+    return tcpbox_factory::get_instance().get_all_tcpboxes(*this);
   }
 
   abstract_system::state_trans_ret_t tcpbox_system::do_initialize()
   {
+    QObject::connect(this, SIGNAL(new_tcpbox(entity_manager::entity_id_t)), &(this->get_event_manager()), SIGNAL(new_tcpbox(entity_manager::entity_id_t)),Qt::AutoConnection);
+    QObject::connect(this, SIGNAL(delete_tcpbox(entity_manager::entity_id_t)), &(this->get_event_manager()), SIGNAL(delete_tcpbox(entity_manager::entity_id_t)),Qt::AutoConnection);
     return 0;
   }
 
   abstract_system::state_trans_ret_t tcpbox_system::do_dispose()
   {
+    QObject::disconnect(this, SIGNAL(new_tcpbox(entity_manager::entity_id_t)), &(this->get_event_manager()), SIGNAL(new_tcpbox(entity_manager::entity_id_t)));
+    QObject::disconnect(this, SIGNAL(delete_tcpbox(entity_manager::entity_id_t)), &(this->get_event_manager()), SIGNAL(delete_tcpbox(entity_manager::entity_id_t)));
     m_thread->quit();
     m_thread->wait();
     delete m_thread;
@@ -71,8 +74,6 @@ namespace talorion {
   abstract_system::state_trans_ret_t tcpbox_system::do_start()
   {
     m_thread->start();
-
-
 
     QTime myTimer;
     myTimer.start();
@@ -103,9 +104,8 @@ namespace talorion {
     if(contains_tcpbox(tcpbox))
       return;
 
-    m_tcpbox_clients.append(tcpbox);
+    emit new_tcpbox(tcpbox);
 
-    //return m_thread->add_box(tcpbox);
   }
 
 

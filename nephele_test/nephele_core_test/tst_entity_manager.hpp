@@ -65,6 +65,15 @@ private slots:
 
     void empty_component_names_are_unique();
 
+    void entity_manager_starts_with_no_event_manager_connected();
+
+    void entity_manager_is_connected_after_event_manager_connected();
+
+    void entity_manager_can_only_be_connected_once();
+
+    void entity_manager_can_find_entities_by_components_value();
+
+    void entity_manager_can_find_entities_by_components_value_only();
 };
 
 #endif // TST_ENTITY_MANAGER_HPP
