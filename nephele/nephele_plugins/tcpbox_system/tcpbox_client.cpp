@@ -7,6 +7,8 @@
 #include "event_manager/event_manager.hpp"
 
 #include <QDebug>
+#include <QEventLoop>
+#include <QTimer>
 
 namespace talorion {
 
@@ -17,6 +19,11 @@ namespace talorion {
     m_sys(sys)
   {
     connect(this,SIGNAL(connect_box(entity_manager::entity_id_t)), &(m_sys.get_event_manager()), SIGNAL(connect_box(entity_manager::entity_id_t)));
+    connect(this, SIGNAL(send_command_to_box(entity_manager::entity_id_t,QString)), &(m_sys.get_event_manager()), SIGNAL(send_command_to_box(entity_manager::entity_id_t,QString)));
+
+    connect(&(m_sys.get_event_manager()), SIGNAL(box_connected(entity_manager::entity_id_t)),this, SLOT(slot_box_connected(entity_manager::entity_id_t)));
+    connect(&(m_sys.get_event_manager()), SIGNAL(box_disconnected(entity_manager::entity_id_t)),this, SLOT(slot_box_disconnected(entity_manager::entity_id_t)));
+
   }
 
   void tcpbox_client::set_box_name(const QString &bx_name)
@@ -48,6 +55,20 @@ namespace talorion {
   void tcpbox_client::set_state(QAbstractSocket::SocketState st)
   {
     entity_mng().set_component_data_for_entity(tcpbox_factory::connection_state_component_id(), tcpbox(), st);
+  }
+
+  void tcpbox_client::slot_box_connected(entity_manager::entity_id_t box)
+  {
+    auto act_state = state();
+    if(box == tcpbox() && act_state == QAbstractSocket::ConnectedState)
+      emit box_connected();
+
+  }
+
+  void tcpbox_client::slot_box_disconnected(entity_manager::entity_id_t box)
+  {
+    if(box == tcpbox())
+      emit box_disconnected();
   }
 
   tcpbox_factory::tcpbox_t tcpbox_client::tcpbox() const
@@ -129,6 +150,8 @@ namespace talorion {
   bool tcpbox_client::send_command(const QString &cmd)
   {
     emit send_command_to_box(tcpbox(),cmd);
+    //give the server time to start
+    QThread::currentThread()->sleep(1);
     return false;
   }
 
@@ -139,13 +162,30 @@ namespace talorion {
     return false;
   }
 
+  bool tcpbox_client::wait_for_connect()
+  {
+    QEventLoop tmp_evt_loop;
+
+    QTimer::singleShot(timeout(), &tmp_evt_loop, SLOT(quit()));
+    connect(this,SIGNAL(box_connected()),&tmp_evt_loop,SLOT(quit()));
+    tmp_evt_loop.exec();
+
+    //Note: On some operating systems the connected() signal may be directly emitted from the connectToHost() call for connections to the localhost.
+    QThread::currentThread()->msleep(100);
+
+    auto act_state = state();
+    return ( act_state == QAbstractSocket::ConnectedState);
+  }
+
 
   QAbstractSocket::SocketState tcpbox_client::state() const
   {
     auto tmp = entity_mng().get_component_data_for_entity(tcpbox_factory::connection_state_component_id(), tcpbox());
     auto tmp_val=QAbstractSocket::UnconnectedState;
-    if(tmp.canConvert<QAbstractSocket::SocketState>())
-      tmp_val =tmp.value<QAbstractSocket::SocketState>();
+    bool ok=false;
+    auto tmp_val2 = tmp.toInt(&ok);
+    if(ok)
+      tmp_val = static_cast<QAbstractSocket::SocketState>(tmp_val2);
     return tmp_val;
   }
 

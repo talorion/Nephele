@@ -23,6 +23,8 @@ namespace talorion {
     explicit ecmd_connection_manager(const tcpbox_system &sys, QObject *par = Q_NULLPTR);
 
   signals:
+    void box_connected(entity_manager::entity_id_t);
+    void box_disconnected(entity_manager::entity_id_t);
 
   public slots:
     //void add_box(entity_manager::entity_id_t tcpbox);

@@ -39,6 +39,14 @@ void tst_system::initialize_adds_default_components()
   QVERIFY(result);
 }
 
+void tst_system::systems_can_call_dispose_anytime()
+{
+  system_dummy sys;
+  sys.dispose();
+  sys.dispose();
+  QVERIFY(true);
+}
+
 
 
 

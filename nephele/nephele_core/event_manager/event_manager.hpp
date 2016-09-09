@@ -25,6 +25,9 @@ namespace talorion {
     void disconnect_box(entity_manager::entity_id_t tcpbox_id);
     void send_command_to_box(entity_manager::entity_id_t tcpbox_id, const QString& cmd);
 
+    void box_connected(entity_manager::entity_id_t);
+    void box_disconnected(entity_manager::entity_id_t);
+
   };
 
 } // namespace talorion

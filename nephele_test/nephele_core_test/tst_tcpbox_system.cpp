@@ -37,6 +37,15 @@ void tst_tcpbox_system::cleanup()
 
 }
 
+void tst_tcpbox_system::can_call_dispose_anytime()
+{
+  tcpbox_system newsys;
+  newsys.dispose();
+  newsys.dispose();
+
+  QVERIFY(true);
+}
+
 
 void tst_tcpbox_system::contains_no_configured_boxes_after_creation()
 {

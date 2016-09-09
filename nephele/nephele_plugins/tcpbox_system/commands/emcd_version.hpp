@@ -14,6 +14,10 @@ namespace talorion {
   signals:
 
   public slots:
+
+    // abstract_ecmd_command interface
+  public:
+    virtual QString build_command_string() const;
   };
 
 } // namespace talorion

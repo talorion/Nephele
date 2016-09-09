@@ -8,4 +8,9 @@ namespace talorion {
 
   }
 
+  QString ecmd_help::build_command_string() const
+  {
+   return command_string();
+  }
+
 } // namespace talorion

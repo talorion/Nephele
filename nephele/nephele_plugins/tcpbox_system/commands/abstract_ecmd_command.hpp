@@ -4,6 +4,13 @@
 #include <QObject>
 namespace talorion {
 
+  typedef enum ecmd_command_state{
+    COMMAND_IDLE,
+    COMMAND_SEND,
+    COMMAND_RECEIVED,
+    COMMAND_ERROR
+  }ecmd_command_state_t;
+
   class abstract_ecmd_command : public QObject
   {
     Q_OBJECT
@@ -11,6 +18,8 @@ namespace talorion {
     explicit abstract_ecmd_command(const QString &cmd_str, QObject *par = Q_NULLPTR);
 
     QString command_string() const;
+
+    virtual QString build_command_string()const=0;
 
   signals:
 

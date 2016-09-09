@@ -1,6 +1,8 @@
 #include "tcpbox_system.hpp"
 
 #include <QDateTime>
+#include <QTimer>
+#include <QEventLoop>
 #include "event_manager/event_manager.hpp"
 
 
@@ -16,7 +18,10 @@ namespace talorion {
   tcpbox_system::~tcpbox_system()
   {
     if(!m_thread.isNull()){
-        m_thread->quit();
+        if(m_thread->isRunning()){
+            QTimer::singleShot(100 ,m_thread.data(), SLOT(quit()));
+            m_thread->wait(1000);
+          }
       }
   }
 
@@ -57,29 +62,49 @@ namespace talorion {
   {
     QObject::connect(this, SIGNAL(new_tcpbox(entity_manager::entity_id_t)), &(this->get_event_manager()), SIGNAL(new_tcpbox(entity_manager::entity_id_t)),Qt::AutoConnection);
     QObject::connect(this, SIGNAL(delete_tcpbox(entity_manager::entity_id_t)), &(this->get_event_manager()), SIGNAL(delete_tcpbox(entity_manager::entity_id_t)),Qt::AutoConnection);
+
     return 0;
   }
 
   abstract_system::state_trans_ret_t tcpbox_system::do_dispose()
   {
+
     QObject::disconnect(this, SIGNAL(new_tcpbox(entity_manager::entity_id_t)), &(this->get_event_manager()), SIGNAL(new_tcpbox(entity_manager::entity_id_t)));
     QObject::disconnect(this, SIGNAL(delete_tcpbox(entity_manager::entity_id_t)), &(this->get_event_manager()), SIGNAL(delete_tcpbox(entity_manager::entity_id_t)));
-    m_thread->quit();
-    m_thread->wait();
-    delete m_thread;
+
+    if(!m_thread.isNull()){
+        if(m_thread->isRunning()){
+            //QTimer::singleShot(100 ,m_thread.data(), SLOT(quit()));
+            m_thread->quit();
+            m_thread->wait(1000);
+          }
+//        if(m_thread->isRunning()){
+//            m_thread->terminate();
+//          }
+      }
 
     return 0;
   }
 
   abstract_system::state_trans_ret_t tcpbox_system::do_start()
   {
+
+    QEventLoop tmp_evt_loop(this);
+
+    connect(m_thread.data() ,SIGNAL(started()), &tmp_evt_loop, SLOT(quit()));
+
+    //QTimer::singleShot(100 ,m_thread.data(), SLOT(start()));
+    QTimer::singleShot(1000 ,&tmp_evt_loop,SLOT(quit()));
     m_thread->start();
 
-    QTime myTimer;
-    myTimer.start();
-    do{
-        QThread::currentThread()->msleep(100);
-      }while(!(m_thread->isRunning()) || myTimer.elapsed()>1000 ) ;
+    tmp_evt_loop.exec();
+
+
+    //    QTime myTimer;
+    //    myTimer.start();
+    //    do{
+    //        QThread::currentThread()->msleep(100);
+    //      }while(!(m_thread->isRunning()) || myTimer.elapsed()>1000 ) ;
     return 0;
   }
 

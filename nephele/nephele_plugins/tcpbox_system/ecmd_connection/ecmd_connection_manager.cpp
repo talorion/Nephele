@@ -2,6 +2,7 @@
 
 #include "tcpbox_system.hpp"
 #include "tcpbox_client.hpp"
+#include "event_manager/event_manager.hpp"
 
 #include <QPointer>
 
@@ -14,6 +15,10 @@ namespace talorion {
     m_signal_mapper(new QSignalMapper(this))
   {
     connect( m_signal_mapper.data(), SIGNAL(mapped(int)), this, SLOT(connection_changed(int)));
+
+    connect(this, SIGNAL(box_connected(entity_manager::entity_id_t)), &(m_sys.get_event_manager()), SIGNAL(box_connected(entity_manager::entity_id_t)));
+    connect(this, SIGNAL(box_disconnected(entity_manager::entity_id_t)), &(m_sys.get_event_manager()), SIGNAL(box_disconnected(entity_manager::entity_id_t)));
+
   }
 
   void ecmd_connection_manager::slot_new_tcpbox(entity_manager::entity_id_t tcpbox_id)
@@ -25,7 +30,9 @@ namespace talorion {
     m_connections.insert(tcpbox_id, con);
 
     connect(con.data(), SIGNAL(connected()), m_signal_mapper.data(), SLOT(map()));
-    //connect(con.data(), SIGNAL(disconnected()), m_signal_mapper.data(), SLOT(map()));
+    connect(con.data(), SIGNAL(hostFound()), m_signal_mapper.data(), SLOT(map()));
+    connect(con.data(), SIGNAL(disconnected()), m_signal_mapper.data(), SLOT(map()));
+
 
     m_signal_mapper->setMapping(con.data(), tcpbox_id);
 
@@ -47,7 +54,7 @@ namespace talorion {
 
   void ecmd_connection_manager::slot_connect_box(entity_manager::entity_id_t tcpbox_id)
   {
-    qDebug()<<Q_FUNC_INFO;
+    //qDebug()<<Q_FUNC_INFO;
     if(!has_connection(tcpbox_id))
       slot_new_tcpbox(tcpbox_id);
 
@@ -63,17 +70,17 @@ namespace talorion {
     auto con = conit.value();
 
     con->abort();
-    con->connectToHost(cli->host_name(), cli->port());
 
-    if (!(con->waitForConnected(cli->timeout()))) {
-        return;
-      }
+    QString host = cli->host_name();
+    quint16 port = cli->port();
+
+    con->connectToHost(host, port);
 
   }
 
   void ecmd_connection_manager::slot_disconnect_box(entity_manager::entity_id_t tcpbox_id)
   {
-    qDebug()<<Q_FUNC_INFO;
+    //qDebug()<<Q_FUNC_INFO;
     if(!has_connection(tcpbox_id))
       return;
 
@@ -102,13 +109,9 @@ namespace talorion {
 
   void ecmd_connection_manager::slot_send_command_to_box(entity_manager::entity_id_t tcpbox_id, const QString &cmd)
   {
-    qDebug()<<Q_FUNC_INFO;
+    //qDebug()<<Q_FUNC_INFO;
     if(!has_connection(tcpbox_id))
       slot_new_tcpbox(tcpbox_id);
-
-    //    QScopedPointer<tcpbox_client>cli= new tcpbox_client(tcpbox_id,m_sys);
-    //    if(!cli->is_configured())
-    //      return;
 
     auto conit = m_connections.find(tcpbox_id);
 
@@ -122,7 +125,7 @@ namespace talorion {
 
   void ecmd_connection_manager::connection_changed(int tcpbox_id)
   {
-    qDebug()<<Q_FUNC_INFO;
+    //qDebug()<<Q_FUNC_INFO;
     if(!has_connection(tcpbox_id))
       return;
 
@@ -138,6 +141,13 @@ namespace talorion {
     auto con = conit.value();
 
     cli->set_state(con->state());
+
+    if(con->state() == QAbstractSocket::UnconnectedState)
+      emit box_disconnected(tcpbox_id);
+
+    if(con->state() == QAbstractSocket::ConnectedState)
+      emit box_connected(tcpbox_id);
+
   }
 
   bool ecmd_connection_manager::has_connection(entity_manager::entity_id_t tcpbox_id)

@@ -24,6 +24,8 @@ private slots:
     void default_component_is_not_empty_after_creation();
     void initialize_adds_default_components();
 
+    void systems_can_call_dispose_anytime();
+
 };
 
 #endif // TST_SYSTEM_H

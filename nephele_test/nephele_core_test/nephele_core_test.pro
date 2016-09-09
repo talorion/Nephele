@@ -25,7 +25,19 @@ SOURCES += tst_entity_manager.cpp \
     tst_system.cpp \
     tst_logging_system.cpp \
     tst_tcpbox_system.cpp \
-    tst_tcpbox_hw.cpp
+    tst_tcpbox_hw.cpp \
+    tcp_box_simulator/abstract_simulated_box.cpp \
+    tcp_box_simulator/simulated_ao.cpp \
+    tcp_box_simulator/simulated_ao_box.cpp \
+    tcp_box_simulator/simulated_av.cpp \
+    tcp_box_simulator/simulated_av_box.cpp \
+    tcp_box_simulator/simulated_fc.cpp \
+    tcp_box_simulator/simulated_fc_box.cpp \
+    tcp_box_simulator/tcp_box_connection.cpp \
+    tcp_box_simulator/tcp_box_server.cpp \
+    tcp_box_simulator/tcp_box_simulator.cpp \
+    tcp_box_simulator/tcp_box_simulator_thread.cpp \
+    tst_ecmd_connection.cpp
 
 DEFINES += SRCDIR=\\\"$$PWD/\\\"
 
@@ -36,7 +48,19 @@ HEADERS += \
     tst_system.hpp \
     tst_logging_system.hpp \
     tst_tcpbox_system.hpp \
-    tst_tcpbox_hw.hpp
+    tst_tcpbox_hw.hpp \
+    tcp_box_simulator/abstract_simulated_box.hpp \
+    tcp_box_simulator/simulated_ao.hpp \
+    tcp_box_simulator/simulated_ao_box.hpp \
+    tcp_box_simulator/simulated_av.hpp \
+    tcp_box_simulator/simulated_av_box.hpp \
+    tcp_box_simulator/simulated_fc.h \
+    tcp_box_simulator/simulated_fc_box.h \
+    tcp_box_simulator/tcp_box_connection.h \
+    tcp_box_simulator/tcp_box_server.h \
+    tcp_box_simulator/tcp_box_simulator.hpp \
+    tcp_box_simulator/tcp_box_simulator_thread.hpp \
+    tst_ecmd_connection.hpp
 
 # ===========================
 win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../../nephele/nephele_core/release/ -lnephele_core

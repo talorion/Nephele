@@ -28,6 +28,7 @@ namespace talorion {
   void tcpbox_system_thread::run()
   {
     m_mutex.lock();
+    auto old_thread_id = m_thread_id;
     m_thread_id = QThread::currentThreadId();
 
     QScopedPointer<ecmd_connection_manager> m_con_mng(new ecmd_connection_manager(m_sys));
@@ -40,6 +41,10 @@ namespace talorion {
     m_mutex.unlock();
 
     exec();
+
+    m_mutex.lock();
+    m_thread_id = old_thread_id;
+    m_mutex.unlock();
 
   }
 

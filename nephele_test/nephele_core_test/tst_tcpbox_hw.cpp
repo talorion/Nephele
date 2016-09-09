@@ -1,5 +1,7 @@
 #include "tst_tcpbox_hw.hpp"
 
+#include <QNetworkInterface>
+
 
 #include "tcpbox_client.hpp"
 #include "tcpbox_factory.hpp"
@@ -12,43 +14,58 @@ using namespace talorion;
 tst_tcpbox_hw::tst_tcpbox_hw(QObject *par):
   QObject(par),
   sys(),
-  tcpbox(entity_manager::invalid_id)
+  tcpbox(),
+  box_simul(NULL),
+  srv_port(0),
+  srv_addr()
 {
 
 }
 
 void tst_tcpbox_hw::initTestCase()
 {
-  //sys.start();
+  box_simul = new tcp_box_simulator_thread();
+
+  box_simul->start();
+  //give the server time to start
+  //QThread::currentThread()->sleep(1);
+  QEventLoop tmp_evt_loop;
+  QTimer::singleShot(1000, &tmp_evt_loop, SLOT(quit()));
+  connect(box_simul.data(),SIGNAL(server_started()),&tmp_evt_loop,SLOT(quit()));
+  tmp_evt_loop.exec();
+
+  srv_port =box_simul->port();
+  srv_addr=box_simul->getIpAddress();
+
+  sys.start();
   tcpbox = tcpbox_factory::get_instance().create_new_tcpbox(sys);
   //auto client = sys.get_client(tcpbox);
   QScopedPointer<tcpbox_client> client(new tcpbox_client(tcpbox,sys));
   client->set_box_name("box1");
-  client->set_host_name("10.0.1.93");
-  client->set_port(2701);
+  client->set_host_name(srv_addr);
+  client->set_port(srv_port);
   client->set_box_id(1);
+  client->set_timeout(5000);
 }
 
 void tst_tcpbox_hw::cleanupTestCase()
 {
-  //sys.dispose();
+  sys.dispose();
+
+  box_simul->quit();
+  box_simul->wait(1000);
+  delete box_simul;
+
 }
 
 void tst_tcpbox_hw::init()
 {
-  //sys.start();
-  //  tcpbox = tcpbox_factory::get_instance().create_new_tcpbox(sys);
-  //  //auto client = sys.get_client(tcpbox);
-  //  QScopedPointer<tcpbox_client> client(new tcpbox_client(tcpbox,sys));
-  //  client->set_box_name("box1");
-  //  client->set_host_name("10.0.1.93");
-  //  client->set_port(2701);
-  //  client->set_box_id(1);
+
 }
 
 void tst_tcpbox_hw::cleanup()
 {
-  //sys.dispose();
+
 }
 
 void tst_tcpbox_hw::all_test_have_configured_tcpbox()
@@ -60,13 +77,23 @@ void tst_tcpbox_hw::all_test_have_configured_tcpbox()
 
 void tst_tcpbox_hw::clients_can_open_tcp_connection()
 {
-  sys.start();
+  //sys.start();
   QScopedPointer<tcpbox_client> client(new tcpbox_client(tcpbox,sys));
   client->open_connection();
+  client->wait_for_connect();
   auto act_state = client->state();
   auto exp_state = QAbstractSocket::ConnectedState;
   QCOMPARE(act_state, exp_state);
-  sys.dispose();
+  //sys.dispose();
+}
+
+void tst_tcpbox_hw::clients_can_wait_for_connect()
+{
+  //sys.start();
+  QScopedPointer<tcpbox_client> client(new tcpbox_client(tcpbox,sys));
+  client->open_connection();
+  auto ret = client->wait_for_connect();
+  QVERIFY(ret);
 }
 
 
@@ -74,7 +101,10 @@ void tst_tcpbox_hw::clients_communicate_via_Ethersex_Command_protocol()
 {
   QScopedPointer<tcpbox_client> client(new tcpbox_client(tcpbox,sys));
   client->open_connection();
-  QVERIFY(client->send_command("help"));
+  client->wait_for_connect();
+  auto ret =client->send_command("help");
+
+  QVERIFY(ret);
 
 }
 

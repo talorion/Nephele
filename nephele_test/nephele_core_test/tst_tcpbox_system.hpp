@@ -25,6 +25,8 @@ private slots:
 
 
 private slots:
+
+  void can_call_dispose_anytime();
   void contains_no_configured_boxes_after_creation();
   void boxes_are_created_by_a_factory();
   void created_box_is_entity();
