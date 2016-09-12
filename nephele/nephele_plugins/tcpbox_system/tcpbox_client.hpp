@@ -34,6 +34,10 @@ namespace talorion {
     void box_connected();
     void box_disconnected();
 
+    void box_command_started();
+    void box_command_finished();
+    void box_command_error();
+
   public slots:
     void set_box_name(const QString& bx_name);
     void set_host_name(const QString& hst_name);
@@ -41,10 +45,15 @@ namespace talorion {
     void set_box_id(const quint32 bx_id);
     void set_timeout(const int to);
     void set_state(QAbstractSocket::SocketState st);
+    void set_command_state(ecmd_command_state_t st);
 
   private slots:
     void slot_box_connected(entity_manager::entity_id_t box);
     void slot_box_disconnected(entity_manager::entity_id_t box);
+
+    void slot_box_command_started(entity_manager::entity_id_t box);
+    void slot_box_command_finished(entity_manager::entity_id_t box);
+    void slot_box_command_error(entity_manager::entity_id_t box);
 
   public:
     tcpbox_factory::tcpbox_t tcpbox() const;
@@ -54,6 +63,7 @@ namespace talorion {
     qint32 box_id()const;
     int timeout()const;
     QUuid serial_version_uid()const;
+    ecmd_command_state_t command_state()const;
 
     bool is_deleted()const;
     bool is_configured()const;
@@ -61,10 +71,14 @@ namespace talorion {
     void open_connection();
     void close_connection();
 
-    bool send_command(const QString& cmd);
+    void send_command(const QString& cmd);
     bool is_command_supported(const QString& cmd) const;
 
     bool wait_for_connect();
+
+    bool wait_for_command_started();
+
+    bool wait_for_command_finished();
 
     QAbstractSocket::SocketState state()const;
 

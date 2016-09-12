@@ -19,10 +19,15 @@ namespace talorion {
     m_sys(sys)
   {
     connect(this,SIGNAL(connect_box(entity_manager::entity_id_t)), &(m_sys.get_event_manager()), SIGNAL(connect_box(entity_manager::entity_id_t)));
+    connect(this,SIGNAL(disconnect_box(entity_manager::entity_id_t)), &(m_sys.get_event_manager()), SIGNAL(disconnect_box(entity_manager::entity_id_t)));
     connect(this, SIGNAL(send_command_to_box(entity_manager::entity_id_t,QString)), &(m_sys.get_event_manager()), SIGNAL(send_command_to_box(entity_manager::entity_id_t,QString)));
 
     connect(&(m_sys.get_event_manager()), SIGNAL(box_connected(entity_manager::entity_id_t)),this, SLOT(slot_box_connected(entity_manager::entity_id_t)));
     connect(&(m_sys.get_event_manager()), SIGNAL(box_disconnected(entity_manager::entity_id_t)),this, SLOT(slot_box_disconnected(entity_manager::entity_id_t)));
+
+    connect(&(m_sys.get_event_manager()), SIGNAL(box_command_started(entity_manager::entity_id_t)),this, SLOT(slot_box_command_started(entity_manager::entity_id_t)));
+    connect(&(m_sys.get_event_manager()), SIGNAL(box_command_finished(entity_manager::entity_id_t)),this, SLOT(slot_box_command_finished(entity_manager::entity_id_t)));
+    connect(&(m_sys.get_event_manager()), SIGNAL(box_command_error(entity_manager::entity_id_t)),this, SLOT(slot_box_command_error(entity_manager::entity_id_t)));
 
   }
 
@@ -57,6 +62,11 @@ namespace talorion {
     entity_mng().set_component_data_for_entity(tcpbox_factory::connection_state_component_id(), tcpbox(), st);
   }
 
+  void tcpbox_client::set_command_state(ecmd_command_state_t st)
+  {
+    entity_mng().set_component_data_for_entity(tcpbox_factory::command_state_component_id(), tcpbox(), st);
+  }
+
   void tcpbox_client::slot_box_connected(entity_manager::entity_id_t box)
   {
     auto act_state = state();
@@ -69,6 +79,24 @@ namespace talorion {
   {
     if(box == tcpbox())
       emit box_disconnected();
+  }
+
+  void tcpbox_client::slot_box_command_started(entity_manager::entity_id_t box)
+  {
+    if(box == tcpbox())
+      emit box_command_started();
+  }
+
+  void tcpbox_client::slot_box_command_finished(entity_manager::entity_id_t box)
+  {
+    if(box == tcpbox())
+      emit box_command_finished();
+  }
+
+  void tcpbox_client::slot_box_command_error(entity_manager::entity_id_t box)
+  {
+    if(box == tcpbox())
+      emit box_command_error();
   }
 
   tcpbox_factory::tcpbox_t tcpbox_client::tcpbox() const
@@ -121,6 +149,18 @@ namespace talorion {
     return entity_mng().get_component_data_for_entity(tcpbox_factory::serial_version_uid_component_id(), tcpbox()).toUuid();
   }
 
+  ecmd_command_state_t tcpbox_client::command_state() const
+  {
+    auto tmp = entity_mng().get_component_data_for_entity(tcpbox_factory::command_state_component_id(), tcpbox());
+    auto tmp_val=COMMAND_STATE_UNKNOWN;
+    bool ok=false;
+    auto tmp_val2 = tmp.toInt(&ok);
+    if(ok)
+      tmp_val = static_cast<ecmd_command_state_t>(tmp_val2);
+    return tmp_val;
+
+  }
+
   bool tcpbox_client::is_deleted() const
   {
     return (entity_mng().entity_exists(tcpbox()) == false);
@@ -147,12 +187,9 @@ namespace talorion {
     emit disconnect_box(tcpbox());
   }
 
-  bool tcpbox_client::send_command(const QString &cmd)
+  void tcpbox_client::send_command(const QString &cmd)
   {
     emit send_command_to_box(tcpbox(),cmd);
-    //give the server time to start
-    QThread::currentThread()->sleep(1);
-    return false;
   }
 
   bool tcpbox_client::is_command_supported(const QString &cmd)const
@@ -170,11 +207,45 @@ namespace talorion {
     connect(this,SIGNAL(box_connected()),&tmp_evt_loop,SLOT(quit()));
     tmp_evt_loop.exec();
 
+#if defined( Q_OS_WIN )
     //Note: On some operating systems the connected() signal may be directly emitted from the connectToHost() call for connections to the localhost.
     QThread::currentThread()->msleep(100);
+#endif
 
     auto act_state = state();
     return ( act_state == QAbstractSocket::ConnectedState);
+  }
+
+  bool tcpbox_client::wait_for_command_started()
+  {
+    QEventLoop tmp_evt_loop;
+
+    QTimer::singleShot(timeout(), &tmp_evt_loop, SLOT(quit()));
+    connect(this,SIGNAL(box_command_started()), &tmp_evt_loop, SLOT(quit()));
+    //connect(this,SIGNAL(box_command_finished()), &tmp_evt_loop, SLOT(quit()));
+    connect(this,SIGNAL(box_command_error()), &tmp_evt_loop, SLOT(quit()));
+    tmp_evt_loop.exec();
+
+    auto act_cmd_state = command_state();
+    return (act_cmd_state == COMMAND_STATE_STARTED);
+  }
+
+  bool tcpbox_client::wait_for_command_finished()
+  {
+    auto act_cmd_state = command_state();
+    if(act_cmd_state != COMMAND_STATE_STARTED)
+      return false;
+
+    QEventLoop tmp_evt_loop;
+
+    QTimer::singleShot(timeout(), &tmp_evt_loop, SLOT(quit()));
+    //connect(this,SIGNAL(box_command_started()), &tmp_evt_loop, SLOT(quit()));
+    connect(this,SIGNAL(box_command_finished()), &tmp_evt_loop, SLOT(quit()));
+    connect(this,SIGNAL(box_command_error()), &tmp_evt_loop, SLOT(quit()));
+    tmp_evt_loop.exec();
+
+    act_cmd_state = command_state();
+    return (act_cmd_state == COMMAND_STATE_OK);
   }
 
 

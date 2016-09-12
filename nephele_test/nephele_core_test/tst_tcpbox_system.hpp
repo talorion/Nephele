@@ -44,9 +44,7 @@ private slots:
   void disposing_tcpbox_system_stops_its_thread();
   //void all_test_have_configured_tcpbox();
   void connections_are_not_connected_after_creation();
-  void clients_do_not_send_commands_when_not_connected();
-
-
+  void box_commands_are_created_by_a_factory();
 
 private:
   talorion::tcpbox_system sys;

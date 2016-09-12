@@ -21,7 +21,8 @@ namespace talorion {
 
     m_timeout_timer.setSingleShot(true);
     m_timeout_timer.setInterval(5000);
-    connect(&m_timeout_timer,SIGNAL(timeout()),this,SLOT(command_timed_out()));
+
+    connect(&m_timeout_timer, SIGNAL(timeout()), this, SLOT(command_timed_out()));
 
   }
 
@@ -36,18 +37,18 @@ namespace talorion {
     return m_supported_commands.contains(cmd);
   }
 
-  bool ecmd_connection::wait_for_command_finished(int timeout){
-
-    QEventLoop tmp_evt_loop;
-    QTimer::singleShot(timeout, &tmp_evt_loop, SLOT(quit()));
-    connect(this, SIGNAL(command_finished()),&tmp_evt_loop, SLOT(quit()));
-    tmp_evt_loop.exec();
-
+  bool ecmd_connection::wait_for_command_finished(int timeout)
+  {
+    auto tmp=m_current_command;
     if(!ongoing_command())
       return false;
 
+    QEventLoop tmp_evt_loop;
+    QTimer::singleShot(timeout, &tmp_evt_loop, SLOT(quit()));
+    connect(this, SIGNAL(command_finished()), &tmp_evt_loop, SLOT(quit()));
+    tmp_evt_loop.exec();
 
-    return false;
+    return tmp->state()==COMMAND_STATE_OK;
   }
 
   bool ecmd_connection::send_command(const QString &cmd)
@@ -87,13 +88,24 @@ namespace talorion {
 
   void ecmd_connection::set_current_command(ecmd_connection::command_t cmd)
   {
+    if(cmd.isNull())
+      return;
+
     m_current_command = cmd;
+    m_current_command->setState(COMMAND_STATE_STARTED);
+
+    //emit command_changed();
+    emit command_started();
+
   }
 
   void ecmd_connection::reset_current_command()
   {
+
     m_timeout_timer.stop();
     m_current_command.clear();
+
+    emit command_finished();
   }
 
   bool ecmd_connection::add_supported_command(ecmd_connection::command_t cmd)
@@ -116,7 +128,11 @@ namespace talorion {
 
   bool ecmd_connection::hasEnoughData()
   {
-    return bytesAvailable()>=10;
+    if(!ongoing_command())
+      return false;
+
+    qint64 expected_data_length=m_current_command->expected_data_length();
+    return bytesAvailable()>=expected_data_length;
   }
 
   bool ecmd_connection::ongoing_command() const
@@ -127,11 +143,39 @@ namespace talorion {
 
   void ecmd_connection::processReadyRead()
   {
-    do {
-        QString tmp(readAll());
-        qDebug()<<tmp;
+    if(!ongoing_command())
+      return;
 
-      } while (bytesAvailable() > 0);
+    do {
+        if(!hasEnoughData())
+          break;
+
+        if(!m_timeout_timer.isActive()){
+            m_current_command->setState(COMMAND_STATE_ERROR);
+            //emit command_changed();
+            break;
+          }
+
+        if(state()!=QAbstractSocket::ConnectedState){
+            m_current_command->setState(COMMAND_STATE_ERROR);
+            //emit command_changed();
+            break;
+          }
+
+        auto tmp = readAll();
+        if(!m_current_command->parse_data(tmp)){
+            m_current_command->setState(COMMAND_STATE_ERROR);
+            //emit command_changed();
+            break;
+          }
+
+        m_current_command->setState(COMMAND_STATE_OK);
+
+
+      } while (true);
+
+
+    reset_current_command();
 
   }
 
@@ -143,7 +187,12 @@ namespace talorion {
 
   void ecmd_connection::command_timed_out()
   {
-    reset_current_command();
+
+  }
+
+  ecmd_connection::command_t ecmd_connection::current_command() const
+  {
+    return m_current_command;
   }
 
 } // namespace talorion

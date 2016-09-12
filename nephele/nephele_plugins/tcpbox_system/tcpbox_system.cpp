@@ -58,6 +58,11 @@ namespace talorion {
     return tcpbox_factory::get_instance().get_all_tcpboxes(*this);
   }
 
+  tcpbox_system::tcpbox_command_container tcpbox_system::get_configured_box_commands(tcpbox_t tcpbox) const
+  {
+return tcpbox_factory::get_instance().get_all_tcpboxes(*this);
+  }
+
   abstract_system::state_trans_ret_t tcpbox_system::do_initialize()
   {
     QObject::connect(this, SIGNAL(new_tcpbox(entity_manager::entity_id_t)), &(this->get_event_manager()), SIGNAL(new_tcpbox(entity_manager::entity_id_t)),Qt::AutoConnection);

@@ -17,7 +17,15 @@ namespace talorion {
 
     // abstract_ecmd_command interface
   public:
-    virtual QString build_command_string() const;
+    virtual QString build_command_string() const Q_DECL_OVERRIDE;
+
+     virtual bool parse_data(QByteArray &data) Q_DECL_OVERRIDE;
+
+    // abstract_ecmd_command interface
+  private:
+    virtual quint64 do_expected_data_length() const Q_DECL_OVERRIDE;
+
+
   };
 
 } // namespace talorion

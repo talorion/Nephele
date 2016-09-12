@@ -101,10 +101,11 @@ void tst_tcpbox_hw::clients_communicate_via_Ethersex_Command_protocol()
 {
   QScopedPointer<tcpbox_client> client(new tcpbox_client(tcpbox,sys));
   client->open_connection();
-  client->wait_for_connect();
-  auto ret =client->send_command("help");
-
-  QVERIFY(ret);
+  auto connected =  client->wait_for_connect();
+  client->send_command("help");
+  auto started  =   client->wait_for_command_started();
+  auto finished =   client->wait_for_command_finished();
+  QVERIFY(connected && started &&  finished);
 
 }
 
@@ -112,21 +113,18 @@ void tst_tcpbox_hw::connections_are_not_connected_after_close()
 {
   QScopedPointer<tcpbox_client> client(new tcpbox_client(tcpbox,sys));
   client->open_connection();
+  client->wait_for_connect();
   client->close_connection();
-  QVERIFY(client->state()!=QAbstractSocket::ConnectedState);
+  QThread::currentThread()->msleep(1000);
+  auto act_state = client->state();
+  auto exp_state = QAbstractSocket::UnconnectedState;
+  QCOMPARE(act_state, exp_state);
 }
 
 void tst_tcpbox_hw::clients_support_help_command_after_creation()
 {
   QScopedPointer<tcpbox_client> client(new tcpbox_client(tcpbox,sys));
   QVERIFY(client->is_command_supported("help"));
-}
-
-void tst_tcpbox_hw::clients_do_not_send_empty_commands()
-{
-  QScopedPointer<tcpbox_client> client(new tcpbox_client(tcpbox,sys));
-  client->open_connection();
-  QVERIFY(client->send_command(QString())==false);
 }
 
 void tst_tcpbox_hw::ecmd_help_returns_all_avaiable_commands()

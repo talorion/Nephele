@@ -43,8 +43,6 @@ private slots:
 
   void clients_support_help_command_after_creation();
 
-  void clients_do_not_send_empty_commands();
-
   void ecmd_help_returns_all_avaiable_commands();
 
 

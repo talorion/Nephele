@@ -172,11 +172,13 @@ void tst_tcpbox_system::connections_are_not_connected_after_creation()
   QVERIFY(client->state() != QAbstractSocket::ConnectedState);
 }
 
-void tst_tcpbox_system::clients_do_not_send_commands_when_not_connected()
+void tst_tcpbox_system::box_commands_are_created_by_a_factory()
 {
-  QScopedPointer<tcpbox_client> client(new tcpbox_client(tcpbox,sys));
-  auto con_res=client->send_command("help");
-  QVERIFY(con_res == false);
+  tcpbox_system newsys;
+  tcpbox_factory::get_instance().create_new_tcpbox_command(newsys);
+  auto cfg_boxes = newsys.get_configured_box_commands();
+  QCOMPARE(cfg_boxes.size(), 1);              /*Assert*/
 }
+
 
 

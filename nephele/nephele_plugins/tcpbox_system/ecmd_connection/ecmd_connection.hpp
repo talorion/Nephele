@@ -25,11 +25,17 @@ namespace talorion {
 
     bool wait_for_command_finished(int timeout = 5000);
 
+    command_t current_command() const;
+
   public slots:
     bool send_command(const QString &cmd);
 
   signals:
     void readyForUse();
+
+    //void command_changed();
+    void command_started();
+    void command_error();
     void command_finished();
 
   private:

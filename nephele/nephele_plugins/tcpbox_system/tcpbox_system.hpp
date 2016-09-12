@@ -21,6 +21,7 @@ namespace talorion {
 
   public:
     using tcpbox_container = tcpbox_factory::tcpbox_container_t;
+    using tcpbox_command_container = tcpbox_factory::tcpbox_command_container_t;
     //using tcpbox_container = QList<tcpbox_factory::tcpbox_t>;
     //using tcpbox_container = tcpbox_system_thread::tcpbox_container;
 
@@ -47,6 +48,7 @@ namespace talorion {
 
   public:
     tcpbox_container get_configured_boxes()const;
+    tcpbox_command_container get_configured_box_commands(tcpbox_t tcpbox =entity_manager::invalid_id)const;
 
     // abstract_system interface
   private:

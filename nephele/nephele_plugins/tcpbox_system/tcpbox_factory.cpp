@@ -51,6 +51,11 @@ namespace talorion {
     return SERIAL_VERSION_UID_COMPONENT;
   }
 
+  entity_manager::component_id_t tcpbox_factory::command_state_component_id()
+  {
+    return COMMAND_STATE_COMPONENT;
+  }
+
   tcpbox_factory::tcpbox_container_t tcpbox_factory::get_all_tcpboxes(const tcpbox_system &sys) const
   {
     entity_manager& mng = sys.get_entity_manager();
@@ -92,6 +97,7 @@ namespace talorion {
     mng.create_component_and_add_to(timeout_component_id(), tcpbox);
     mng.create_component_and_add_to(connection_state_component_id(), tcpbox);
     mng.create_component_and_add_to(serial_version_uid_component_id(), tcpbox);
+    mng.create_component_and_add_to(command_state_component_id(), tcpbox);
 
 
     mng.set_component_data_for_entity(name_component_id(),               tcpbox, box_name);
@@ -100,11 +106,38 @@ namespace talorion {
     mng.set_component_data_for_entity(box_id_component_id(),             tcpbox, box_id);
     mng.set_component_data_for_entity(timeout_component_id(),            tcpbox, 5000);
     mng.set_component_data_for_entity(connection_state_component_id(),   tcpbox, QAbstractSocket::UnconnectedState);
+    mng.set_component_data_for_entity(command_state_component_id(),      tcpbox, COMMAND_STATE_UNKNOWN);
     auto uid= QVariant::fromValue(get_TcpBox_uid());
     mng.set_component_data_for_entity(serial_version_uid_component_id(), tcpbox, uid);
     sys.add_box(tcpbox);
 
     return tcpbox;
+  }
+
+  tcpbox_factory::tcpbox_command_container_t tcpbox_factory::get_all_tcpbox_commands(const tcpbox_system &sys, tcpbox_factory::tcpbox_t tcpbox) const
+  {
+    entity_manager& mng = sys.get_entity_manager();
+    auto uid= QVariant::fromValue(get_TcpBox_uid());
+    //auto boxes = mng.get_entities_by_components_value(serial_version_uid_component_id(), uid);
+    tcpbox_factory::tcpbox_container_t boxes;
+    auto all_ents= mng.get_all_entities();
+    foreach (auto entity, all_ents) {
+        auto ent_uid = mng.get_component_data_for_entity(serial_version_uid_component_id(),entity).toUuid();
+        if(ent_uid == uid){
+            boxes<<entity;
+          }
+      }
+
+    return boxes;
+  }
+  }
+
+  tcpbox_factory::tcpbox_command_t tcpbox_factory::create_new_tcpbox_command(tcpbox_system& sys, tcpbox_t tcpbox ) const
+  {
+    entity_manager& mng = sys.get_entity_manager();
+    tcpbox_command_t tcpbox_cmd=mng.create_new_entity();
+
+    return tcpbox_cmd;
   }
 
 

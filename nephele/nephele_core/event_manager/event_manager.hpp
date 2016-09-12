@@ -28,6 +28,10 @@ namespace talorion {
     void box_connected(entity_manager::entity_id_t);
     void box_disconnected(entity_manager::entity_id_t);
 
+    void box_command_started(entity_manager::entity_id_t);
+    void box_command_finished(entity_manager::entity_id_t);
+    void box_command_error(entity_manager::entity_id_t);
+
   };
 
 } // namespace talorion

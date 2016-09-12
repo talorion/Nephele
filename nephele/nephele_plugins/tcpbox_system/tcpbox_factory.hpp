@@ -20,6 +20,9 @@ namespace talorion {
     using tcpbox_t = entity_manager::entity_id_t;
     using tcpbox_container_t = QList<tcpbox_t>;
 
+    using tcpbox_command_t = entity_manager::entity_id_t;
+    using tcpbox_command_container_t = QList<tcpbox_command_t>;
+
   private:
     explicit tcpbox_factory(QObject *par = Q_NULLPTR);
 
@@ -38,6 +41,7 @@ namespace talorion {
     static entity_manager::component_id_t timeout_component_id();
     static entity_manager::component_id_t connection_state_component_id();
     static entity_manager::component_id_t serial_version_uid_component_id();
+    static entity_manager::component_id_t command_state_component_id();
 
     static tcpbox_factory& get_instance();
 
@@ -45,6 +49,9 @@ public:
     QUuid get_TcpBox_uid()const ;
     tcpbox_container_t get_all_tcpboxes(const tcpbox_system &sys)const;
     tcpbox_t create_new_tcpbox(tcpbox_system &sys, const QString &box_name=QString(), const QString &host_name=QString(), quint16 port=0, qint32 box_id=0)const;
+
+    tcpbox_command_container_t get_all_tcpbox_commands(const tcpbox_system &sys, tcpbox_t tcpbox =entity_manager::invalid_id)const;
+    tcpbox_command_t create_new_tcpbox_command(tcpbox_system &sys, tcpbox_t tcpbox =entity_manager::invalid_id) const;
 
   signals:
 

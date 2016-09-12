@@ -26,11 +26,11 @@ namespace talorion {
     void box_connected(entity_manager::entity_id_t);
     void box_disconnected(entity_manager::entity_id_t);
 
-  public slots:
-    //void add_box(entity_manager::entity_id_t tcpbox);
-    //void delete_box(entity_manager::entity_id_t tcpbox);
-    //void delete_all_boxes();
+    void box_command_started(entity_manager::entity_id_t);
+    void box_command_finished(entity_manager::entity_id_t);
+    void box_command_error(entity_manager::entity_id_t);
 
+  public slots:
     void slot_new_tcpbox(entity_manager::entity_id_t tcpbox_id);
     void slot_delete_tcpbox(entity_manager::entity_id_t tcpbox_id);
     void slot_connect_box(entity_manager::entity_id_t tcpbox_id);
@@ -39,6 +39,10 @@ namespace talorion {
 
   private slots:
     void connection_changed(int tcpbox_id);
+    //void command_changed(int tcpbox_id);
+    void command_started(int tcpbox_id);
+    void command_error(int tcpbox_id);
+    void command_finished(int tcpbox_id);
 
   private:
     bool has_connection(entity_manager::entity_id_t tcpbox_id);
@@ -46,7 +50,11 @@ namespace talorion {
   private:
     ecmd_connection_container m_connections;
     const tcpbox_system& m_sys;
-    QScopedPointer<QSignalMapper> m_signal_mapper;
+    QScopedPointer<QSignalMapper> m_connection_changed_mapper;
+    //QScopedPointer<QSignalMapper> m_command_changed_mapper;
+    QScopedPointer<QSignalMapper> m_command_started_mapper;
+    QScopedPointer<QSignalMapper> m_command_error_mapper;
+    QScopedPointer<QSignalMapper> m_command_finished_mapper;
   };
 
 } // namespace talorion
