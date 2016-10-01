@@ -97,6 +97,7 @@ namespace talorion {
 
     void tcp_box_worker::slot_tcp_box_disconnected(int entity)
     {
+        Q_UNUSED(entity);
 //      foreach(int val, entity_manager::get_instance()->get_all_DValues()){
 //          int box_id= entity_manager::get_instance()->get_box_id_component(val);
 //          if(box_id == entity)
@@ -208,6 +209,7 @@ namespace talorion {
 
       entity_manager::get_instance()->slot_connection_state_component(box_id, false);
       bool co = dev1->connectDevice(ip, port);
+      Q_UNUSED(co);
       //entity_manager::get_instance()->slot_connection_state_component(box_id, co);
 
     }

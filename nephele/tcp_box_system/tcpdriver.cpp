@@ -348,7 +348,7 @@ void tcpDriver::tcpError(QAbstractSocket::SocketError tcpErr)
     case QAbstractSocket::ProxyProtocolError:               {qDebug() <<"Box "<< getBox_id()<<": "<< "ProxyProtocolError"; break;}
     case QAbstractSocket::OperationError:                   {
         qDebug() <<"Box "<< getBox_id()<<": "<< "OperationError";
-        tcpSocket->abort();
+        //tcpSocket->abort();
         break;
     }
     case QAbstractSocket::SslInternalError:                 {qDebug() <<"Box "<< getBox_id()<<": "<< "SslInternalError"; break;}

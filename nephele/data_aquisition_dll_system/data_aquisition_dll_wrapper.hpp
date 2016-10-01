@@ -40,6 +40,7 @@ namespace talorion {
     typedef int     (*GetRegUserDataSources_prototype)(int* arrayLength, char* location, int* nbrElements, int* type);
     typedef int     (*TofDaqRunning_prototype)();
     typedef int     (*GetRegUserDataDesc_prototype)(char* location, int* nbrElements, char* elementDescription);
+    typedef int     (*ReadRegUserData_prototype)(char* Location, int NbrElements, double* Data);
 
     class data_aquisition_dll_wrapper: public abstract_scriptable_object
     {
@@ -66,6 +67,7 @@ namespace talorion {
         //int read_reg_user_date(QStringList& value_names, QVector<double>& Data);
         int get_reg_user_data_sources(QStringList& locations, QVector<int>& nbrElements, QVector<int>& type);
         int get_reg_user_data_desc(const QString& path, QStringList& descriptions);
+        int read_reg_user_data(const QString& path, QVector<double>& Data);
 
         int read_spectrum(QVector<float>& buffer_Spectrum, int BufIndex, int SegmentIndex = -1, int SegmentEndIndex = -1,bool Normalize = false) const;
         int read_average_spectrum(QVector<double>& buffer_avg_spectrum, bool Normalize = false) const;
@@ -122,6 +124,7 @@ namespace talorion {
         GetRegUserDataSources_prototype m_GetRegUserDataSources;
         TofDaqRunning_prototype m_TofDaqRunning;
         GetRegUserDataDesc_prototype m_GetRegUserDataDesc;
+        ReadRegUserData_prototype m_ReadRegUserData;
 
         QLibrary* m_data_aquisition_dll;
         QString m_dll_name;
