@@ -15,25 +15,25 @@ console.log_fatal("FATAL")
 console.write("set FC_1="+set.FC_1)
 console.write("act FC_1="+act.FC_1)
 
-set.val("FC_0", 23)
-var fc0=act.FC_0
-set.val("FC_1", fc0)
-set.val("FC_2", set.FC_2 + 10)
+set.val("FC_0", 23.0)
+//var fc0=act.FC_0
+//set.val("FC_1", fc0)
+//set.val("FC_2", set.FC_2 + 10.0)
 
-direct_daq.stop_aquisition();
-util.sleep(2000);
+//direct_daq.stop_aquisition();
+//util.sleep(2000);
 
-direct_daq.write_parameter("DataPath","c:\\temp\\");
-util.sleep(2000);
+//direct_daq.write_parameter("DataPath","c:\\temp\\");
+//util.sleep(2000);
 
-direct_daq.write_parameter("DataFileName","newfile.h5");
-util.sleep(2000);
+//direct_daq.write_parameter("DataFileName","newfile.h5");
+//util.sleep(2000);
 
-direct_daq.start_aquisition();
-util.sleep(2000);
+//direct_daq.start_aquisition();
+//util.sleep(2000);
 
-direct_daq.stop_aquisition();
-util.sleep(2000);
+//direct_daq.stop_aquisition();
+//util.sleep(2000);
 
 //util.sleep(10000)
 0

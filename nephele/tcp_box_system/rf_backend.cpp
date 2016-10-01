@@ -14,7 +14,8 @@ namespace talorion {
         analog_setbuffer(),
         digital_actbuffer(),
         digital_setbuffer(),
-        block_next_read(false)
+        block_next_read(false),
+        m_box_id(-1)
     {
 
     }
@@ -26,6 +27,7 @@ namespace talorion {
 
     void rf_backend::processData(QVariantMap desc, tcpDriverDataTypes::dataType type, int box_id)
     {
+        m_box_id=box_id;
         if(block_next_read){
             block_next_read = false;
             return;
@@ -82,8 +84,9 @@ namespace talorion {
         }
     }
 
-    void rf_backend::logError(QString errorString)
+    void rf_backend::logError(QString errorString, int source)
     {
+        if(m_box_id==source)
         qDebug() << errorString << endl;
     }
 

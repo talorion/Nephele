@@ -20,7 +20,7 @@ namespace talorion {
 
     public slots:
         virtual void processData(QVariantMap desc, tcpDriverDataTypes::dataType type, int box_id) Q_DECL_OVERRIDE;
-        virtual void logError(QString errorString) Q_DECL_OVERRIDE;
+        virtual void logError(QString errorString, int source) Q_DECL_OVERRIDE;
 
     private slots:
         virtual void fcSetChangeProxy(int entity) Q_DECL_OVERRIDE;
@@ -56,6 +56,8 @@ namespace talorion {
         QMap<int, int> digital_actbuffer;
         QMap<int, int> digital_setbuffer;
         bool block_next_read;
+
+        int m_box_id;
     };
 
 } // namespace talorion

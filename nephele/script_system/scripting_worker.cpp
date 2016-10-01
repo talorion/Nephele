@@ -20,6 +20,8 @@ namespace talorion {
         m_util_hdl(NULL),
         m_log_hdl(NULL),
         m_daq_hdl(NULL),
+        m_scrp_usr_dta(NULL),
+        mscrpt_lod_hdl(NULL),
         //m_actHdl(),
         //m_setHdl(),
         //m_diagHdl(),
@@ -28,6 +30,7 @@ namespace talorion {
         //m_daqhdl(),
         script_values()
     {
+
     }
 
     scripting_worker::~scripting_worker(){
@@ -43,6 +46,11 @@ namespace talorion {
             delete m_log_hdl;
         if(m_daq_hdl)
             delete m_daq_hdl;
+        if(m_scrp_usr_dta)
+            delete m_scrp_usr_dta;
+        if(mscrpt_lod_hdl)
+          delete mscrpt_lod_hdl;
+
 
         foreach (QScriptValue* var, script_values) {
             if(var)
@@ -92,6 +100,13 @@ namespace talorion {
         m_daq_hdl = new script_daq_handler();
         entity_manager::get_instance()->createScriptableObject(m_daq_hdl->script_name(), m_daq_hdl);
 
+        m_scrp_usr_dta = new scriptable_usr_data_handler();
+        entity_manager::get_instance()->createScriptableObject(m_scrp_usr_dta->script_name(), m_scrp_usr_dta);
+
+        mscrpt_lod_hdl = new script_load_handler(&m_script_engine);
+        entity_manager::get_instance()->createScriptableObject(mscrpt_lod_hdl->script_name(), mscrpt_lod_hdl);
+
+        //scriptable_usr_data_handler* m_scrp_usr_dta;
 
         //m_script_engine = new QScriptEngine();
 
@@ -157,11 +172,13 @@ namespace talorion {
 
         if(m_script_engine.isEvaluating()){
             m_log_hdl->log_fatal("another script is already running");
+            qDebug()<<"another script is already running";
             return;
         }
 
         if (!m_script_engine.canEvaluate(script)){
             m_log_hdl->log_fatal("cannot evaluate script");
+            qDebug()<<"cannot evaluate script";
             return;
         }
 
@@ -173,10 +190,14 @@ namespace talorion {
         QScriptValue ret = m_script_engine.evaluate(script).toNumber();
         m_log_hdl->log_info("script returned " + ret.toString());
 
-        if (m_script_engine.hasUncaughtException())
-            m_log_hdl->log_fatal("Script had Uncaught Exceptions"+ m_script_engine.uncaughtException().toString());
-        else
+        if (m_script_engine.hasUncaughtException()){
+
+            m_log_hdl->log_fatal("Script had Uncaught Exceptions at line: "+ QString::number(m_script_engine.uncaughtExceptionLineNumber())+" EXception:" +m_script_engine.uncaughtException().toString());
+            qDebug()<<"Script had Uncaught Exceptions at line: "+ QString::number(m_script_engine.uncaughtExceptionLineNumber())+" EXception:" +m_script_engine.uncaughtException().toString();
+        }else{
             m_log_hdl->log_info("script finished successfully");
+            qDebug()<<"script finished successfully";
+          }
 
         emit script_finished();
     }
@@ -187,6 +208,7 @@ namespace talorion {
 
         if(!script_file.open(QIODevice::ReadOnly)) {
             m_log_hdl->log_error("error:" + script_file.errorString());
+            qDebug()<<"error:" + script_file.errorString();
         }
         QTextStream in(&script_file);
         QString sc;
@@ -197,6 +219,8 @@ namespace talorion {
         script_file.close();
 
         m_log_hdl->log_info("Starting "+script);
+        qDebug()<<"Starting "+script;
+
         slot_start_script(sc,debug);
     }
 
@@ -219,6 +243,7 @@ namespace talorion {
 
             m_script_engine.abortEvaluation();
             m_log_hdl->log_fatal("script aborted");
+            qDebug()<<"script aborted";
             return;
         }
 

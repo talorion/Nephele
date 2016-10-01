@@ -97,21 +97,21 @@ namespace talorion {
 
     void tcp_box_worker::slot_tcp_box_disconnected(int entity)
     {
-      foreach(int val, entity_manager::get_instance()->get_all_DValues()){
-          int box_id= entity_manager::get_instance()->get_box_id_component(val);
-          if(box_id == entity)
-            entity_manager::get_instance()->delete_entity(val);
-        }
+//      foreach(int val, entity_manager::get_instance()->get_all_DValues()){
+//          int box_id= entity_manager::get_instance()->get_box_id_component(val);
+//          if(box_id == entity)
+//            entity_manager::get_instance()->delete_entity(val);
+//        }
 
-      foreach(int val, entity_manager::get_instance()->get_all_Values()){
-          int box_id= entity_manager::get_instance()->get_box_id_component(val);
-          if(box_id == entity)
-            entity_manager::get_instance()->delete_entity(val);
-        }
+//      foreach(int val, entity_manager::get_instance()->get_all_Values()){
+//          int box_id= entity_manager::get_instance()->get_box_id_component(val);
+//          if(box_id == entity)
+//            entity_manager::get_instance()->delete_entity(val);
+//        }
 
 
-      entity_manager::get_instance()->slot_connection_state_component(entity, false);
-      emit tcp_box_disconnected(entity);
+//      entity_manager::get_instance()->slot_connection_state_component(entity, false);
+//      emit tcp_box_disconnected(entity);
     }
 
     void tcp_box_worker::reconnect_all_boxes()
@@ -140,12 +140,10 @@ namespace talorion {
 
         tcpDriver* dev1;
         dev1 = new tcpDriver(box_id, "uibkafc getAll","uibkafc getAll", back); // for AFC Board
-        bool co = dev1->connectDevice(ip, port);
-
-
-        entity_manager::get_instance()->slot_connection_state_component(box_id, co);
-
         connect(dev1, SIGNAL(disconnected(int)),this,SLOT(slot_tcp_box_disconnected(int)));
+        bool co = dev1->connectDevice(ip, port, 1000);
+
+        //entity_manager::get_instance()->slot_connection_state_component(box_id, co);
 
         if(co)
             boxes.insert(box_id,dev1);
@@ -164,9 +162,9 @@ namespace talorion {
 
         tcpDriver* dev1;
         dev1 = new tcpDriver(box_id, "uibkav getAll","uibkav getAll", back); // for AFC Board
-        bool co = dev1->connectDevice(ip, port);
+        bool co = dev1->connectDevice(ip, port, 1000);
 
-        entity_manager::get_instance()->slot_connection_state_component(box_id, co);
+        //entity_manager::get_instance()->slot_connection_state_component(box_id, co);
 
         if(co)
             boxes.insert(box_id,dev1);
@@ -185,9 +183,9 @@ namespace talorion {
 
         tcpDriver* dev1;
         dev1 = new tcpDriver(box_id, "uibk getAll","uibk getAll", back); // for AFC Board
-        bool co = dev1->connectDevice(ip, port);
+        bool co = dev1->connectDevice(ip, port, 1000);
 
-        entity_manager::get_instance()->slot_connection_state_component(box_id, co);
+        //entity_manager::get_instance()->slot_connection_state_component(box_id, co);
 
         if(co)
             boxes.insert(box_id,dev1);
@@ -208,8 +206,9 @@ namespace talorion {
       QString ip = entity_manager::get_instance()->get_ip_address_component(box_id);
       quint16 port = entity_manager::get_instance()->get_port_component(box_id);
 
+      entity_manager::get_instance()->slot_connection_state_component(box_id, false);
       bool co = dev1->connectDevice(ip, port);
-      entity_manager::get_instance()->slot_connection_state_component(box_id, co);
+      //entity_manager::get_instance()->slot_connection_state_component(box_id, co);
 
     }
 

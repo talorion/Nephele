@@ -17,122 +17,134 @@
 
 #include "config_file/config_file.hpp"
 
+#include "gui_system_config_widget/gui_system_config_widget.hpp"
+
 namespace talorion{
-    gui_system::gui_system(QObject *par) :
-        QObject(par),
-        abstract_system("{93647299-a839-4cb6-ada7-7dabf01f297d}"),
-        window(NULL)
-    {
+  gui_system::gui_system(QObject *par) :
+    QObject(par),
+    abstract_system("{93647299-a839-4cb6-ada7-7dabf01f297d}"),
+    window(NULL),
+    gui_system_cfg_wdgt(NULL)
+  {
 
-        connect(event_manager::get_instance(),SIGNAL(fatal(QString)),this,SLOT(slot_open_info_dialog(QString)));
-    }
+    connect(event_manager::get_instance(),SIGNAL(fatal(QString)),this,SLOT(slot_open_info_dialog(QString)));
 
-    gui_system::~gui_system()
-    {
-        if(window)
-            delete window;
-    }
+    gui_system_cfg_wdgt = new gui_system_config_widget();
+  }
 
-    void gui_system::slot_open_numeric_dialog()
-    {
+  gui_system::~gui_system()
+  {
+    if(window)
+      delete window;
+  }
 
-        bool ok;
-        double d = QInputDialog::getDouble(NULL, tr("QInputDialog::getDouble()"), tr("Amount:"), 37.56, -10000, 10000, 2, &ok);
+  void gui_system::slot_open_numeric_dialog()
+  {
 
-        if (!ok)
-            d=-1;
+    bool ok;
+    double d = QInputDialog::getDouble(NULL, tr("QInputDialog::getDouble()"), tr("Amount:"), 37.56, -10000, 10000, 2, &ok);
 
-        emit dialog_finished(d);
-    }
+    if (!ok)
+      d=-1;
 
-    void gui_system::slot_open_string_dialog()
-    {
-        bool ok;
-        QString d = QInputDialog::getText(NULL, tr("QInputDialog::getText()"),tr("User name:"), QLineEdit::Normal,QDir::home().dirName(), &ok);
+    emit dialog_finished(d);
+  }
 
-        if (!ok)
-            d="";
+  void gui_system::slot_open_string_dialog()
+  {
+    bool ok;
+    QString d = QInputDialog::getText(NULL, tr("QInputDialog::getText()"),tr("User name:"), QLineEdit::Normal,QDir::home().dirName(), &ok);
 
-        emit dialog_finished(d);
-    }
+    if (!ok)
+      d="";
 
-    void gui_system::slot_open_file_dialog()
-    {
+    emit dialog_finished(d);
+  }
 
-        QString d = QFileDialog::getOpenFileName(NULL, tr("Open File"), "", "any file (*.*)");
+  void gui_system::slot_open_file_dialog()
+  {
 
-        emit dialog_finished(d);
-    }
+    QString d = QFileDialog::getOpenFileName(NULL, tr("Open File"), "", "any file (*.*)");
 
-    void gui_system::slot_open_info_dialog(const QString& msg)
-    {
-        QMessageBox::information(NULL, tr("Info"),msg);
-        emit dialog_finished();
-    }
+    emit dialog_finished(d);
+  }
 
-    void gui_system::slot_open_plot_dialog()
-    {
-      QMessageBox::critical(NULL, tr("Plot Dilaog"),tr("Plot Dialog not implemented"));
-    }
+  void gui_system::slot_open_info_dialog(const QString& msg)
+  {
+    QMessageBox::information(NULL, tr("Info"),msg);
+    emit dialog_finished();
+  }
 
-    void gui_system::slot_box_disconnected(int boxId)
-    {
-      QString boxname =  entity_manager::get_instance()->get_name_component(boxId);
-      QMessageBox::warning(NULL, "Plot Dilaog", "WARNING!!!! BOX "+boxname+" DISCONNECTED!!!! ADD DATA MAYBE CHANGED!!!!");
-    }
+  void gui_system::slot_open_plot_dialog()
+  {
+    QMessageBox::critical(NULL, tr("Plot Dilaog"),tr("Plot Dialog not implemented"));
+  }
 
-    void talorion::gui_system::do_start_system()
-    {
-        config_file *cfg_hdl = new config_file();
-        entity_manager::get_instance()->createScriptableObject(cfg_hdl->script_name(), cfg_hdl);
-        int W = 250;
-        int H = 250;
+  void gui_system::slot_box_disconnected(int boxId)
+  {
+    QString boxname =  entity_manager::get_instance()->get_name_component(boxId);
+    QMessageBox::warning(NULL, "Plot Dilaog", "WARNING!!!! BOX "+boxname+" DISCONNECTED!!!! ADD DATA MAYBE CHANGED!!!!");
+  }
 
-        int screenWidth;
-        int screenHeight;
+  void talorion::gui_system::do_start_system()
+  {
+    config_file *cfg_hdl = new config_file();
+    entity_manager::get_instance()->createScriptableObject(cfg_hdl->script_name(), cfg_hdl);
+    int W = 250;
+    int H = 250;
 
-        int x, y;
+    int screenWidth;
+    int screenHeight;
 
-        QPixmap pixmap(":/images/images/splash.png");
-        QPixmap pixmapForSplash = pixmap.scaledToHeight(600);
+    int x, y;
 
-        QSplashScreen splash(pixmapForSplash);
-        splash.show();
+    QPixmap pixmap(":/images/images/splash.png");
+    QPixmap pixmapForSplash = pixmap.scaledToHeight(600);
 
-        QTime dieTime= QTime::currentTime().addSecs(2); //wait for 2 s
-        while( QTime::currentTime() < dieTime )
-            QApplication::instance()->processEvents();
+    QSplashScreen splash(pixmapForSplash);
+    splash.show();
 
-        window= new nephele_main_window();
-        window->setCfg_hdl(cfg_hdl);
-        QDesktopWidget *desktop = QApplication::desktop();
+    QTime dieTime= QTime::currentTime().addSecs(2); //wait for 2 s
+    while( QTime::currentTime() < dieTime )
+      QApplication::instance()->processEvents();
 
-        screenWidth = desktop->width();
-        screenHeight = desktop->height();
+    window= new nephele_main_window();
+    window->setCfg_hdl(cfg_hdl);
+    QDesktopWidget *desktop = QApplication::desktop();
 
-        x = (screenWidth - W) / 2;
-        y = (screenHeight - H) / 2;
+    screenWidth = desktop->width();
+    screenHeight = desktop->height();
 
-        window->resize(W, H);
-        window->move( x, y );
-        window->readSettings();
-        window->show();
+    x = (screenWidth - W) / 2;
+    y = (screenHeight - H) / 2;
 
-        splash.finish(window);
+    window->resize(W, H);
+    window->move( x, y );
+    window->readSettings();
+    window->show();
 
-        // connect dialoges
-        connect(event_manager::get_instance(),SIGNAL(open_numeric_dialog()),this,SLOT(slot_open_numeric_dialog()));
-        connect(event_manager::get_instance(),SIGNAL(open_string_dialog()),this,SLOT(slot_open_string_dialog()));
-        connect(event_manager::get_instance(),SIGNAL(open_file_dialog()),this,SLOT(slot_open_file_dialog()));
-        connect(event_manager::get_instance(),SIGNAL(open_info_dialog(QString)),this,SLOT(slot_open_info_dialog(QString)));
-        connect(event_manager::get_instance(),SIGNAL(open_plot_dialog()),this,SLOT(slot_open_plot_dialog()));
+    splash.finish(window);
 
-        connect(this, SIGNAL(dialog_finished(double)),event_manager::get_instance(),SIGNAL(dialog_finished(double)));
-        connect(this, SIGNAL(dialog_finished(QString)),event_manager::get_instance(),SIGNAL(dialog_finished(QString)));
-        connect(this, SIGNAL(dialog_finished()),event_manager::get_instance(),SIGNAL(dialog_finished()));
+    // connect dialoges
+    connect(event_manager::get_instance(),SIGNAL(open_numeric_dialog()),this,SLOT(slot_open_numeric_dialog()));
+    connect(event_manager::get_instance(),SIGNAL(open_string_dialog()),this,SLOT(slot_open_string_dialog()));
+    connect(event_manager::get_instance(),SIGNAL(open_file_dialog()),this,SLOT(slot_open_file_dialog()));
+    connect(event_manager::get_instance(),SIGNAL(open_info_dialog(QString)),this,SLOT(slot_open_info_dialog(QString)));
+    connect(event_manager::get_instance(),SIGNAL(open_plot_dialog()),this,SLOT(slot_open_plot_dialog()));
 
-        connect(event_manager::get_instance(),SIGNAL(disconnect_tcp_box(int)),this,SLOT(slot_box_disconnected(int)));
+    connect(this, SIGNAL(dialog_finished(double)),event_manager::get_instance(),SIGNAL(dialog_finished(double)));
+    connect(this, SIGNAL(dialog_finished(QString)),event_manager::get_instance(),SIGNAL(dialog_finished(QString)));
+    connect(this, SIGNAL(dialog_finished()),event_manager::get_instance(),SIGNAL(dialog_finished()));
 
-        // connect dialoges
-    }
+    connect(event_manager::get_instance(),SIGNAL(disconnect_tcp_box(int)),this,SLOT(slot_box_disconnected(int)));
+
+    // connect dialoges
+  }
+
+  abstract_configuration_widget *gui_system::do_get_configuration_widget()
+  {
+    return gui_system_cfg_wdgt;
+  }
+
+
 }

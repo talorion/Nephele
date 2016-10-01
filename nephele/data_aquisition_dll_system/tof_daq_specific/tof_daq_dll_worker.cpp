@@ -84,11 +84,14 @@ namespace talorion{
 
   void tof_daq_dll_worker::update()
   {
-    QStringList loc;
-    QVector<int> elm;
-    QVector<int> tpy;
-    int ret = m_dll->get_reg_user_data_sources(loc, elm, tpy);
-    if(ret == 4 ){
+    //QStringList loc;
+    //QVector<int> elm;
+    //QVector<int> tpy;
+    //int ret = m_dll->get_reg_user_data_sources(loc, elm, tpy);
+    QString path= entity_manager::get_instance()->get_user_data_path_component(m_entity);
+
+    int ret =m_dll->get_reg_user_data_desc(path, tw_registered_values);
+    if(ret == 4 || ret == 7){
         //m_dll->UpdateUserData();
         register_user_data();
         update_user_data();
@@ -188,28 +191,50 @@ namespace talorion{
 
     if(m_entity<0)
       return;
+
+    if(tw_registered_values.isEmpty())
+      return;
+
     QString path= entity_manager::get_instance()->get_user_data_path_component(m_entity);
 
     //QVector<double> Data(registered_values.size(), qQNaN());
-    QVector<double> Data(registered_values.size(), 0);
+    QVector<double> Data(tw_registered_values.size(), 0);
 
     if(registered_values.isEmpty()){
         return;
       }
 
     int i=0;
-    foreach (int var, registered_values) {
+    int index = 0;
+    QString previous_name("");
+    QString next_name("");
+    //foreach (int var, registered_values) {
+    QList<int> ent_wth_usr_dta= entity_manager::get_instance()->get_entities_with_userdata_components();
+    foreach (int var, ent_wth_usr_dta) {
         int component_id = entity_manager::get_instance()->get_userdata_component(var);
         tmp = entity_manager::get_instance()->getComponentDataForEntity(component_id,var);
         name =entity_manager::get_instance()->get_name_component(var);
+
+//        if(i>=registered_values.size()){
+//            next_name = "";
+//          }else{
+//            int next_var= registered_values.at(i+1);
+//            next_name =entity_manager::get_instance()->get_name_component(next_var);
+//          }
+
+        //index=i;
+        index = get_tw_index(previous_name, name, next_name);
+
         if(tmp.isValid()){
             tmp_dbl = tmp.toDouble(&ok);
-            if(ok && i< Data.size()){
+            if(ok && index< Data.size() && index >=0){
                 //Data.append(tmp_dbl);
-                Data.replace(i, tmp_dbl);
+                Data.replace(index, tmp_dbl);
               }
           }
         i++;
+        //previous_name=name;
+
       }
 
     if(Data.isEmpty()){
@@ -239,6 +264,43 @@ namespace talorion{
     if(!m_shmptr)
       m_shmptr = new shared_memory_pointer(NbrSamples, NbrPeaks, NbrSegments, NbrBufs, NbrWrites);
 
+  }
+
+  int tof_daq_dll_worker::get_tw_index(const QString &previous_name, const QString &name, const QString &next_name, int starting_index)
+  {
+    Q_UNUSED(starting_index)
+
+    Q_UNUSED(previous_name)
+//    int previous_index = 0;
+//    if(previous_name.isEmpty()){
+//        previous_index=-1;
+//      }else{
+//        previous_index = tw_registered_values.indexOf(previous_name);
+//      }
+
+    int index = -1;
+    if(name.isEmpty()){
+        index=-1;
+      }else{
+        index = tw_registered_values.indexOf(name);
+      }
+    return index;
+
+//    if(previous_index==index-1)
+//      return index;
+
+    Q_UNUSED(next_name)
+//    int next_index = 0;
+//    if(next_name.isEmpty()){
+//        next_index=-1;
+//      }else{
+//        next_index = tw_registered_values.indexOf(next_name);
+//      }
+
+//    if(index==next_index-1)
+//      return index;
+
+//    return -1;
   }
 
 }

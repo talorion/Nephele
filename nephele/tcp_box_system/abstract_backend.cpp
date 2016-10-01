@@ -11,7 +11,7 @@ namespace talorion {
         //connect(this,SIGNAL(newFlowcontroller(int)),event_manager::get_instance(),SIGNAL(newAnalogValue(int)));
 
         //connect(event_manager::get_instance(),SIGNAL(receivedData(QVariantMap,tcpDriverDataTypes::dataType, int)), this, SLOT(processData(QVariantMap,tcpDriverDataTypes::dataType, int)));
-        connect(event_manager::get_instance(),SIGNAL(error(QString)), this, SLOT(logError(QString)));
+        connect(event_manager::get_instance(),SIGNAL(error(QString,int)), this, SLOT(logError(QString,int)));
         connect(event_manager::get_instance(),SIGNAL(analogSet_component_changed(int)), this, SLOT(fcSetChangeProxy(int)));
         connect(event_manager::get_instance(),SIGNAL(digitalSet_component_changed(int)), this, SLOT(dvSetChangeProxy(int)));
 

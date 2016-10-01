@@ -67,6 +67,8 @@ namespace talorion {
         connect(this, SIGNAL(newTcpBox(int)),event_manager::get_instance(),SIGNAL(newTcpBox(int)));
         connect(this, SIGNAL(newQtScriptEngine(int)),event_manager::get_instance(),SIGNAL(newQtScriptEngine(int)));
         connect(this, SIGNAL(newTofDaqDll(int)),event_manager::get_instance(),SIGNAL(newTofDaqDll(int)));
+
+        connect(this, SIGNAL(newQuickScript(int)),event_manager::get_instance(),SIGNAL(newQuickScript(int)));
     }
 
     entity_manager::~entity_manager()
@@ -643,6 +645,22 @@ namespace talorion {
         return new_id;
     }
 
+    int entity_manager::create_scriptable_usr_data(QString nameVal, double setVal)
+    {
+      int new_id = createNewEntity();
+      createComponentAndAddTo( NAME_COMPONENT, new_id );
+      createComponentAndAddTo(USER_DATA_COMPONENT, new_id);
+      createComponentAndAddTo( ANALOG_ACT_VALUE_COMPONENT, new_id );
+      createComponentAndAddTo(SERIAL_VERSION_UID_COMPONENT, new_id);
+
+      setComponentDataForEntity(NAME_COMPONENT,               new_id, nameVal);
+      setComponentDataForEntity(USER_DATA_COMPONENT, new_id, ANALOG_ACT_VALUE_COMPONENT);
+      setComponentDataForEntity(ANALOG_ACT_VALUE_COMPONENT,  new_id, setVal);
+      setComponentDataForEntity(SERIAL_VERSION_UID_COMPONENT, new_id, get_ScriptableUsrData_uid());
+
+      return new_id;
+    }
+
     int entity_manager::createScriptableObject(QString nameVal, abstract_scriptable_object *comp)
     {
         int new_id = createNewEntity();
@@ -659,6 +677,22 @@ namespace talorion {
 
         emit newScriptableObject(new_id);
         return new_id;
+    }
+
+    int entity_manager::createQuickScript(QString nameVal, QString path)
+    {
+      int new_id = createNewEntity();
+      createComponentAndAddTo( NAME_COMPONENT, new_id );
+      createComponentAndAddTo(USER_DATA_PATH_COMPONENT, new_id);
+      createComponentAndAddTo(SERIAL_VERSION_UID_COMPONENT, new_id);
+
+      setComponentDataForEntity(NAME_COMPONENT,               new_id, nameVal);
+      setComponentDataForEntity(USER_DATA_PATH_COMPONENT, new_id, path);
+      setComponentDataForEntity(SERIAL_VERSION_UID_COMPONENT, new_id, get_QuickScript_uid());
+
+      emit newQuickScript(new_id);
+
+      return new_id;
     }
 
     bool entity_manager::is_analog_value(int entity) const

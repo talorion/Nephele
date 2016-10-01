@@ -34,6 +34,8 @@ namespace talorion {
         void newQtScriptEngine(int);
         void newTofDaqDll(int);
 
+        void newQuickScript(int);
+
         void application_aboutToQuit();
 
         void connect_tcp_box(int );
@@ -75,6 +77,7 @@ namespace talorion {
         void newDigitalOutputValue(int);
         void newDigitalValue(int);
         void error(QString);
+        void error(QString, int);
         void fatal(QString);
 
         void open_numeric_dialog();

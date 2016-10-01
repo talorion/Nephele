@@ -10,7 +10,8 @@ namespace talorion {
         analog(),
         actbuffer(),
         setbuffer(),
-        block_next_read(false)
+        block_next_read(false),
+        m_box_id(-1)
     {
 //        connect(this,SIGNAL(avSetChangeCommand(QByteArray)),event_manager::get_instance(),SIGNAL(avSetChangeCommand(QByteArray)));
 //        connect(this,SIGNAL(newAnalogValue(int)),event_manager::get_instance(),SIGNAL(newAnalogValue(int)));
@@ -36,6 +37,8 @@ namespace talorion {
 
     void qvmbackend::processData(QVariantMap desc, tcpDriverDataTypes::dataType type, int box_id)
     {
+
+        m_box_id=box_id;
         if(block_next_read){
             block_next_read = false;
             return;
@@ -110,8 +113,9 @@ namespace talorion {
         }
     }
 
-    void qvmbackend::logError(QString errorString)
+    void qvmbackend::logError(QString errorString, int source)
     {
+        if(m_box_id==source)
         qDebug() << errorString << endl;
     }
 

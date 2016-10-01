@@ -16,6 +16,7 @@ typedef qint64 __int64;
 #include <TofDaqDll.h>
 
 
+
 namespace talorion {
 
 class shared_memory_descriptor:public QObject

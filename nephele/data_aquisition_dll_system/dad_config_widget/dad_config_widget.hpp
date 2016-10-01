@@ -26,7 +26,6 @@ namespace talorion {
         void change_user_data_updaterate_component(int , int );
         void change_user_data_path_component(int , QString );
 
-
     private:
         virtual void do_refresh_data() Q_DECL_OVERRIDE;
 

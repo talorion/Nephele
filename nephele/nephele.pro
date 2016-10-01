@@ -8,11 +8,16 @@ QT       += core gui script printsupport network scripttools
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
-greaterThan(QT_MAJOR_VERSION, 4): RC_ICONS += nephele.ico
-lessThan(QT_MAJOR_VERSION, 5): RC_FILE = nephele.rc
+win32: {
+RC_FILE = nephele.rc
+}
+
+#greaterThan(QT_MAJOR_VERSION, 4): RC_ICONS += nephele.ico
+#lessThan(QT_MAJOR_VERSION, 5): RC_FILE = nephele.rc
 
 RESOURCES += \
     Resources.qrc
+
 
 TARGET = nephele
 TEMPLATE = app
@@ -123,7 +128,11 @@ SOURCES += main.cpp\
     data_tools_dll_system/data_tools_dll_system.cpp \
     data_tools_dll_system/twtoolswrapper.cpp \
     data_tools_dll_system/dtd_config_widget/dtd_config_widget.cpp \
-    power_supply_dll_system/psd_config_widget/psd_config_widget.cpp
+    power_supply_dll_system/psd_config_widget/psd_config_widget.cpp \
+    gui_system/quick_script_widget/quick_script_widget.cpp \
+    gui_system/gui_system_config_widget/gui_system_config_widget.cpp \
+    script_system/script_handler/scriptable_usr_data_handler.cpp \
+    script_system/script_handler/script_load_handler.cpp
 
 HEADERS  += version.hpp \
     nephele.rc \
@@ -183,7 +192,11 @@ HEADERS  += version.hpp \
     data_tools_dll_system/data_tools_dll_system.hpp \
     data_tools_dll_system/twtoolswrapper.h \
     data_tools_dll_system/dtd_config_widget/dtd_config_widget.hpp \
-    power_supply_dll_system/psd_config_widget/psd_config_widget.hpp
+    power_supply_dll_system/psd_config_widget/psd_config_widget.hpp \
+    gui_system/quick_script_widget/quick_script_widget.hpp \
+    gui_system/gui_system_config_widget/gui_system_config_widget.hpp \
+    script_system/script_handler/scriptable_usr_data_handler.hpp \
+    script_system/script_handler/script_load_handler.hpp
 
 
 win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../qcustomplot/release/ -lqcustomplot
@@ -207,6 +220,9 @@ win32:      DEPENDPATH += $$PWD/../../../libs/TofDaq_1.97_API/include
 
 win32-g++:  INCLUDEPATH += $$PWD/../../../libs/TofDaq_1.97_API/include
 win32-g++:  DEPENDPATH += $$PWD/../../../libs/TofDaq_1.97_API/include
+
+win32-g++: INCLUDEPATH += $$PWD/../../../../Tofwerk/TofDaq_1.97_API/include
+win32-g++: DEPENDPATH += $$PWD/../../../../Tofwerk/TofDaq_1.97_API/include
 
 win32-g++: INCLUDEPATH += $$PWD/../../../../../../Tofwerk/TofDaq_1.97_API/include
 win32-g++: DEPENDPATH += $$PWD/../../../../../../Tofwerk/TofDaq_1.97_API/include

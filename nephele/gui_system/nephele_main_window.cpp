@@ -16,6 +16,7 @@
 #include "tcp_box_view/digital_view/digital_view.hpp"
 #include "script_editor/script_editor_window.hpp"
 #include "settings_dialog/settings_dialog.hpp"
+#include "quick_script_widget/quick_script_widget.hpp"
 
 #include "version.hpp"
 
@@ -49,7 +50,8 @@ namespace talorion {
         exitAct (NULL),
         aboutAct(NULL),
         central_wdgt(NULL),
-        cfg_hdl(NULL)
+        cfg_hdl(NULL),
+        qs_widget(NULL)
     {
 
 //        connect(event_manager::get_instance(),SIGNAL(newAnalogInputValue(int)),this, SLOT(addAIV(int)));
@@ -96,10 +98,20 @@ namespace talorion {
         //mainLayout->addWidget(response,2,0,1,2);
 
         central_wdgt = new QWidget();
-        //central_wdgt->setLayout(mainLayout);
 
         setWindowTitle("Nephele");
+
+        //setCentralWidget(central_wdgt);
         setCentralWidget(central_wdgt);
+
+        qs_widget = new quick_script_widget();
+        qs_widget->setWindowTitle("Quick Scripts");
+        QDockWidget *dock = new QDockWidget(qs_widget->windowTitle(),this);
+        dock->setWidget(qs_widget);
+        dock->setObjectName("QuickScriptsdockWidget");
+        //dock->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
+        //if(boxes.isEmpty())
+        addDockWidget(Qt::TopDockWidgetArea, dock, Qt::Vertical);
 
         createActions();
         createMenus();
@@ -163,8 +175,11 @@ namespace talorion {
             //mainLayout->addWidget(tmp);
             //addDockWidget(Qt::RightDockWidgetArea, tmp);
             //viewMenu->addAction(tmp->toggleViewAction());
+            QString boxname =  entity_manager::get_instance()->get_name_component(entity);
+
             QDockWidget *dock = new QDockWidget(tmp->windowTitle(),this);
             dock->setWidget(tmp);
+            dock->setObjectName(boxname+"dockWidget");
             //dock->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
             //if(boxes.isEmpty())
                 addDockWidget(Qt::TopDockWidgetArea, dock, Qt::Vertical);

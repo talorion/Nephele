@@ -19,6 +19,7 @@ namespace talorion {
     class script_editor_window;
     class settings_dialog;
     class config_file;
+    class quick_script_widget;
 
     class nephele_main_window : public QMainWindow
     {
@@ -89,6 +90,8 @@ namespace talorion {
         QWidget *central_wdgt;
 
         config_file *cfg_hdl;
+
+        quick_script_widget* qs_widget;
 
 
     private slots:

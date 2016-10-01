@@ -46,6 +46,8 @@ namespace talorion{
         //        void swap_shmdesc();
         //        void swap_shmptr();
 
+        int get_tw_index(const QString& previous_name, const QString& name, const QString& next_name, int starting_index=0);
+
     private:
         shared_memory_descriptor* m_shmdesc;
         //        shared_memory_descriptor* current_shmdesc;
@@ -62,6 +64,7 @@ namespace talorion{
         QTimer *timer;
 
         QList<int> registered_values;
+        QStringList tw_registered_values;
 
         bool values_registered;
         bool fatal_emited;

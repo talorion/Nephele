@@ -24,6 +24,9 @@ int main(int argc, char *argv[])
 
     int ret = -1;
 
+
+   qDebug()<<QUuid::createUuid();
+
     try{
         QString v = "0.1.0."+QString::number(BUILD);
         qDebug()<<v;
@@ -70,5 +73,6 @@ int main(int argc, char *argv[])
         qDebug()<<"OMG! an unexpected exception has been caught";
         ret = -5;
     }
+
     return ret;
 }

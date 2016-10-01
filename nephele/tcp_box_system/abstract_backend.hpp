@@ -27,7 +27,7 @@ namespace talorion {
 
     public slots:
         virtual void processData(QVariantMap desc, tcpDriverDataTypes::dataType type, int box_id)=0;
-        virtual void logError(QString errorString)=0;
+        virtual void logError(QString errorString, int source)=0;
 
     private slots:
         virtual void fcSetChangeProxy(int entity)=0;

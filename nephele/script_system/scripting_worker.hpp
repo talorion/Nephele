@@ -13,6 +13,8 @@
 #include "script_handler/script_util_handler.hpp"
 #include "script_handler/script_log_handler.hpp"
 #include "script_handler/script_daq_handler.hpp"
+#include "script_handler/scriptable_usr_data_handler.hpp"
+#include "script_handler/script_load_handler.hpp"
 
 namespace talorion {
 
@@ -54,7 +56,8 @@ namespace talorion {
         script_util_handler* m_util_hdl;
         script_log_handler* m_log_hdl;
         script_daq_handler* m_daq_hdl;
-
+        scriptable_usr_data_handler* m_scrp_usr_dta;
+        script_load_handler* mscrpt_lod_hdl;
 //        QScriptValue m_actHdl;
 //        QScriptValue m_setHdl;
 //        QScriptValue m_diagHdl;

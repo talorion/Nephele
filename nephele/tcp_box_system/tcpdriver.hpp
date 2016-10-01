@@ -49,7 +49,10 @@ namespace talorion {
         bool waitTransmissionFinish();
         void sendCommand(QByteArray cmd, tcpDriverDataTypes::dataType type);
 
+        void remove_all_values();
+
     private slots:
+        void tcpSocket_connected();
         void tcpSocket_disconnected();
 
     private:

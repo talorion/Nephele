@@ -86,6 +86,9 @@ namespace talorion {
 
     void tcp_box_view::disconnect_tcp_box(int entity)
     {
+        qDebug() << "disconnect_tcp_box()!";
+        qDebug() << "removing all values!";
+
       if(belogs_to_box(entity)){
 
           QMap<int, analogView* >::iterator ait;

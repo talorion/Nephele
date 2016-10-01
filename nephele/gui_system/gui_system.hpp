@@ -4,9 +4,13 @@
 #include <QObject>
 #include <core/abstract_system.hpp>
 
+
+
 namespace talorion{
 
     class nephele_main_window;
+
+    class gui_system_config_widget;
 
     class gui_system : public QObject, public abstract_system
     {
@@ -33,10 +37,13 @@ namespace talorion{
     private:
         virtual void do_start_system() Q_DECL_OVERRIDE;
         virtual QString do_get_system_name() Q_DECL_OVERRIDE {return "gui_system";}
-        virtual abstract_configuration_widget* do_get_configuration_widget() Q_DECL_OVERRIDE{return NULL;}
+        virtual abstract_configuration_widget* do_get_configuration_widget() Q_DECL_OVERRIDE;
 
     private:
         nephele_main_window* window;
+        gui_system_config_widget* gui_system_cfg_wdgt;
+
+
     };
 }
 

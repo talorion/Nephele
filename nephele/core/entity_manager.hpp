@@ -115,8 +115,12 @@ namespace talorion {
         int createNewTcpBox(QString nameVal="New Box", QString ip="localhost", quint16 port=2701);
         int createQtScriptEngine(QString nameVal="Qt Script Engine", QScriptEngine* engine=NULL);
         int createTofDaqDll(QString nameVal="TofDaqDll", QString pathVal="C:\\Tofwerk\\TofDaq_1.97_noHW\\TofDaqDll.dll", int timeout = 5000, int updaterate=1000, QString user_data_path="/USER_DATA");
+        int create_scriptable_usr_data(QString nameVal, double setval=0.0);
+
 
         int createScriptableObject(QString nameVal, abstract_scriptable_object* comp);
+
+        int createQuickScript(QString nameVal, QString path);
         //===
 
         bool is_analog_value(int entity) const;
@@ -137,6 +141,9 @@ namespace talorion {
         QUuid get_Qt_Script_Engine_uid()const   {return ("{3a31ae25-c7f4-4e79-93c4-2a4f7b675298}");}
         QUuid get_TofDaqDll_uid()const          {return ("{e16e6a36-4f76-4746-995d-62996c86f74a}");}
         QUuid get_ScriptableObject_uid()const   {return ("{592400d5-7684-4c31-9bfa-7cd806c40589}");}
+        QUuid get_QuickScript_uid()const        {return ("{9ed7ca3b-4304-465c-9fe9-c5c6ba483a6c}");}
+        QUuid get_ScriptableUsrData_uid()const   {return ("{d9b14945-2e1a-438c-b647-2ca630ed5558}");}
+
         //
 
         QList<int> get_all_tcpBoxes()const{return get_entity_by_serialVersionUID(get_TcpBox_uid());}
@@ -153,6 +160,8 @@ namespace talorion {
         QList<int> get_all_Qt_Script_Engines()const{return get_entity_by_serialVersionUID(get_Qt_Script_Engine_uid());}
         QList<int> get_all_TofDaqDlls()const{return get_entity_by_serialVersionUID(get_TofDaqDll_uid());}
         QList<int> get_all_ScriptableObjects()const{return get_entity_by_serialVersionUID(get_ScriptableObject_uid());}
+
+        QList<int> get_all_quickScripts()const{return get_entity_by_serialVersionUID(get_QuickScript_uid());}
 
         QList<int> get_entities_with_scriptable_components()const{return get_entity_by_component(SCRIPTABLE_OBJECT_COMPONENT);}
         QList<int> get_entities_with_userdata_components()const{return get_entity_by_component(USER_DATA_COMPONENT);}
@@ -204,6 +213,8 @@ namespace talorion {
         void slot_connection_state_component(int entity, bool value);
         void slot_change_tcp_box_backend_component(int entity, int value);
 
+        void slot_change_userDataPath_component(int entity, QString value);
+
     signals:
         void newSystem(int entity);
 
@@ -239,6 +250,8 @@ namespace talorion {
         void newTofDaqDll(int);
 
         void newScriptableObject(int);
+
+        void newQuickScript(int);
 
         //void register_scritable_component(int);
         //void unregister_scritable_component(int);
@@ -290,7 +303,7 @@ namespace talorion {
 
         void slot_change_updaterate_component(int entity, int value);
 
-        void slot_change_userDataPath_component(int entity, QString value);
+
 
     private:
 
