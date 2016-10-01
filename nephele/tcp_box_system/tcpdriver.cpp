@@ -182,7 +182,8 @@ void tcpDriver::tcpSocket_connected()
 void tcpDriver::tcpSocket_disconnected()
 {
     qDebug() << "tcpSocket_disconnected()!";
-    tcpSocket->abort();
+    if(tcpSocket->state() == QAbstractSocket::ConnectedState)
+        tcpSocket->abort();
     timeoutTimer->stop();
     pollTimer->stop();
     ongoingRequest = false;
@@ -251,6 +252,7 @@ void tcpDriver::parsePackage()
             ongoingRequest = false;
             pollTimer->start();
             responseCounter++;
+            delete jsonerror;
         }
     }
     else if (transmissionContext == tcpDriverDataTypes::SETDATA)
