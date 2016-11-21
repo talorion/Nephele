@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui script printsupport network scripttools
+QT       += core gui script printsupport network scripttools serialport
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -132,7 +132,9 @@ SOURCES += main.cpp\
     gui_system/quick_script_widget/quick_script_widget.cpp \
     gui_system/gui_system_config_widget/gui_system_config_widget.cpp \
     script_system/script_handler/scriptable_usr_data_handler.cpp \
-    script_system/script_handler/script_load_handler.cpp
+    script_system/script_handler/script_load_handler.cpp \
+    ../qcustomplot/qcustomplot.cpp \
+    tcp_box_system/arduino_backend.cpp
 
 HEADERS  += version.hpp \
     nephele.rc \
@@ -196,7 +198,10 @@ HEADERS  += version.hpp \
     gui_system/quick_script_widget/quick_script_widget.hpp \
     gui_system/gui_system_config_widget/gui_system_config_widget.hpp \
     script_system/script_handler/scriptable_usr_data_handler.hpp \
-    script_system/script_handler/script_load_handler.hpp
+    script_system/script_handler/script_load_handler.hpp \
+    ../qcustomplot/qcustomplot.hpp \
+    data_aquisition_dll_system/tof_daq_specific/TofDaqDll.h \
+    tcp_box_system/arduino_backend.hpp
 
 
 win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../qcustomplot/release/ -lqcustomplot
@@ -236,6 +241,9 @@ unix: DEPENDPATH += $$PWD/../../../../Apis/TofDaq_1.95_API/include
 DISTFILES += \
     nephele.ico \
     build_number.txt
+
+SUBDIRS += \
+    ../qcustomplot/qcustomplot.pro
 
 
 
