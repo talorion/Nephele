@@ -134,7 +134,7 @@ SOURCES += main.cpp\
     script_system/script_handler/scriptable_usr_data_handler.cpp \
     script_system/script_handler/script_load_handler.cpp \
     ../qcustomplot/qcustomplot.cpp \
-    tcp_box_system/arduino_backend.cpp
+    tcp_box_system/serialdriver.cpp
 
 HEADERS  += version.hpp \
     nephele.rc \
@@ -201,7 +201,7 @@ HEADERS  += version.hpp \
     script_system/script_handler/script_load_handler.hpp \
     ../qcustomplot/qcustomplot.hpp \
     data_aquisition_dll_system/tof_daq_specific/TofDaqDll.h \
-    tcp_box_system/arduino_backend.hpp
+    tcp_box_system/serialdriver.hpp
 
 
 win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../qcustomplot/release/ -lqcustomplot
