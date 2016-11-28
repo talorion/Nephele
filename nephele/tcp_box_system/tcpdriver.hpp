@@ -1,6 +1,8 @@
 #ifndef TCPDRIVER_H
 #define TCPDRIVER_H
 
+#include <QtSerialPort/QSerialPort>
+
 #include <QTcpSocket>
 #include <QJsonDocument>
 #include <QJsonObject>
@@ -16,7 +18,6 @@
 namespace talorion {
 
     class abstract_backend;
-
     class tcpDriver : public QObject
     {
         Q_OBJECT
@@ -57,16 +58,21 @@ namespace talorion {
 
     private:
         QTcpSocket* tcpSocket;
+        QSerialPort* serialSocket;
         tcpDriverDataTypes::dataType transmissionContext;
         QByteArray recBuf;
         QByteArray sendBuf;
         QByteArray getInfoCommand_val;
         QByteArray getMinimalSetActCommand_val;
+        int commandCounter;
+        bool isScope;
+        int ScopeNumberOfMeasurements;
         int curlyOpen, curlyClose;
         QTimer* timeoutTimer;
         QTimer* pollTimer;
         QString lastIP;
         qint32  lastPort;
+        qint32 SerialBaud;
         bool ongoingRequest;
         int requestCounter;
         int responseCounter;
@@ -81,6 +87,7 @@ namespace talorion {
         void poll();
         void parsePackage();
         void timeoutCheck();
+        void serialError(QSerialPort::SerialPortError seriualErr);
         void tcpError(QAbstractSocket::SocketError tcpErr);
     };
 }

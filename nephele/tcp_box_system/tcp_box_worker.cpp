@@ -7,6 +7,9 @@
 #include "qvmbackend.hpp"
 #include "flowcontrollerbackend.h"
 #include "rf_backend.hpp"
+#include "arduino_backend.hpp"
+
+#include <QtSerialPort/QSerialPort>
 
 namespace talorion {
 
@@ -54,15 +57,15 @@ namespace talorion {
     void tcp_box_worker::slot_connect_tcp_box(int entity)
     {
         int mode = entity_manager::get_instance()->get_tcp_box_backend_component(entity);
-
         QMap<int, tcpDriver*>::iterator it = boxes.find(entity);
         if(it == boxes.end()){
 
             switch(mode){
 
-            case 0:{connect_to_fc_box(entity);break;}
+            case 0:{connect_to_rf_box(entity);break;}
             case 1:{connect_to_av_box(entity);break;}
-            case 2:{connect_to_rf_box(entity);break;}
+            case 2:{connect_to_fc_box(entity);break;}
+            //case 3:{connect_to_arduino(entity);break;}
             }
 
             //            if(mode == 0)
@@ -85,7 +88,6 @@ namespace talorion {
         QMap<int, tcpDriver*>::iterator it = boxes.find(entity);
         if(it == boxes.end())
             return;
-
         tcpDriver* dev1 = it.value();
         if(!dev1)
             return;
@@ -98,26 +100,12 @@ namespace talorion {
     void tcp_box_worker::slot_tcp_box_disconnected(int entity)
     {
         Q_UNUSED(entity);
-//      foreach(int val, entity_manager::get_instance()->get_all_DValues()){
-//          int box_id= entity_manager::get_instance()->get_box_id_component(val);
-//          if(box_id == entity)
-//            entity_manager::get_instance()->delete_entity(val);
-//        }
-
-//      foreach(int val, entity_manager::get_instance()->get_all_Values()){
-//          int box_id= entity_manager::get_instance()->get_box_id_component(val);
-//          if(box_id == entity)
-//            entity_manager::get_instance()->delete_entity(val);
-//        }
-
-
-//      entity_manager::get_instance()->slot_connection_state_component(entity, false);
-//      emit tcp_box_disconnected(entity);
     }
 
     void tcp_box_worker::reconnect_all_boxes()
     {
-      foreach (int box, entity_manager::get_instance()->get_all_tcpBoxes()) {
+        qDebug() << "reconnect_all_boxes()....";
+        foreach (int box, entity_manager::get_instance()->get_all_tcpBoxes()) {
           bool is_box_connected = entity_manager::get_instance()->get_connection_state_component(box);
           if(!is_box_connected)
             slot_connect_tcp_box(box);
@@ -131,25 +119,36 @@ namespace talorion {
 
     void tcp_box_worker::connect_to_fc_box(int box_id)
     {
-        qDebug()<<"creating fc box";
-
         flowControllerBackend* back = new flowControllerBackend();
 
         //int box_id = entity_manager::get_instance()->createNewTcpBox("new TCP Box", ip, port);
         QString ip = entity_manager::get_instance()->get_ip_address_component(box_id);
         quint16 port = entity_manager::get_instance()->get_port_component(box_id);
 
-        tcpDriver* dev1;
-        dev1 = new tcpDriver(box_id, "uibkafc getAll","uibkafc getAll", back); // for AFC Board
-        connect(dev1, SIGNAL(disconnected(int)),this,SLOT(slot_tcp_box_disconnected(int)));
-        bool co = dev1->connectDevice(ip, port, 1000);
-
+        bool co = false;
+        if (ip.startsWith("COM")) {
+            qDebug() << "SERIAL: creating fc box";
+            tcpDriver* dev1;
+            dev1 = new tcpDriver(box_id, "Arduino","getAll", back); // for AFC Board
+            connect(dev1, SIGNAL(disconnected(int)),this,SLOT(slot_tcp_box_disconnected(int)));
+            co = dev1->connectDevice(ip, port, 1500);
+            boxes.insert(box_id,dev1);
+        }
+        else
+        {
+            qDebug()<<"creating fc box";
+            tcpDriver* dev1;
+            dev1 = new tcpDriver(box_id, "uibkafc getAll","uibkafc getAll", back); // for AFC Board
+            connect(dev1, SIGNAL(disconnected(int)),this,SLOT(slot_tcp_box_disconnected(int)));
+            co = dev1->connectDevice(ip, port, 2000);
+            if(co)
+                boxes.insert(box_id,dev1);
+            else
+                delete dev1;
+        }
         //entity_manager::get_instance()->slot_connection_state_component(box_id, co);
 
-        if(co)
-            boxes.insert(box_id,dev1);
-        else
-            delete dev1;
+
     }
 
     void tcp_box_worker::connect_to_av_box(int box_id)
@@ -175,24 +174,39 @@ namespace talorion {
 
     void tcp_box_worker::connect_to_rf_box(int box_id)
     {
-        rf_backend* back = new rf_backend();
+        arduino_backend* back = new arduino_backend();
         qDebug()<<"creating rf box";
 
         //int box_id = entity_manager::get_instance()->createNewTcpBox("new TCP Box", ip, port);
         QString ip = entity_manager::get_instance()->get_ip_address_component(box_id);
         quint16 port = entity_manager::get_instance()->get_port_component(box_id);
 
+
+        bool co = false;
+        if (ip.startsWith("COM")) {
+            qDebug() << "SERIAL: creating rf box";
+            tcpDriver* dev1;
+            dev1 = new tcpDriver(box_id, "Arduino","getAll", back); // for AFC Board
+            connect(dev1, SIGNAL(disconnected(int)),this,SLOT(slot_tcp_box_disconnected(int)));
+            co = dev1->connectDevice(ip, port, 1500);
+            boxes.insert(box_id,dev1);
+        }
+        else
+        {
         tcpDriver* dev1;
         dev1 = new tcpDriver(box_id, "uibk getAll","uibk getAll", back); // for AFC Board
         bool co = dev1->connectDevice(ip, port, 1000);
-
-        //entity_manager::get_instance()->slot_connection_state_component(box_id, co);
 
         if(co)
             boxes.insert(box_id,dev1);
         else
           delete dev1;
+        //entity_manager::get_instance()->slot_connection_state_component(box_id, co);
+        }
+
     }
+
+
 
     void tcp_box_worker::reconnect_tcp_box(int box_id)
     {
@@ -206,6 +220,8 @@ namespace talorion {
 
       QString ip = entity_manager::get_instance()->get_ip_address_component(box_id);
       quint16 port = entity_manager::get_instance()->get_port_component(box_id);
+
+      qDebug() << "----> Box" <<box_id << " IP: "<< ip<<" AND "<<port;
 
       entity_manager::get_instance()->slot_connection_state_component(box_id, false);
       bool co = dev1->connectDevice(ip, port);

@@ -1,8 +1,5 @@
 *.user
+build-*
 nephele/build.h
 nephele/build_number.txt
-nephele/build.h
-nephele/build.h
-nephele/build.h
 nephele/build_number.h
-nephele/build_number.txt
