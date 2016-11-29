@@ -1,6 +1,8 @@
 #ifndef TALORION_TCP_BOX_WORKER_HPP
 #define TALORION_TCP_BOX_WORKER_HPP
 
+#include <QtSerialPort/QSerialPort>
+
 #include <QObject>
 #include <QMap>
 #include <QTimer>
@@ -10,7 +12,6 @@
 namespace talorion {
 
     class tcpDriver;
-
     class tcp_box_worker : public QObject
     {
         Q_OBJECT
@@ -36,8 +37,8 @@ namespace talorion {
         void connect_to_fc_box(int box_id);
         void connect_to_av_box(int box_id);
         void connect_to_rf_box(int box_id);
-
         void reconnect_tcp_box(int box_id);
+
     private:
         int curr_box_id;
         QMap<int, tcpDriver*> boxes;

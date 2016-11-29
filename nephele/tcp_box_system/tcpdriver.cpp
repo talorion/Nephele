@@ -5,27 +5,33 @@
 
 #include <QDebug>
 #include <QHostAddress>
+#include <QtSerialPort/QSerialPort>
 
 #include "flowcontrollerbackend.h"
 
-#define POLLINTERVAL_MS 10
+#define POLLINTERVAL_MS 50
 
 namespace talorion {
 
 tcpDriver::tcpDriver(int id, QByteArray getInfoCommand, QByteArray getMinimalSetActCommand, abstract_backend* bk, QObject *par):
     QObject(par),
     tcpSocket(NULL),
+    serialSocket(NULL),
     transmissionContext(),
     recBuf(),
     sendBuf(),
     getInfoCommand_val(),
     getMinimalSetActCommand_val(),
+    commandCounter(0),
+    isScope(false),
+    ScopeNumberOfMeasurements(6),
     curlyOpen(0),
     curlyClose(0),
     timeoutTimer(),
     pollTimer(),
     lastIP(),
     lastPort(0),
+    SerialBaud(QSerialPort::Baud9600),
     ongoingRequest(false),
     requestCounter(0),
     responseCounter(0),
@@ -37,8 +43,10 @@ tcpDriver::tcpDriver(int id, QByteArray getInfoCommand, QByteArray getMinimalSet
     qDebug()<<"creating box"<<box_id;
 
     if(!bk)
+    {
         m_back= new flowControllerBackend();
-
+        qDebug() << "no backend defined -> used FC...";
+    }
     connect(this, SIGNAL(receivedData(QVariantMap,tcpDriverDataTypes::dataType,int)),m_back,SLOT(processData(QVariantMap,tcpDriverDataTypes::dataType,int)));
     connect(m_back, SIGNAL(fcSetChangeCommand(QByteArray)),this,SLOT(setDataCommand(QByteArray)));
 
@@ -51,24 +59,46 @@ tcpDriver::tcpDriver(int id, QByteArray getInfoCommand, QByteArray getMinimalSet
     connect(this, SIGNAL(disconnected(int)), event_manager::get_instance(),SIGNAL(disconnect_tcp_box(int)));
 
 
-    getInfoCommand_val = getInfoCommand;
-    getMinimalSetActCommand_val = getMinimalSetActCommand;
-    tcpSocket = new QTcpSocket();
-    queue = new tcpCommandQueue();
-    connect(tcpSocket, SIGNAL(readyRead()), this, SLOT(parsePackage()));
-    connect(tcpSocket, SIGNAL(error(QAbstractSocket::SocketError)), this, SLOT(tcpError(QAbstractSocket::SocketError)));
-    connect(tcpSocket, SIGNAL(disconnected()), this, SLOT(tcpSocket_disconnected()));
-    connect(tcpSocket, SIGNAL(connected()), this, SLOT(tcpSocket_connected()));
-    timeoutTimer = new QTimer();
-    timeoutTimer->setSingleShot(true);
-    connect(timeoutTimer, SIGNAL(timeout()),this,SLOT(timeoutCheck()));
-
     pollTimer = new QTimer();
     pollTimer->setInterval(POLLINTERVAL_MS);
     pollTimer->setSingleShot(true);
     requestCounter = 0;
     responseCounter = 0;
     connect(pollTimer,SIGNAL(timeout()),this,SLOT(poll()));
+
+    timeoutTimer = new QTimer();
+    timeoutTimer->setSingleShot(true);
+    connect(timeoutTimer, SIGNAL(timeout()),this,SLOT(timeoutCheck()));
+
+
+    getInfoCommand_val = getInfoCommand;
+    getMinimalSetActCommand_val = getMinimalSetActCommand;
+
+    QString ip = entity_manager::get_instance()->get_ip_address_component(box_id);
+    if (ip.startsWith("COM")) {
+        serialSocket = new QSerialPort();
+        queue = new tcpCommandQueue();
+        connect(serialSocket, SIGNAL(readyRead()), this, SLOT(parsePackage()));
+        connect(serialSocket, SIGNAL(error(QSerialPort::SerialPortError)), this, SLOT(serialError(QSerialPort::SerialPortError)));
+        serialSocket->setPortName(ip);
+        serialSocket->setBaudRate(SerialBaud);
+        serialSocket->setDataBits(serialSocket->Data8);
+        bool opened = serialSocket->open(QIODevice::ReadWrite);
+        //connect(serialSocket, SIGNAL(connected()), this, SLOT(tcpSocket_connected()));
+        if (opened) this->tcpSocket_connected();
+    } else {
+        tcpSocket = new QTcpSocket();
+        queue = new tcpCommandQueue();
+        connect(tcpSocket, SIGNAL(readyRead()), this, SLOT(parsePackage()));
+        connect(tcpSocket, SIGNAL(error(QAbstractSocket::SocketError)), this, SLOT(tcpError(QAbstractSocket::SocketError)));
+        connect(tcpSocket, SIGNAL(disconnected()), this, SLOT(tcpSocket_disconnected()));
+        connect(tcpSocket, SIGNAL(connected()), this, SLOT(tcpSocket_connected()));
+        }
+
+
+
+
+
 }
 
 tcpDriver::~tcpDriver()
@@ -88,40 +118,45 @@ bool tcpDriver::connectDevice(QString ip, qint32 port, int timeoutMs)
 
     timeoutTimer->setInterval(timeoutMs);
 
-    this->tcpSocket->connectToHost(ip,port);
-//    if(tcpSocket->waitForConnected(timeoutMs))
-//    {
+    if (ip.startsWith("COM"))
+    {
+        QSerialPort* ser1;
+        ser1 = new QSerialPort(ip);
+        ser1->setPortName(ip);
+        ser1->setBaudRate(SerialBaud);
+        ser1->setDataBits(ser1->Data8);
+        if (ser1->isOpen()) return true; else return false;
+    }
+    else
+    {
+        this->tcpSocket->connectToHost(ip,port);
         lastIP=ip;
         lastPort=port;
-        //        //queue->pushFirst("uibkafc getAll", tcpDriverDataTypes::ALLDATA);
-        //        queue->pushFirst(getInfoCommand_val, tcpDriverDataTypes::ALLDATA);
-        //        pollTimer->start();
-
         return true;
-//    }
-    //emit error("Connection Timeout to " + ip + ":" + QString::number(port),getBox_id());
-    //qDebug()<<"Connection Timeout to " + ip + ":" + QString::number(port),getBox_id();
-
-//    return false;
+    }
 }
 
 void tcpDriver::disconect()
 {
-    if(!tcpSocket)
-        return;
-    tcpSocket->close();
+    qDebug() << "disconnect()";
+
+    if(this->tcpSocket) this->tcpSocket->close();
+
+    if(this->serialSocket) this->serialSocket->close();
+
 }
 
 
 void tcpDriver::setDataCommand(QByteArray cmd)
 {
-    //qDebug()<<"sending "<<getBox_id()<<cmd<<"to "<<tcpSocket->peerAddress()<<tcpSocket->peerPort()<<"from "<<tcpSocket->localAddress()<<tcpSocket->localPort();
+    //qDebug() << "setDataCommand"<<cmd<<"to"<<getBox_id();
     tcpCommand* command = new tcpCommand(cmd,tcpDriverDataTypes::SETDATA);
     queue->pushLast(command);
 }
 
 void tcpDriver::customCommand(const QString& cm)
 {
+    //qDebug() << "customCommand"<<cm<<"to"<<getBox_id();
     QByteArray cmd = cm.toLocal8Bit();
     tcpCommand* command = new tcpCommand(cmd,tcpDriverDataTypes::CUSTOMCOMMAND);
     queue->pushLast(command);
@@ -129,9 +164,8 @@ void tcpDriver::customCommand(const QString& cm)
 
 void tcpDriver::sendCommand(QByteArray cmd, tcpDriverDataTypes::dataType type)
 {
-    //qDebug()<<getBox_id()<<cmd;
-    QMutexLocker locker(&mutex);
 
+    QMutexLocker locker(&mutex);
     recheckConnection();
     recBuf = "";
     curlyOpen = 0;
@@ -139,7 +173,14 @@ void tcpDriver::sendCommand(QByteArray cmd, tcpDriverDataTypes::dataType type)
     ongoingRequest = true;
     timeoutTimer->start();
 
-    tcpSocket->write(cmd.trimmed().append("\r\n"));
+    if (tcpSocket){
+        tcpSocket->write(cmd.trimmed());
+        qDebug() << "sendCommand"<<cmd<<"to"<<getBox_id();
+
+    }
+    else {
+        serialSocket->write(cmd.trimmed()+"\n");
+    }
     transmissionContext = type;
     requestCounter++;
 
@@ -147,7 +188,6 @@ void tcpDriver::sendCommand(QByteArray cmd, tcpDriverDataTypes::dataType type)
 
 void tcpDriver::remove_all_values()
 {
-
     qDebug()<< "remove_all_values";
     int entity=getBox_id();
     foreach(int val, entity_manager::get_instance()->get_all_DValues()){
@@ -161,27 +201,20 @@ void tcpDriver::remove_all_values()
         if(box_id_e == entity)
             entity_manager::get_instance()->delete_entity(val);
     }
-
-
-    //entity_manager::get_instance()->slot_connection_state_component(entity, false);
 }
 
 void tcpDriver::tcpSocket_connected()
 {
+    qDebug() << "tcpSocket_connected()" << getBox_id() << "pushing" << getInfoCommand_val;
     entity_manager::get_instance()->slot_connection_state_component(getBox_id(), true);
-
-    //lastIP=ip;
-    //lastPort=port;
-    //queue->pushFirst("uibkafc getAll", tcpDriverDataTypes::ALLDATA);
     queue->pushFirst(getInfoCommand_val, tcpDriverDataTypes::ALLDATA);
     pollTimer->start();
-
     emit connected(getBox_id());
 }
 
 void tcpDriver::tcpSocket_disconnected()
 {
-    qDebug() << "tcpSocket_disconnected()!";
+    qDebug() << "tcpSocket_disconnected()!" << getBox_id();
     if(tcpSocket->state() == QAbstractSocket::ConnectedState)
         tcpSocket->abort();
     timeoutTimer->stop();
@@ -200,36 +233,131 @@ int tcpDriver::getBox_id() const
 
 void tcpDriver::recheckConnection()
 {
-
-    if (tcpSocket->state() != QTcpSocket::ConnectedState && lastIP != "")
+    //qDebug() << "recheckConnection"<<getBox_id()<<"lastIP: "<< lastIP;
+    if (tcpSocket)
     {
-        if (connectDevice(lastIP, lastPort, timeoutTimer->interval()))
+        if (tcpSocket->state() != QTcpSocket::ConnectedState && lastIP != "")
         {
-            emit connected(getBox_id());
+            if (connectDevice(lastIP, lastPort, timeoutTimer->interval()))
+                emit connected(getBox_id());
         }
     }
+    if (serialSocket) {
+        if (serialSocket->error() == QSerialPort::NoError) return;
 
+        qDebug() << "RECONNECT SERIAL DEVICE....";
+
+        serialSocket->close();
+        queue->flush();
+        serialSocket->setPortName(lastIP);
+        serialSocket->setBaudRate(SerialBaud);
+        serialSocket->setDataBits(serialSocket->Data8);
+        bool opened = serialSocket->open(QIODevice::ReadWrite);
+        if (opened) this->tcpSocket_connected();
+    }
 }
 
 void tcpDriver::poll()
 {
+    //qDebug() << "poll()"<<"lastIP:"<<lastIP;
+
     tcpCommand* cmd = queue->getNext();
     if (cmd != NULL)
     {
         sendCommand(cmd->getCmd(),cmd->getCmdType());
+        //qDebug()<<"polling" << cmd;
         delete cmd;
     }
     else
     {
-        sendCommand(getMinimalSetActCommand_val,tcpDriverDataTypes::ACTSETDATA);
+        QString ip = entity_manager::get_instance()->get_ip_address_component(box_id);
+
+        if (ip.startsWith("COM") && lastIP=="") {
+            sendCommand(getInfoCommand_val,tcpDriverDataTypes::ALLDATA);
+            lastIP=ip;
+        }
+        else
+            sendCommand(getMinimalSetActCommand_val,tcpDriverDataTypes::ACTSETDATA);
     }
 }
 
 void tcpDriver::parsePackage()
 {
+
     QMutexLocker locker(&mutex);
 
-    QByteArray tmp = tcpSocket->readAll();
+    QString ip = entity_manager::get_instance()->get_ip_address_component(box_id);
+
+    QByteArray tmp;
+    if (ip.startsWith("COM"))
+        {
+        if (!serialSocket->canReadLine()) return;
+        //qDebug() << "Package received.";
+        tmp = serialSocket->readAll();
+        tmp = tmp.trimmed();
+        }
+    else {
+        tmp = tcpSocket->readAll();
+        qDebug() << "Package from "<< ip << " received:" << tmp;
+
+    }
+
+    if (isScope) {
+        QByteArray cmd = getInfoCommand_val;
+        QByteArray currentCmd = "";
+        for (int i=0; i<ScopeNumberOfMeasurements; i++) {
+            int a=0;
+            for (int j=0; j<i; j++) a=cmd.indexOf("|",a+1);
+            if (i==commandCounter) currentCmd = cmd.mid(a+1,cmd.indexOf("|",a+1)-a-1);
+        }
+        int dataid = commandCounter-1;
+        if (dataid < 0) dataid+=ScopeNumberOfMeasurements;
+        tmp = "{\"AI\":[{\"id\": "+QByteArray::number(dataid)+", \"act\": "+tmp+"}]}";
+
+        getMinimalSetActCommand_val = currentCmd;
+        transmissionContext = tcpDriverDataTypes::ACTSETDATA;
+
+
+        commandCounter++;
+        if (commandCounter > ScopeNumberOfMeasurements-1) commandCounter=0;
+        qDebug() << "------------------" << tmp;
+    }
+
+    if (tmp.startsWith("RIGOL TECHNOLOGIES,DS1054Z")) {
+        qDebug() << "RIGOL SCOPE DETECTED!";
+
+        tmp = "{\"AI\": [";
+
+
+        for (int i=0; i<3; i++) {
+            tmp=tmp+"{\"name\": \"Amplitude "+QByteArray::number(i+1)+"\", \"units\": \"V\", \"smin\": 0.00, \"smax\": 1000.00, \"amin\": 0.00, \"amax\": 1000.00, \"id\": "+QByteArray::number(i)+"},";
+           // if (i<2) tmp=tmp+",";
+        }
+        tmp=tmp+"{\"name\": \"Phase 1->2\", \"units\": \"deg\", \"smin\": 0.00, \"smax\": 360.00, \"amin\": 0.00, \"amax\": 360.00, \"id\": 3},";
+        tmp=tmp+"{\"name\": \"Phase 2->3\", \"units\": \"deg\", \"smin\": 0.00, \"smax\": 360.00, \"amin\": 0.00, \"amax\": 360.00, \"id\": 4},";
+        tmp=tmp+"{\"name\": \"Frequency\", \"units\": \"Hz\", \"smin\": 0.00, \"smax\": 2e7, \"amin\": 0.00, \"amax\": 2e7, \"id\": 5}";
+
+        tmp += "]}";
+
+        QByteArray cmd = getInfoCommand_val;
+        QByteArray currentCmd = "";
+        for (int i=0; i<ScopeNumberOfMeasurements; i++) {
+            int a=0;
+            for (int j=0; j<i; j++) a=cmd.indexOf("|",a+1);
+            if (i==commandCounter) currentCmd = cmd.mid(a+1,cmd.indexOf("|",a+1)-a-1);
+        }
+        isScope=true;
+        getMinimalSetActCommand_val = currentCmd;
+        transmissionContext = tcpDriverDataTypes::ALLDATA;
+
+        commandCounter++;
+        if (commandCounter > ScopeNumberOfMeasurements) commandCounter=0;
+
+    }
+
+
+
+
     if (transmissionContext == tcpDriverDataTypes::ALLDATA || transmissionContext == tcpDriverDataTypes::ACTSETDATA)
     {
         curlyOpen += tmp.count('{');
@@ -243,6 +371,7 @@ void tcpDriver::parsePackage()
             QJsonObject obj = QJsonDocument::fromJson(recBuf,jsonerror).object();
             if (jsonerror->error == QJsonParseError::NoError)
             {
+                //qDebug() << "Data received; box:" << getBox_id();
                 emit receivedData(obj.toVariantMap(), transmissionContext, getBox_id());
             } else
             {
@@ -283,6 +412,7 @@ void tcpDriver::parsePackage()
 
 void tcpDriver::timeoutCheck()
 {
+    //qDebug()<<"timeoutCheck"<<getBox_id();
     if (ongoingRequest)
     {
         ongoingRequest = false;
@@ -292,11 +422,34 @@ void tcpDriver::timeoutCheck()
     }
 }
 
+void tcpDriver::serialError(QSerialPort::SerialPortError serialErr)
+{
+    Q_UNUSED(serialErr)
+    emit error(serialSocket->errorString(), getBox_id());
+    qDebug()<<serialSocket->errorString() << getBox_id();
+
+
+    switch (serialErr) {
+    //case QSerialPort::BreakConditionError: { qDebug()<< "SERIALError: Box "<< getBox_id()<<": Break Condition Error"; break; }
+    case QSerialPort::DeviceNotFoundError: { qDebug()<< "SERIALError: Box "<< getBox_id()<<": Device not found"; break; }
+    //case QSerialPort::FramingError: { qDebug()<< "SERIALError: Box "<< getBox_id()<<": Framing Error"; break; }
+    case QSerialPort::NotOpenError: { qDebug()<< "SERIALError: Box "<< getBox_id()<<": Not Open Error"; break; }
+    case QSerialPort::OpenError: { qDebug()<< "SERIALError: Box "<< getBox_id()<<": Open Error"; break; }
+    //case QSerialPort::ParityError: { qDebug()<< "SERIALError: Box "<< getBox_id()<<": Parity Error"; break; }
+    case QSerialPort::PermissionError: { qDebug()<< "SERIALError: Box "<< getBox_id()<<": Permission Error"; break; }
+    case QSerialPort::ReadError: { qDebug()<< "SERIALError: Box "<< getBox_id()<<": Read Error"; break; }
+    case QSerialPort::ResourceError: { qDebug()<< "SERIALError: Box "<< getBox_id()<<": Ressource Error"; break; }
+    case QSerialPort::WriteError: { qDebug()<< "SERIALError: Box "<< getBox_id()<<": Write Error"; break; }
+    default: {qDebug() <<"Box "<< getBox_id()<<": "<< "Unknown SERIAL Error"; break;}
+
+    }
+}
+
 void tcpDriver::tcpError(QAbstractSocket::SocketError tcpErr)
 {
     Q_UNUSED(tcpErr)
     emit error(tcpSocket->errorString(), getBox_id());
-    qDebug()<<tcpSocket->errorString();
+    qDebug()<<tcpSocket->errorString() << getBox_id();
 
     switch (tcpErr) {
     case QAbstractSocket::ConnectionRefusedError:           {qDebug() <<"Box "<< getBox_id()<<": "<< "ConnectionRefusedError"; break;}

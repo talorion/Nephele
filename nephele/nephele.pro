@@ -133,7 +133,6 @@ SOURCES += main.cpp\
     gui_system/gui_system_config_widget/gui_system_config_widget.cpp \
     script_system/script_handler/scriptable_usr_data_handler.cpp \
     script_system/script_handler/script_load_handler.cpp \
-    ../qcustomplot/qcustomplot.cpp \
     tcp_box_system/arduino_backend.cpp
 
 HEADERS  += version.hpp \
@@ -199,8 +198,6 @@ HEADERS  += version.hpp \
     gui_system/gui_system_config_widget/gui_system_config_widget.hpp \
     script_system/script_handler/scriptable_usr_data_handler.hpp \
     script_system/script_handler/script_load_handler.hpp \
-    ../qcustomplot/qcustomplot.hpp \
-    data_aquisition_dll_system/tof_daq_specific/TofDaqDll.h \
     tcp_box_system/arduino_backend.hpp
 
 
@@ -220,8 +217,8 @@ else:unix: PRE_TARGETDEPS += $$OUT_PWD/../qcustomplot/libqcustomplot.a
 unix: INCLUDEPATH += $$PWD/../../../libs/TofDaq_1.97_API/include
 unix: DEPENDPATH += $$PWD/../../../libs/TofDaq_1.97_API/include
 
-win32:      INCLUDEPATH += $$PWD/../../../libs/TofDaq_1.97_API/include
-win32:      DEPENDPATH += $$PWD/../../../libs/TofDaq_1.97_API/include
+win32:      INCLUDEPATH += $$PWD/../../Tofwerk/TofDaq_1.98_API/include
+win32:      DEPENDPATH += $$PWD/../../Tofwerk/TofDaq_1.98_API/include
 
 win32-g++:  INCLUDEPATH += $$PWD/../../../libs/TofDaq_1.97_API/include
 win32-g++:  DEPENDPATH += $$PWD/../../../libs/TofDaq_1.97_API/include
@@ -241,9 +238,6 @@ unix: DEPENDPATH += $$PWD/../../../../Apis/TofDaq_1.95_API/include
 DISTFILES += \
     nephele.ico \
     build_number.txt
-
-SUBDIRS += \
-    ../qcustomplot/qcustomplot.pro
 
 
 
