@@ -4,14 +4,10 @@ DISTFILES += Licence.txt \
                notes.txt \
 		README.md
 
-SUBDIRS +=    libs
-SUBDIRS +=    nephele
-SUBDIRS +=    nephele_test
+SUBDIRS +=    src
+SUBDIRS +=    tests
 
-
-nephele.depends                         += libs
-nephele_test.depends                    += nephele
-
+tests.depends                += src
 
 # build must be last:
 CONFIG += ordered

@@ -15,6 +15,13 @@ unix | win32-g++:{
     QMAKE_CXXFLAGS += -Wstrict-aliasing
 }
 
-CONFIG += c++11
-CONFIG += static
+CONFIG += warn_on
 
+CONFIG += c++11
+CONFIG += c++14
+CONFIG += c++1z
+
+#CONFIG += static
+
+QT       += core gui script network scripttools
+greaterThan(QT_MAJOR_VERSION, 4): QT += widgets printsupport
