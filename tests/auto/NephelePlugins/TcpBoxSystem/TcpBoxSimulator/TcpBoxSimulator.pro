@@ -4,15 +4,13 @@
 #
 #-------------------------------------------------
 
-QT       -= gui
-QT          += network
+include(../../../../../common_cxxflags.pri)
 
 TARGET = TcpBoxSimulator
 TEMPLATE = lib
+CONFIG += dll
 
 DEFINES += TCPBOXSIMULATOR_LIBRARY
-
-include(../../../../../common_cxxflags.pri)
 
 SOURCES += \
     abstract_simulated_box.cpp \

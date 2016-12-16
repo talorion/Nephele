@@ -595,10 +595,10 @@ private slots:
 
 
 private:
-    QScopedPointer<EntityManagerDb> const m_db_ptr; /**< TODO: describe */
-    QPointer<EventManager> m_evt_mng; /**< TODO: describe */
+    QScopedPointer<EntityManagerDb> const m_db_ptr;
+    QPointer<EventManager> m_evt_mng;
 
-    EntityList m_exclusive_components; /**< TODO: describe */
+    EntityList m_exclusive_components;
 };
 
 } // namespace talorion

@@ -1,0 +1,22 @@
+#-------------------------------------------------
+#
+# Project created by QtCreator 2016-12-15T18:49:05
+#
+#-------------------------------------------------
+
+QT       -= gui
+
+TARGET = qecmdclient
+TEMPLATE = lib
+
+DEFINES += QECMDCLIENT_LIBRARY
+
+SOURCES += QEcmdClient.cpp
+
+HEADERS += QEcmdClient.hpp\
+        qecmdclient_global.hpp
+
+unix {
+    target.path = /usr/lib
+    INSTALLS += target
+}

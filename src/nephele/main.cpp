@@ -1,7 +1,14 @@
 #include <QApplication>
 
 #include <ManagerLocator.hpp>
+#include <QtPlugin>
+using namespace talorion;
+
+//#include <SystemManager/AbstractSystem.hpp>
+//Q_IMPORT_PLUGIN(AbstractSystem)
+
 #include <GuiSystem.hpp>
+//Q_IMPORT_PLUGIN(GuiSystem)
 
 int main(int argc, char *argv[]){
 
@@ -13,24 +20,24 @@ int main(int argc, char *argv[]){
   QCoreApplication::setApplicationName("Nephele");
   QCoreApplication::setApplicationVersion(v);
 
-  talorion::ManagerLocator::initialize();
-  talorion::ManagerLocator::provideEntityManager(new talorion::EntityManager(a));
-  talorion::ManagerLocator::provideEventManager(new talorion::EventManager(a));
-  talorion::ManagerLocator::provideSystemManager(new talorion::SystemManager(a));
+  ManagerLocator::initialize();
+  ManagerLocator::provideEntityManager(new EntityManager(a));
+  ManagerLocator::provideEventManager(new EventManager(a));
+  ManagerLocator::provideSystemManager(new SystemManager(a));
 
   //load Systems
-  talorion::ManagerLocator::systemManager().registerNewSystem<talorion::GuiSystem>();
-  //talorion::ManagerLocator::systemManager().loadPluginSystems();
+  ManagerLocator::systemManager().registerNewSystem<GuiSystem>();
+  //ManagerLocator::systemManager().loadPluginSystems();
 
-  talorion::ManagerLocator::systemManager().startAllSystems();
+  ManagerLocator::systemManager().startAllSystems();
 
   int ret = 0;
   ret =a->exec();
 
-  talorion::ManagerLocator::systemManager().disposeAllSystems();
-  talorion::ManagerLocator::systemManager().deleteAllSystems();
+  ManagerLocator::systemManager().disposeAllSystems();
+  ManagerLocator::systemManager().deleteAllSystems();
 
-  talorion::ManagerLocator::dispose();
+  ManagerLocator::dispose();
 
   delete a;
 

@@ -4,6 +4,8 @@
 #include <QObject>
 #include <QUuid>
 
+#include <tcpboxsystem_global.hpp>
+
 //find a way to forward declare entity_manager::entity_id_t
 #include "EntityManager/EntityManager.hpp"
 
@@ -13,7 +15,7 @@ namespace talorion {
   class TcpboxSystem;
   class TcpboxClient;
 
-  class TcpboxFactory : public QObject
+  class TCPBOXSYSTEMSHARED_EXPORT TcpboxFactory : public QObject
   {
     Q_OBJECT
   public:

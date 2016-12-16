@@ -3,11 +3,13 @@
 
 #include "SystemManager/AbstractSystem.hpp"
 
+#include <LoggingSystem_global.hpp>
+
 #include <QStringList>
 
 namespace talorion {
 
-  class LoggingSystem : public AbstractSystem
+  class LOGGING_SYSTEMSHARED_EXPORT LoggingSystem : public AbstractSystem
   {
     Q_OBJECT
   public:

@@ -1,7 +1,8 @@
 TEMPLATE = subdirs
 
 SUBDIRS += qcustomplot \
-    qtofdaqdll
+    qtofdaqdll \
+    qecmdclient
 
 # build must be last:
 CONFIG += ordered

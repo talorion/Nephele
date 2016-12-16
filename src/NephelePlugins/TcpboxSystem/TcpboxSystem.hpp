@@ -4,6 +4,7 @@
 #include <QMap>
 #include <QThread>
 
+#include <tcpboxsystem_global.hpp>
 #include "SystemManager/AbstractSystem.hpp"
 #include "TcpboxFactory.hpp"
 #include "TcpboxClient.hpp"
@@ -11,7 +12,7 @@
 
 namespace talorion {
 
-  class TcpboxSystem : public AbstractSystem
+  class TCPBOXSYSTEMSHARED_EXPORT TcpboxSystem : public AbstractSystem
   {
     Q_OBJECT
   public:

@@ -1,6 +1,19 @@
 #include <QString>
 #include <QtTest>
 #include <QCoreApplication>
+#include <QTofDaqDll.hpp>
+
+#if defined( Q_OS_WIN )
+#include <WTypes.h>
+#else
+#define __int64 long long
+#define __stdcall
+#define __declspec( dllexport )
+#endif
+
+#include "TofDaqDll.h"
+
+using namespace talorion;
 
 class tst_QTofDaqDll : public QObject
 {

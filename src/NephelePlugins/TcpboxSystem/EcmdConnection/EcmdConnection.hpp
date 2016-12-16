@@ -2,6 +2,7 @@
 #define TALORION_ECMD_CONNECTION_HPP
 
 #include "Commands/AbstractEcmdCommand.hpp"
+#include <tcpboxsystem_global.hpp>
 
 #include <QTcpSocket>
 #include <QList>
@@ -11,7 +12,7 @@
 
 namespace talorion {
 
-  class EcmdConnection : public QTcpSocket
+  class TCPBOXSYSTEMSHARED_EXPORT EcmdConnection : public QTcpSocket
   {
     Q_OBJECT
   public:

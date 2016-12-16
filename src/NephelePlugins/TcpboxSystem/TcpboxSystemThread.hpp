@@ -4,6 +4,8 @@
 #include <QMutex>
 #include <QThread>
 
+#include <tcpboxsystem_global.hpp>
+
 #include "TcpboxFactory.hpp"
 #include "TcpboxClient.hpp"
 #include "EcmdConnection/EcmdConnectionManager.hpp"
@@ -12,7 +14,7 @@ namespace talorion {
 
   class TcpboxSystem;
 
-  class TcpboxSystemThread : public QThread
+  class TCPBOXSYSTEMSHARED_EXPORT TcpboxSystemThread : public QThread
   {
     Q_OBJECT
   public:

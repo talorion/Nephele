@@ -4,10 +4,11 @@
 #
 #-------------------------------------------------
 
-include(../../common_cxxflags.pri)
+include(../../../common_cxxflags.pri)
 
 TARGET = qtofdaqdll
 TEMPLATE = lib
+CONFIG += dll
 
 DEFINES += QTOFDAQDLL_LIBRARY
 

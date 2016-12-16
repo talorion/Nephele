@@ -1,3 +1,4 @@
+#include <ManagerLocator.hpp>
 #include <QString>
 #include <QtTest>
 #include <TcpboxSystem.hpp>
@@ -40,6 +41,18 @@ tst_TcpBoxSystem::tst_TcpBoxSystem():
   sys(),
   tcpbox()
 {
+    ManagerLocator::initialize();
+    ManagerLocator::provideEntityManager(new EntityManager());
+    ManagerLocator::provideEventManager(new EventManager());
+    ManagerLocator::provideSystemManager(new SystemManager());
+
+    EntityManager& entity_mng_ext = ManagerLocator::entityManager();
+    sys.provideEntityManager(&entity_mng_ext);
+    EventManager& event_mng_ext = ManagerLocator::eventManager();
+    sys.provideEventManager(&event_mng_ext);
+    SystemManager& system_mng_ext = ManagerLocator::systemManager();
+    sys.provideSystemManager(&system_mng_ext);
+
 }
 
 void tst_TcpBoxSystem::canCallDisposeAnytime()

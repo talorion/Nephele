@@ -1,6 +1,8 @@
 #ifndef TCPBOX_CLIENT_HPP
 #define TCPBOX_CLIENT_HPP
 
+#include <tcpboxsystem_global.hpp>
+
 //find a way to forward declare entity_manager::entity_id_t
 #include "EntityManager/EntityManager.hpp"
 #include "TcpboxFactory.hpp"
@@ -14,7 +16,7 @@ namespace talorion {
   class TcpboxSystemThread;
   class TcpboxSystem;
 
-  class TcpboxClient : public QObject
+  class TCPBOXSYSTEMSHARED_EXPORT TcpboxClient : public QObject
   {
 
     Q_OBJECT

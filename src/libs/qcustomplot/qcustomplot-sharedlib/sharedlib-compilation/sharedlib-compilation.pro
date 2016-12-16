@@ -9,6 +9,8 @@ DEFINES += QCUSTOMPLOT_COMPILE_LIBRARY
 TEMPLATE = lib
 CONFIG += shared debug_and_release build_all
 #CONFIG += static
+CONFIG += dll
+
 VERSION = 2.0.0
 
 TARGET = qcustomplot
