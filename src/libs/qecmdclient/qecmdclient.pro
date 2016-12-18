@@ -4,10 +4,11 @@
 #
 #-------------------------------------------------
 
-QT       -= gui
+include(../../../common_cxxflags.pri)
 
 TARGET = qecmdclient
 TEMPLATE = lib
+CONFIG += dll
 
 DEFINES += QECMDCLIENT_LIBRARY
 

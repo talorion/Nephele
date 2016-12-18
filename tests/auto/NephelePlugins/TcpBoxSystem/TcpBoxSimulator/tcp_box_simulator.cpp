@@ -35,7 +35,13 @@ tcp_box_simulator::tcp_box_simulator(abstract_simulated_box *b, qint16 port, QOb
       networkSession->open();
     } else {
       sessionOpened();
-    }
+  }
+}
+
+void tcp_box_simulator::close()
+{
+    tcpServer->close();
+
 }
 
 void tcp_box_simulator::sessionOpened()
@@ -73,8 +79,11 @@ void tcp_box_simulator::sessionOpened()
         }
     }
   // if we did not find one, use IPv4 localhost
-  if (ipAddress.isEmpty())
+  if (ipAddress.isEmpty()){
     ipAddress = QHostAddress(QHostAddress::LocalHost).toString();
+    tcpServer->listen(QHostAddress(QHostAddress::LocalHost),m_port);
+
+  }
 
   qDebug()<<(tr("The server is running on IP: %1 port: %2").arg(ipAddress).arg(tcpServer->serverPort()));
 }

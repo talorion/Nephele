@@ -18,7 +18,7 @@ void tcp_box_simulator_thread::run()
 
   simulated_fc_box* fc_box = new simulated_fc_box();
   tcp_box_simulator simul(fc_box);
-  Q_UNUSED(simul);
+  //Q_UNUSED(simul);
 
   m_port =simul.getPort();
   ipAddress = simul.getIpAddress();
@@ -26,6 +26,8 @@ void tcp_box_simulator_thread::run()
   emit server_started();
 
   exec();
+
+  simul.close();
 
   delete fc_box;
 

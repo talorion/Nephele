@@ -14,13 +14,11 @@ class TCPBOXSIMULATORSHARED_EXPORT tcp_box_simulator : public QObject
 public:
   explicit tcp_box_simulator(abstract_simulated_box *b, qint16 port =2701, QObject *par = 0);
 
+  void close();
+
   QString getIpAddress() const;
 
   qint16 getPort() const;
-
-signals:
-
-public slots:
 
 private slots:
   void sessionOpened();
