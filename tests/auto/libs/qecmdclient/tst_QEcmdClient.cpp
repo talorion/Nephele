@@ -37,14 +37,19 @@ private Q_SLOTS:
 
     void qEcmdClientIsNotConnectedWhenRemoteHostCloses();
 
+    void qEcmdClientCanSendCommandsAsString();
+    void qEcmdClientDoesNotSendCommandsWhenNotConnected();
+    void qEcmdClientSendCommandsAppendsCrAndNl();
+    void qEcmdClientSendCommandsDoesNotAppendsCrAndNlWhenAlreadyThere();
+    void qEcmdClientSendCommandsAnswerIsReceivedViaSignal();
+    void qEcmdClientSendCommandsAreHandledFirstInFirstOut();
+
 private:
     QPointer<tcp_box_simulator_thread> box_simul;
     quint16 srv_port;
     QString srv_addr;
     bool remotehost_running;
 };
-
-
 
 
 tst_QEcmdClient::tst_QEcmdClient():
@@ -178,6 +183,63 @@ void tst_QEcmdClient::qEcmdClientIsNotConnectedWhenRemoteHostCloses()
     client.connectEcmdDevice(srv_addr, srv_port);
     stopRemoteHost();
     QTRY_COMPARE_WITH_TIMEOUT(client.isConnected(), false, 500);
+}
+
+void tst_QEcmdClient::qEcmdClientCanSendCommandsAsString()
+{
+    QEcmdClient client;
+    client.connectEcmdDevice(srv_addr, srv_port);
+    auto cmd_sent = client.sendCommand("help");
+    QCOMPARE(cmd_sent, true);
+}
+
+void tst_QEcmdClient::qEcmdClientDoesNotSendCommandsWhenNotConnected()
+{
+    QEcmdClient client;
+    auto cmd_sent = client.sendCommand("help");
+    QCOMPARE(cmd_sent, false);
+}
+
+void tst_QEcmdClient::qEcmdClientSendCommandsAppendsCrAndNl()
+{
+    QEcmdClient client;
+    client.connectEcmdDevice(srv_addr, srv_port);
+    QString cmd("help");
+    client.sendCommand(cmd);
+    QCOMPARE(QString::compare(client.lastSentCommand().cmdStr(), cmd.append("\r\n")), 0);
+}
+
+void tst_QEcmdClient::qEcmdClientSendCommandsDoesNotAppendsCrAndNlWhenAlreadyThere()
+{
+    QEcmdClient client;
+    client.connectEcmdDevice(srv_addr, srv_port);
+    QString cmd("help\r\n");
+    client.sendCommand(cmd);
+    QCOMPARE(QString::compare(client.lastSentCommand().cmdStr(), cmd), 0);
+}
+
+void tst_QEcmdClient::qEcmdClientSendCommandsAnswerIsReceivedViaSignal()
+{
+    QEcmdClient client;
+    client.connectEcmdDevice(srv_addr, srv_port);
+    QSignalSpy spy(&client, SIGNAL(receivedData()));
+    client.sendCommand("help");
+    QTRY_COMPARE_WITH_TIMEOUT(spy.count(), 1, 500);
+}
+
+void tst_QEcmdClient::qEcmdClientSendCommandsAreHandledFirstInFirstOut()
+{
+    QEcmdClient client;
+    client.connectEcmdDevice(srv_addr, srv_port);
+    QSignalSpy spy(&client, SIGNAL(commandSent(QString)));
+    client.sendCommand("help");
+    client.sendCommand("uibk getAll");
+    QTRY_COMPARE_WITH_TIMEOUT(spy.count(), 2, 500);
+    auto first_cmd      = spy.at(0).at(0).toString();
+    auto second_cmd     = spy.at(1).at(0).toString();
+    auto first_valid    = QString::compare(first_cmd, QString("help").append("\r\n")) == 0 ;
+    auto second_valid   = QString::compare(second_cmd, QString("uibk getAll").append("\r\n")) == 0 ;
+    QVERIFY(first_valid && second_valid);
 }
 
 QTEST_MAIN(tst_QEcmdClient)
