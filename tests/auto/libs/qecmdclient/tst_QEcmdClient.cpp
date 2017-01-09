@@ -5,6 +5,8 @@
 #include <QPointer>
 #include <tcp_box_simulator_thread.hpp>
 
+#include <QEcmdParser/AbstractQEcmdParser.hpp>
+
 using namespace talorion;
 
 class tst_QEcmdClient : public QObject
@@ -43,6 +45,11 @@ private Q_SLOTS:
     void qEcmdClientSendCommandsDoesNotAppendsCrAndNlWhenAlreadyThere();
     void qEcmdClientSendCommandsAnswerIsReceivedViaSignal();
     void qEcmdClientSendCommandsAreHandledFirstInFirstOut();
+
+    void qEcmdParserHasNotEnoughDataAfterCreation();
+    void qEcmdParserGatherDataReturnsTrueIfHasEnoughDataOrNoDataIsLeft();
+    //void QAbstractSocketCanBeUsedWithAbstractQEcmdParsersStreamOperator();
+    void qEcmdParserDataIsInvalidAfterCreation();
 
 private:
     QPointer<tcp_box_simulator_thread> box_simul;
@@ -241,6 +248,26 @@ void tst_QEcmdClient::qEcmdClientSendCommandsAreHandledFirstInFirstOut()
     auto second_valid   = QString::compare(second_cmd, QString("uibk getAll").append("\r\n")) == 0 ;
     QVERIFY(first_valid && second_valid);
 }
+
+void tst_QEcmdClient::qEcmdParserHasNotEnoughDataAfterCreation()
+{
+    AbstractQEcmdParser parser;
+    QVERIFY(parser.hasEnoughData() == false);
+}
+
+void tst_QEcmdClient::qEcmdParserGatherDataReturnsTrueIfHasEnoughDataOrNoDataIsLeft()
+{
+    AbstractQEcmdParser parser;
+    auto help_ret = box_simul->getHelpCmd().toLocal8Bit();
+    QVERIFY(parser.gatherData(help_ret) == (parser.hasEnoughData() || parser.noDataIsLeft()));
+}
+
+void tst_QEcmdClient::qEcmdParserDataIsInvalidAfterCreation()
+{
+    AbstractQEcmdParser parser;
+    QVERIFY( parser.data().isValid() == false);
+}
+
 
 QTEST_MAIN(tst_QEcmdClient)
 

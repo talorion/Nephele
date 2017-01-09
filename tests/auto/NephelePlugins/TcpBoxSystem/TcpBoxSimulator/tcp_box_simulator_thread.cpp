@@ -22,6 +22,7 @@ void tcp_box_simulator_thread::run()
 
   m_port =simul.getPort();
   ipAddress = simul.getIpAddress();
+  helpCmd = fc_box->getHelp_string();
 
   emit server_started();
 
@@ -33,9 +34,14 @@ void tcp_box_simulator_thread::run()
 
 }
 
+QString tcp_box_simulator_thread::getHelpCmd() const
+{
+    return helpCmd;
+}
+
 QString tcp_box_simulator_thread::getIpAddress() const
 {
-  return ipAddress;
+    return ipAddress;
 }
 
 qint16 tcp_box_simulator_thread::port() const

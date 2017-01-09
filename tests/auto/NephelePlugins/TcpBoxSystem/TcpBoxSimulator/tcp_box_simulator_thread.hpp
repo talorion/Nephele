@@ -14,6 +14,8 @@ public:
 
   QString getIpAddress() const;
 
+  QString getHelpCmd() const;
+
 signals:
   void server_started();
 
@@ -26,6 +28,7 @@ protected:
 
   qint16 m_port;
   QString ipAddress;
+  QString helpCmd;
 };
 
 #endif // TCP_BOX_SIMULATOR_THREAD_HPP
