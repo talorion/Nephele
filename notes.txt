@@ -22,10 +22,32 @@ system executes script
 system provides data for script
 system provides methods for script
 
-
-
 == logging ==
 system logs
+
+== logging ==
+error management
+    severity    action
+    -----------------------------------
+    info        log
+    debug       log
+    warning     log, indicate on gui yellow
+    error       log, indicate on gui red
+    critical    log, show dialog on gui
+    fatal       log, show dialog, exit program
+
+    struct ErrorStruct {
+        usigned char errorFlag; // 0 = FALSE, 1 = TRUE
+        int errorCode,
+        char errorMessage[256]
+    };
+
+    errorFlag == 0 && errorCode == 0 --> info
+    errorFlag == 0 && errorCode >  0 --> debug       //errorCode == debug level
+    errorFlag == 0 && errorCode <  0 --> warning
+    errorFlag == 1 && errorCode <  0 --> error
+    errorFlag == 2 && errorCode <  0 --> critical
+    errorFlag == 3 && errorCode <  0 --> fatal
 
 //=== Factory constants
 QUuid get_AnalogInputValue_uid()const   {return ("{340c5f10-6d53-4c15-8fc4-4c559580cfbc}");}

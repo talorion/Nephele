@@ -13,13 +13,11 @@ CONFIG += dll
 DEFINES += QECMDCLIENT_LIBRARY
 
 SOURCES += QEcmdClient.cpp \
-    QEcmdCommand/AbstractQEcmdCommand.cpp \
-    QEcmdParser/AbstractQEcmdParser.cpp
+    QEcmdCommand/AbstractQEcmdCommand.cpp
 
 HEADERS += QEcmdClient.hpp\
         qecmdclient_global.hpp \
-    QEcmdCommand/AbstractQEcmdCommand.hpp \
-    QEcmdParser/AbstractQEcmdParser.hpp
+    QEcmdCommand/AbstractQEcmdCommand.hpp
 
 unix {
     target.path = /usr/lib
