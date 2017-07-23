@@ -2,7 +2,7 @@
 
 A general purpose data aquisition, data processing, and automation application.
 
-Martin Breitenlechner and Lukas Fischer developed a PTR-MS for cloud9 this is the application controlling the device.
+Martin Breitenlechner and Lukas Fischer developed a 3D PTR-MS "PTR3" for cloud9 this is the application controlling the device.
 
 
 # requirements

@@ -19,7 +19,7 @@ TEMPLATE = app
 #VERSION = 0.0.$$BUILD_NUMBER
 #VERSION = 2.0.0
 VERSION = 0.$$member(BUILDDATE,1).$$BUILD_NUMBER
-#message(VERSION: $$VERSION)
+message(VERSION: $$VERSION)
 
 CONFIG(debug, debug|release) {
   QMAKE_TARGET_PRODUCT = "Nephele (debug mode)"

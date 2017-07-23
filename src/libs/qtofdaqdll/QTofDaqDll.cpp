@@ -63,6 +63,7 @@ QTofDaqDll::QTofDaqDll(QObject *par):
     m_TwReadRegUserData(Q_NULLPTR),
     m_TwUnregisterUserData(Q_NULLPTR),
     m_TwUpdateUserData(Q_NULLPTR),
+    m_TwGetSumSpectrumFromShMem(Q_NULLPTR),
     m_shared_memory_descriptor(new TSharedMemoryDesc)
 {
 

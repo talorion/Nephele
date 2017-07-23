@@ -13,7 +13,7 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets printsupport
 QT += widgets
 
 unix:!macx: {
-    #CONFIG += static
+    CONFIG += static
 }else:{
     CONFIG += static
     DEFINES += STATIC
@@ -38,7 +38,7 @@ win32: {
 unix:!macx: {
     #BUILDDATE = $$system( date "+%d.%m.%Y_%H:%M:%S" )
     BUILD_DATE = $$system( date "+%d.%m.%Y_%H:%M:%S" )
-    BUILDDATE = $$system( date "+%d %m %Y %H %M %S" )
+    BUILDDATE = $$system( date $$shell_quote("+%d %m %Y %H %M %S") )
 }
 
 #BUILD_NUMBER = $$member(BUILDDATE,1)$$member(BUILDDATE,0)$$member(BUILDDATE,3)$$member(BUILDDATE,4)

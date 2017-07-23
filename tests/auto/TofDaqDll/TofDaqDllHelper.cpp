@@ -48,14 +48,14 @@ void TofDaqDllHelper::setTofDaqRunning(bool tofDaqRunning)
     m_tofDaqRunning = tofDaqRunning;
 }
 
-std::list<std::string, std::string> TofDaqDllHelper::getSources() const
-{
-    return m_sources;
-}
+//std::list<std::string, std::string> TofDaqDllHelper::getSources() const
+//{
+//    return m_sources;
+//}
 
-void TofDaqDllHelper::setSources(const std::list<std::string, std::string> &sources)
-{
-    m_sources = sources;
-}
+//void TofDaqDllHelper::setSources(const std::list<std::string, std::string> &sources)
+//{
+//    m_sources = sources;
+//}
 
 } // namespace talorion

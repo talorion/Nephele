@@ -5,7 +5,7 @@
 
 #include <map>
 #include <string>
-#include <list>
+//#include <list>
 
 namespace talorion {
 
@@ -34,8 +34,8 @@ public:
     bool getTofDaqRunning() const;
     void setTofDaqRunning(bool tofDaqRunning);
 
-    std::list<std::string, std::string> getSources() const;
-    void setSources(const std::list<std::string, std::string> &sources);
+    //std::list<std::string, std::string> getSources() const;
+    //void setSources(const std::list<std::string, std::string> &sources);
 
 private:
     bool m_daqActive;
@@ -45,7 +45,7 @@ private:
     TSharedMemoryDesc *pBufDesc;
 
     //std::map<std::string, std::v
-    std::list<std::string, std::string>  m_sources;
+    //std::list<std::string, std::string>  m_sources;
 
 };
 
