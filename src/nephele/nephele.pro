@@ -7,9 +7,10 @@
 include(../common_cxxflags.pri)
 include(../common_flags.pri)
 
-#win32: {
+win32: {
 #RC_FILE = nephele.rc
-#}
+RC_ICONS = nephele.ico
+}
 
 RESOURCES += Resources.qrc
 
@@ -31,22 +32,22 @@ QMAKE_TARGET_COMPANY = "https://github.com/talorion/Nephele"
 QMAKE_TARGET_COPYRIGHT = "Copyright (C) 2015 by Gregor Mayramhof"
 
 #==========Deploy
-#win32: {
-#    TARGET_CUSTOM_EXT = .exe
+win32: {
+    TARGET_CUSTOM_EXT = .exe
 
-#    CONFIG( debug, debug|release ) {
-#        # debug
-#        DEPLOY_TARGET = $$shell_quote($$shell_path($${OUT_PWD}/debug/$${TARGET}$${TARGET_CUSTOM_EXT}))
-#        DLLDESTDIR  = $$shell_quote($$shell_path($${OUT_PWD}/out/debug/))
-#    } else {
-#        # release
-#        DEPLOY_TARGET = $$shell_quote($$shell_path($${OUT_PWD}/release/$${TARGET}$${TARGET_CUSTOM_EXT}))
-#        DLLDESTDIR  = $$shell_quote($$shell_path($${OUT_PWD}/out/release/))
-#    }
+    CONFIG( debug, debug|release ) {
+        # debug
+        DEPLOY_TARGET = $$shell_quote($$shell_path($${OUT_PWD}/debug/$${TARGET}$${TARGET_CUSTOM_EXT}))
+        DLLDESTDIR  = $$shell_quote($$shell_path($${OUT_PWD}/out/debug/))
+    } else {
+        # release
+        DEPLOY_TARGET = $$shell_quote($$shell_path($${OUT_PWD}/release/$${TARGET}$${TARGET_CUSTOM_EXT}))
+        DLLDESTDIR  = $$shell_quote($$shell_path($${OUT_PWD}/out/release/))
+    }
 
-#    DEPLOY_COMMAND = windeployqt
-#    QMAKE_POST_LINK = $${DEPLOY_COMMAND} --dir $${DLLDESTDIR} --no-translations $${DEPLOY_TARGET}
-#}
+    DEPLOY_COMMAND = windeployqt
+    QMAKE_POST_LINK = $${DEPLOY_COMMAND} --dir $${DLLDESTDIR} --no-translations $${DEPLOY_TARGET}
+}
 #==========================================
 
 

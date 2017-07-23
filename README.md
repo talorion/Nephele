@@ -9,9 +9,9 @@ Martin Breitenlechner and Lukas Fischer developed a PTR-MS for cloud9 this is th
 
 ## hardware
 
-2) [Tofwerk TOF](http://www.tofwerk.com/) -- for tofdaqdll_system, twtooldll_system, twtps_system
+1) [Tofwerk TOF](http://www.tofwerk.com/) -- for tofdaqdll_system, twtooldll_system, twtps_system
 
-3) TCP I/O Box build by Martin Breitenlechner and Lukas Fischer at [UIBK Institute for Ion Physics and Applied Physics](http://www.uibk.ac.at/ionen-angewandte-physik/)
+2) TCP I/O Box build by Martin Breitenlechner and Lukas Fischer at [UIBK Institute for Ion Physics and Applied Physics](http://www.uibk.ac.at/ionen-angewandte-physik/)
 
 
 ## software
