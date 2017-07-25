@@ -17,4 +17,4 @@ SUBDIRS += DataAquisitionSystem
 SUBDIRS += DataAquisitionWorker
 
 # build must be last:
-CONFIG += ordered
+#CONFIG += ordered

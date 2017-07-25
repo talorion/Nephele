@@ -34,7 +34,7 @@ JsonRpcRequest::JsonRpcRequest(const QByteArray &msg, QObject *par):
     m_sendTime(),
     m_methodName(),
     m_internalSource(true),
-    m_timeout(500),
+    m_timeout(5000),
     m_timoutTimer(),
     m_sender(Q_NULLPTR)
 {

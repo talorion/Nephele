@@ -4,4 +4,4 @@ SUBDIRS += QTofDaqDll_init
 SUBDIRS += QTofDaqDll
 SUBDIRS += QTofDaqRec
 
-CONFIG += ordered
+#CONFIG += ordered

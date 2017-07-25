@@ -1,7 +1,5 @@
 TEMPLATE = subdirs
 
-CONFIG += debug
-
 DISTFILES += \
     LICENSE.txt \
     README.md \

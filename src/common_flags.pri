@@ -34,6 +34,7 @@ win32: {
     BUILD_DATE = $$member(BUILDDATE,0)_$$member(BUILDDATE,1)
     BUILDDATE = $$split(BUILDDATE, /)
     BUILDDATE = $$split(BUILDDATE, :)
+    BUILDDATE = $$split(BUILDDATE, .)
 }
 unix:!macx: {
     #BUILDDATE = $$system( date "+%d.%m.%Y_%H:%M:%S" )

@@ -292,6 +292,7 @@ void JsonRpcDriver::requestTimedOut(QString req_id)
         qDebug()<< Q_FUNC_INFO <<"No response for timed out request"<< req_id;
         auto request = requestit.value();
         m_back.processData(request, Q_NULLPTR);
+        request.clear();
     }
 
 }
