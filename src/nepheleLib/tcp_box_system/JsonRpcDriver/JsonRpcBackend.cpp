@@ -225,13 +225,16 @@ namespace talorion {
 
   void JsonRpcBackend::fcSetChangeProxy(double value, int id)
   {
+    auto rounded_f = static_cast<float>(value);
+    auto rounded_d = static_cast<double>(rounded_f);
+
     QSharedPointer<JsonRpcRequest> request;
     if(EntityManager::isValid(getSetSetpointId()) == true){
-        request = JsonRpcFactory::createRequest(getSetSetpointId(), QVariant(QVariantList{QVariant(id), QVariant(value)}));
+        request = JsonRpcFactory::createRequest(getSetSetpointId(), QVariant(QVariantList{QVariant(id), QVariant(rounded_d)}));
       }
 
     if(request.isNull() == false){
-        analog_setbuffer[id] =value;
+        analog_setbuffer[id] = rounded_d;
         emit sendCommand(request);
         blockSetUpdate(id, request->requestId());
       }

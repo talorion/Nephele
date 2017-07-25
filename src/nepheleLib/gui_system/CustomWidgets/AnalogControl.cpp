@@ -21,7 +21,10 @@ namespace talorion {
     if(hasFocus())
       return;
 
-    QDoubleSpinBox::setValue(val);
+    auto rounded_f = static_cast<float>(val);
+    auto rounded_d = static_cast<double>(rounded_f);
+
+    QDoubleSpinBox::setValue(rounded_d);
   }
 
   void AnalogControl::setup(int min, int max, QString unit, int dec)
