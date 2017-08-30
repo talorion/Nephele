@@ -3,7 +3,7 @@
 
 #include <QTime>
 
-#include <tcp_box_system/jsonrpcdriver.hpp>
+#include <tcp_box_system/abstracttcpdriver.hpp>
 
 
 namespace talorion {
@@ -45,7 +45,7 @@ JsonRpcRequest::JsonRpcRequest(const QByteArray &msg, QObject *par):
 
 }
 
-void JsonRpcRequest::wasSent(JsonRpcDriver *sender, double additional){
+void JsonRpcRequest::wasSent(AbstractTcpDriver *sender, double additional){
     m_sendTime = QTime::currentTime();
     m_sendTime.start();
 

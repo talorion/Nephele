@@ -54,7 +54,8 @@ typedef enum static_component_id {
     PARAMETER_NAMES_COMPONENT,
     METHOD_ID_COMPONENT,
     AUTO_RECONNECT_COMPONENT,
-    METADATA_COMPONENT
+    METADATA_COMPONENT,
+    BOX_TRANSPORT_COMPONENT
 } static_component_id;
 }
 

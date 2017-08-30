@@ -12,7 +12,7 @@ DISTFILES += \
 
 SUBDIRS +=    ext
 SUBDIRS +=    src
-#SUBDIRS +=    tests
+SUBDIRS +=    tests
 
 src.depends           += ext
 tests.depends           += src

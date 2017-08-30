@@ -7,7 +7,7 @@ unix | win32-g++:{
 }
 
 
-QT       += core gui script network scripttools
+QT       += core gui script network scripttools serialport
 QT      += concurrent
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets printsupport
 QT += widgets

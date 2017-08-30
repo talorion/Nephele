@@ -881,7 +881,7 @@ EntityManager::EntityID EntityManager::tcpBoxExists(QString serverName, quint16 
     return EntityManager::invalid_id;
 }
 
-int EntityManager::createNewTcpBox(QString nameVal, QString ip, quint16 port)
+int EntityManager::createNewBox(QString nameVal, QString ip, quint16 port, int transport)
 {
     auto box = tcpBoxExists(ip, port);
     if(EntityManager::isValid(box))
@@ -896,6 +896,7 @@ int EntityManager::createNewTcpBox(QString nameVal, QString ip, quint16 port)
     createComponentAndAddTo( CONNECTION_STATE_COMPONENT, new_id );
     createComponentAndAddTo( SERIAL_VERSION_UID_COMPONENT, new_id);
     createComponentAndAddTo( TCP_BOX_BACKEND_COMPONENT, new_id);
+    createComponentAndAddTo( BOX_TRANSPORT_COMPONENT, new_id);
     createComponentAndAddTo( AUTO_RECONNECT_COMPONENT, new_id);
     createComponentAndAddTo( METADATA_COMPONENT, new_id);
 
@@ -906,12 +907,23 @@ int EntityManager::createNewTcpBox(QString nameVal, QString ip, quint16 port)
     setComponentDataForEntity(CONNECTION_STATE_COMPONENT,   new_id, false);
     setComponentDataForEntity(SERIAL_VERSION_UID_COMPONENT, new_id, get_TcpBox_uid());
     setComponentDataForEntity(TCP_BOX_BACKEND_COMPONENT, new_id, 0);
+    setComponentDataForEntity(BOX_TRANSPORT_COMPONENT, new_id, transport);
     setComponentDataForEntity(AUTO_RECONNECT_COMPONENT, new_id, false);
     setComponentDataForEntity(METADATA_COMPONENT, new_id, QVariant());
     //setComponentDataForEntity(TCP_BOX_BACKEND_COMPONENT, new_id, -1);
 
     emit newTcpBox(new_id);
     return new_id;
+}
+
+int EntityManager::createNewTcpBox(QString nameVal, QString ip, quint16 port)
+{
+    return createNewBox(nameVal, ip, port,0);
+}
+
+int EntityManager::createNewSerialBox(QString nameVal, QString ip)
+{
+    return createNewBox(nameVal, ip, 0,1);
 }
 
 int EntityManager::createQtScriptEngine(QString nameVal, QScriptEngine *engine)
@@ -1436,6 +1448,19 @@ int EntityManager::get_userdata_component(int entity) const{return componentData
 QString EntityManager::get_user_data_path_component(int entity) const{return componentDataForEntity(USER_DATA_PATH_COMPONENT, entity).toString();}
 
 QVariant EntityManager::get_metadata_component(EntityManager::EntityID entity) const{return componentDataForEntity(METADATA_COMPONENT, entity);}
+
+int EntityManager::getTransportComponent(int entity) const
+{
+    auto transVar = EntityManager::get_instance()->componentDataForEntity(BOX_TRANSPORT_COMPONENT,entity);
+    if(transVar.isValid()==false || transVar.isNull())
+        return 0;
+
+    int trans = 0;
+    if(transVar.canConvert<int>())
+        trans = transVar.value<int>();
+
+    return trans;
+}
 
 double EntityManager::get_analogActValue_component(int entity) const{return componentDataForEntity(ANALOG_ACT_VALUE_COMPONENT, entity).toDouble();}
 

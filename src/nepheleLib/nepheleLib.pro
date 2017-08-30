@@ -164,7 +164,13 @@ SOURCES += \
     gui_system/CustomWidgets/entitysignalinterface.cpp \
     gui_system/SystemView/actvaluegraph.cpp \
     tcp_box_system/JsonRpcDriver/boxnameresponseparser.cpp \
-    script_system/Scriptables/TofDaqScriptable.cpp
+    script_system/Scriptables/TofDaqScriptable.cpp \
+    SerialBoxSystem/SerialBoxSystem.cpp \
+    SerialBoxSystem/SerialBoxesThread.cpp \
+    SerialBoxSystem/SerialBoxesWorker.cpp \
+    SerialBoxSystem/sbs_config_widget/sbs_config_widget.cpp \
+    SerialBoxSystem/AbstractSerialDriver.cpp \
+    SerialBoxSystem/SerialJsonRpcDriver.cpp
 
 HEADERS  += \
     core/abstract_configuration_widget.hpp \
@@ -293,7 +299,13 @@ HEADERS  += \
     gui_system/CustomWidgets/entitysignalinterface.hpp \
     gui_system/SystemView/actvaluegraph.hpp \
     tcp_box_system/JsonRpcDriver/boxnameresponseparser.hpp \
-    script_system/Scriptables/TofDaqScriptable.hpp
+    script_system/Scriptables/TofDaqScriptable.hpp \
+    SerialBoxSystem/SerialBoxSystem.hpp \
+    SerialBoxSystem/SerialBoxesThread.hpp \
+    SerialBoxSystem/SerialBoxesWorker.hpp \
+    SerialBoxSystem/sbs_config_widget/sbs_config_widget.hpp \
+    SerialBoxSystem/AbstractSerialDriver.hpp \
+    SerialBoxSystem/SerialJsonRpcDriver.hpp
 
 
 unix {

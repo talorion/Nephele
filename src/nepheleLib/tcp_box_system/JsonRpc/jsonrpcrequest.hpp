@@ -11,7 +11,7 @@
 namespace talorion {
 
 //using JsonRpcRequest = QByteArray;
-  class JsonRpcDriver;
+  class AbstractTcpDriver;
 
 class JsonRpcRequest: public QObject
 {
@@ -38,7 +38,7 @@ public:
     QTime creationTime() const{ return m_creationTime;}
     QTime sendTime() const{ return m_sendTime;}
 
-    void wasSent(JsonRpcDriver* sender, double additional = 0);
+    void wasSent(AbstractTcpDriver* sender, double additional = 0);
     void wasReceived();
     //void wasReSent(){m_sendTime = QTime::currentTime();m_sendTime.start();}
     QString methodName() const  {return m_methodName; }
@@ -63,7 +63,7 @@ private:
     bool m_internalSource;
     int m_timeout;
     QTimer m_timoutTimer;
-    JsonRpcDriver * m_sender;
+    AbstractTcpDriver * m_sender;
 };
 
 bool operator ==(const JsonRpcRequest &a, const JsonRpcRequest &b);

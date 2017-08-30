@@ -58,7 +58,7 @@ namespace talorion {
     void socketReadyRead();
     void pollQueue();
     void tcpError(QAbstractSocket::SocketError tcpErr);
-    void requestTimedOut(QString req_idS);
+    virtual void requestTimedOut(QString req_idS) Q_DECL_OVERRIDE;
 
   private:
     bool waitForDisconnected(int msecs = 30000);

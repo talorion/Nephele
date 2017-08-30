@@ -18,6 +18,7 @@
 #include "gui_system/gui_system.hpp"
 #include "script_system/script_system.hpp"
 #include "tcp_box_system/tcp_box_system.hpp"
+#include "SerialBoxSystem/SerialBoxSystem.hpp"
 //#include "data_tools_dll_system/data_tools_dll_system.hpp"
 //#include "power_supply_dll_system/power_supply_dll_system.hpp"
 #include "DataAquisitionSystem/DataAquisitionSystem.hpp"
@@ -54,6 +55,8 @@ int main(int argc, char *argv[])
         ManagerLocator::systemManager().register_new_system<script_system>();
         //SystemManager::get_instance()->register_new_system<tcp_box_system>();
         ManagerLocator::systemManager().register_new_system<tcp_box_system>();
+
+        ManagerLocator::systemManager().register_new_system<SerialBoxSystem>();
         //SystemManager::get_instance()->register_new_system<data_aquisition_dll_system>();
         //ManagerLocator::systemManager().register_new_system<data_aquisition_dll_system>();
         //SystemManager::get_instance()->register_new_system<data_tools_dll_system>();

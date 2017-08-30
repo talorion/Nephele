@@ -70,6 +70,9 @@ namespace talorion {
         void tcpSocket_connected();
         void tcpSocket_disconnected();
 
+    private slots:
+        virtual void requestTimedOut(QString )Q_DECL_OVERRIDE{}
+
     private:
         QTcpSocket* tcpSocket;
         tcpDriverDataTypes::dataType transmissionContext;

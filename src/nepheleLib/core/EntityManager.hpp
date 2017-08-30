@@ -178,7 +178,9 @@ public:
     int createNewDigitalOutputValue(QString nameVal,  bool setVal, int id, int box_id= invalid_id , int entity =-1) ;
     int createNewDigitalValue(QString nameVal, QString unitsVal,  bool setVal, int id, int box_id= invalid_id ) ;
     int createNewDigitalValue(QString nameVal, bool setVal, int id, int box_id= invalid_id ) ;
+    int createNewBox(QString nameVal="New Box", QString ip="localhost", quint16 port=2701, int transport=0);
     int createNewTcpBox(QString nameVal="New Box", QString ip="localhost", quint16 port=2701);
+    int createNewSerialBox(QString nameVal="New Box", QString ip="COM1");
     int createQtScriptEngine(QString nameVal="Qt Script Engine", QScriptEngine* engine=NULL);
     int createTofDaqDll(QString nameVal="TofDaqDll", QString pathVal="C:\\Tofwerk\\TofDaq_1.97_noHW\\TofDaqDll.dll", int timeout = 5000, int updaterate=1000, QString user_data_path="/NEPHELE");
     int create_scriptable_usr_data(QString nameVal, double setval=0.0);
@@ -267,7 +269,7 @@ public:
     int get_userdata_component(int entity)const;
     QString get_user_data_path_component(int entity)const;
     QVariant get_metadata_component(EntityID entity)const;
-
+    int getTransportComponent(int entity)const;
 
     //QList<int> get_all_systems()const;
     QList<int> get_entity_by_name(const QString& name) const;

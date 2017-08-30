@@ -1,4 +1,4 @@
-#include "tbs_config_widget.hpp"
+#include "sbs_config_widget.hpp"
 
 
 #include "core/EventManager.hpp"
@@ -10,7 +10,7 @@
 
 namespace talorion {
 
-tbs_config_widget::tbs_config_widget(QWidget *par) :
+sbs_config_widget::sbs_config_widget(QWidget *par) :
     abstract_configuration_widget(par),
     boxes_list(NULL),
     box_name_label(NULL),
@@ -125,7 +125,7 @@ tbs_config_widget::tbs_config_widget(QWidget *par) :
 
 }
 
-tbs_config_widget::~tbs_config_widget()
+sbs_config_widget::~sbs_config_widget()
 {
     //QMap<QListWidgetItem*,int>::iterator it;
     auto it =list2entity.begin();
@@ -155,15 +155,15 @@ tbs_config_widget::~tbs_config_widget()
     delete mainLayout;
 }
 
-void tbs_config_widget::do_refresh_data()
+void sbs_config_widget::do_refresh_data()
 {
 
 }
 
-void tbs_config_widget::slot_newTcpBox(int entity)
+void sbs_config_widget::slot_newTcpBox(int entity)
 {
     int trans = EntityManager::get_instance()->getTransportComponent(entity);
-    if(trans != 0 )
+    if(trans != 1 )
         return;
 
     QString itemText =EntityManager::get_instance()->get_name_component(entity);
@@ -173,12 +173,12 @@ void tbs_config_widget::slot_newTcpBox(int entity)
     list2entity.insert(newItem, entity);
 }
 
-void tbs_config_widget::slot_add_button_clicked(bool)
+void sbs_config_widget::slot_add_button_clicked(bool)
 {
-    EntityManager::get_instance()->createNewTcpBox();
+    EntityManager::get_instance()->createNewSerialBox();
 }
 
-void tbs_config_widget::slot_remove_button_clicked(bool)
+void sbs_config_widget::slot_remove_button_clicked(bool)
 {
     auto box = current_entity;
     if(EntityManager::isValid(box)== false)
@@ -188,22 +188,11 @@ void tbs_config_widget::slot_remove_button_clicked(bool)
     update_visibility(false);
 }
 
-void tbs_config_widget::slot_scan_button_clicked(bool)
+void sbs_config_widget::slot_scan_button_clicked(bool)
 {
-    QApplication::setOverrideCursor(Qt::WaitCursor);
-
-    auto discoveredHosts = JsonRpcDriverUtils::discoverHosts();
-    auto glambda = [](auto serverName, auto serverPort) { return  JsonRpcDriverUtils::createNewTcpBoxForHost(serverName, serverPort); };
-
-    foreach (auto host, discoveredHosts) {
-        //JsonRpcDriverUtils::createNewTcpBoxForHost(host, 2701);
-        //auto future = QtConcurrent::run(glambda, host, 2701);
-        QtConcurrent::run(glambda, host, 2701);
-    }
-    QApplication::restoreOverrideCursor();
 }
 
-void tbs_config_widget::slot_itemClicked(QListWidgetItem *item)
+void sbs_config_widget::slot_itemClicked(QListWidgetItem *item)
 {
     current_entity = EntityManager::invalid_id;
     QMap<QListWidgetItem*,int>::iterator it=list2entity.find(item);
@@ -222,10 +211,10 @@ void tbs_config_widget::slot_itemClicked(QListWidgetItem *item)
 
 }
 
-void tbs_config_widget::slot_connection_state_changed(int entity)
+void sbs_config_widget::slot_connection_state_changed(int entity)
 {
     int trans = EntityManager::get_instance()->getTransportComponent(entity);
-    if(trans != 0 )
+    if(trans != 1 )
         return;
 
     if(current_entity != entity)
@@ -234,10 +223,10 @@ void tbs_config_widget::slot_connection_state_changed(int entity)
     update_visibility(tmp);
 }
 
-void tbs_config_widget::slot_name_component_changed(int entity)
+void sbs_config_widget::slot_name_component_changed(int entity)
 {
     int trans = EntityManager::get_instance()->getTransportComponent(entity);
-    if(trans != 0 )
+    if(trans != 1 )
         return;
 
     if(box_name_field->hasFocus())
@@ -249,7 +238,7 @@ void tbs_config_widget::slot_name_component_changed(int entity)
     boxes_list->currentItem()->setText(tmp);
 }
 
-void tbs_config_widget::update_visibility(bool connected)
+void sbs_config_widget::update_visibility(bool connected)
 {
     auto sel_row = boxes_list->currentRow();
     if(sel_row >= 0){
@@ -281,7 +270,7 @@ void tbs_config_widget::update_visibility(bool connected)
     }
 }
 
-void tbs_config_widget::slot_connect_button_clicked(bool)
+void sbs_config_widget::slot_connect_button_clicked(bool)
 {
     //int mode = 0;
     //if(!backend_field->text().isEmpty())
@@ -298,7 +287,7 @@ void tbs_config_widget::slot_connect_button_clicked(bool)
     }
 }
 
-void tbs_config_widget::slot_disconnect_button_clicked(bool)
+void sbs_config_widget::slot_disconnect_button_clicked(bool)
 {
     if(current_entity>=0){
         EntityManager::get_instance()->setComponentDataForEntity(AUTO_RECONNECT_COMPONENT, current_entity, QVariant::fromValue(false));
@@ -306,7 +295,7 @@ void tbs_config_widget::slot_disconnect_button_clicked(bool)
     }
 }
 
-void tbs_config_widget::slot_configure_button_clicked(bool)
+void sbs_config_widget::slot_configure_button_clicked(bool)
 {
     if(EntityManager::isValid(current_entity) == false)
         return;
@@ -320,7 +309,7 @@ void tbs_config_widget::slot_configure_button_clicked(bool)
 
 }
 
-void tbs_config_widget::box_name_field_textChanged(const QString name)
+void sbs_config_widget::box_name_field_textChanged(const QString name)
 {
     //Q_UNUSED(name)
     auto en = current_entity;
@@ -328,10 +317,10 @@ void tbs_config_widget::box_name_field_textChanged(const QString name)
     ManagerLocator::entityManager().slot_change_name_component(en, name);
 }
 
-void tbs_config_widget::slot_removeTcpBox(int entity)
+void sbs_config_widget::slot_removeTcpBox(int entity)
 {
     int trans = EntityManager::get_instance()->getTransportComponent(entity);
-    if(trans != 0 )
+    if(trans != 1 )
         return;
 
     auto it=list2entity.begin();
@@ -356,17 +345,17 @@ void tbs_config_widget::slot_removeTcpBox(int entity)
     //list2entity.insert(newItem, entity);
 }
 
-QPushButton *tbs_config_widget::getConfigure_button() const
+QPushButton *sbs_config_widget::getConfigure_button() const
 {
     return configure_button;
 }
 
-QPushButton *tbs_config_widget::getDisconnect_button() const
+QPushButton *sbs_config_widget::getDisconnect_button() const
 {
     return disconnect_button;
 }
 
-EntityManager::EntityID tbs_config_widget::getSelectedBox() const
+EntityManager::EntityID sbs_config_widget::getSelectedBox() const
 {
     auto sel_row = boxes_list->currentRow();
     if(sel_row >= 0){
@@ -376,47 +365,47 @@ EntityManager::EntityID tbs_config_widget::getSelectedBox() const
 
 }
 
-QPushButton *tbs_config_widget::getConnect_button() const
+QPushButton *sbs_config_widget::getConnect_button() const
 {
     return connect_button;
 }
 
-QSpinBox *tbs_config_widget::getBackend_field() const
+QSpinBox *sbs_config_widget::getBackend_field() const
 {
     return backend_field;
 }
 
-QSpinBox *tbs_config_widget::getPortField() const
+QSpinBox *sbs_config_widget::getPortField() const
 {
     return portField;
 }
 
-QLineEdit *tbs_config_widget::getIp_address_field() const
+QLineEdit *sbs_config_widget::getIp_address_field() const
 {
     return ip_address_field;
 }
 
-QLineEdit *tbs_config_widget::getBox_name_field() const
+QLineEdit *sbs_config_widget::getBox_name_field() const
 {
     return box_name_field;
 }
 
-int tbs_config_widget::getCurrent_entity() const
+int sbs_config_widget::getCurrent_entity() const
 {
     return current_entity;
 }
 
-QPushButton *tbs_config_widget::getRemove_button() const
+QPushButton *sbs_config_widget::getRemove_button() const
 {
     return remove_button;
 }
 
-QPushButton *tbs_config_widget::getAdd_button() const
+QPushButton *sbs_config_widget::getAdd_button() const
 {
     return add_button;
 }
 
-QListWidget *tbs_config_widget::getBoxes_list() const
+QListWidget *sbs_config_widget::getBoxes_list() const
 {
     return boxes_list;
 }
