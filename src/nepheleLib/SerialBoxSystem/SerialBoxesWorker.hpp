@@ -1,11 +1,12 @@
 #ifndef SERIALBOXESWORKER_HPP
 #define SERIALBOXESWORKER_HPP
 
-#include "AbstractSerialDriver.hpp"
+//#include "AbstractSerialDriver.hpp"
 
 #include <QObject>
 
 #include <tcp_box_system/abstract_backend.hpp>
+#include <tcp_box_system/abstracttcpdriver.hpp>
 
 namespace talorion {
 
@@ -39,7 +40,7 @@ private:
 
 private:
     int curr_box_id;
-    QMap<int, AbstractSerialDriver*> boxes;
+    QMap<int, AbstractTcpDriver*> boxes;
     //QList<abstract_backend*> bkends;
     QTimer* reconnectTimer;
 };

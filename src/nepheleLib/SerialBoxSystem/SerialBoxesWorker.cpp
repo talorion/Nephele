@@ -94,7 +94,7 @@ void SerialBoxesWorker::serialBoxRemoved(int boxId)
 
 void SerialBoxesWorker::connectToBreitiBox(int box_id)
 {
-    AbstractSerialDriver* dev1;
+    AbstractTcpDriver* dev1;
     auto it = boxes.find(box_id);
     if(it == boxes.end())
         dev1 = new SerialJsonRpcDriver(box_id);

@@ -8,10 +8,10 @@
 #include <QListWidget>
 #include <QPushButton>
 
+#include <tcp_box_system/tbs_config_widget/boxconfiguredialog.hpp>
+
 #include "core/abstract_configuration_widget.hpp"
 #include "core/EntityManager.hpp"
-
-#include "boxconfiguredialog.hpp"
 
 namespace talorion {
 

@@ -169,7 +169,6 @@ SOURCES += \
     SerialBoxSystem/SerialBoxesThread.cpp \
     SerialBoxSystem/SerialBoxesWorker.cpp \
     SerialBoxSystem/sbs_config_widget/sbs_config_widget.cpp \
-    SerialBoxSystem/AbstractSerialDriver.cpp \
     SerialBoxSystem/SerialJsonRpcDriver.cpp
 
 HEADERS  += \
@@ -304,7 +303,6 @@ HEADERS  += \
     SerialBoxSystem/SerialBoxesThread.hpp \
     SerialBoxSystem/SerialBoxesWorker.hpp \
     SerialBoxSystem/sbs_config_widget/sbs_config_widget.hpp \
-    SerialBoxSystem/AbstractSerialDriver.hpp \
     SerialBoxSystem/SerialJsonRpcDriver.hpp
 
 
