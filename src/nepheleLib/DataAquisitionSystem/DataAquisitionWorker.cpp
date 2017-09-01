@@ -152,6 +152,8 @@ namespace talorion {
     connect(m_daqDll, SIGNAL(initialized()), m_machine,SLOT(start()));
     connect(m_daqDll, SIGNAL(disposed()), m_machine,SLOT(stop()));
 
+    //auto daqdll = DaqDllEntityFactory::createNewDaqDllEntity();
+
   }
 
   DataAquisitionWorker::~DataAquisitionWorker()
@@ -233,6 +235,7 @@ namespace talorion {
 
     auto dllPath = m_daqDllEntity->dllPath();
     auto timeout = m_daqDllEntity->timeout();
+    m_daqDll->init(dllPath, timeout);
     dataAquisitionDllChanged(m_daqDllEntity->daqDllId(), dllPath);
     timoutChanged(m_daqDllEntity->daqDllId(), timeout);
 
