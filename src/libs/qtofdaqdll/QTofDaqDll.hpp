@@ -9,7 +9,9 @@
 #include <QPointer>
 #include <type_traits>
 
+//
 #if defined( Q_OS_WIN )
+//#if defined( _MSC_VER )
 #include <Windows.h>
 #endif
 
@@ -23,7 +25,8 @@ struct _TSharedMemoryPointer;
 typedef _TSharedMemoryPointer TSharedMemoryPointer;
 
 namespace talorion {
-
+//TOFWERK_DAQ_API TwRetVal TwInitializeDll(void);
+using TwInitializeDllPtr                 = std::add_pointer<int()>::type;
 using TwCleanupDllPtr                 = std::add_pointer<void()>::type;
 using TwGetDllVersionPtr              = std::add_pointer<double()>::type;
 using TwDaqActivePtr                  = std::add_pointer<bool()>::type;
@@ -94,6 +97,7 @@ signals:
     void disposed();
 
 public slots:
+    int initializeDll(void);
     void cleanupDll(void);
 
     double getDllVersion()const;
@@ -169,11 +173,14 @@ private:
     QString m_absolutePath;
     QString m_dll_name;
     QLibrary* m_data_aquisition_dll;
-#if defined( Q_OS_WIN )
+    //
+//#if defined( Q_OS_WIN )
+#if defined( _MSC_VER )
     DLL_DIRECTORY_COOKIE m_cookie;
 #endif
 
 private:
+    TwInitializeDllPtr m_TwInitializeDll;
     TwCleanupDllPtr     m_TwCleanupDll;
 
     TwGetDllVersionPtr  m_TwGetDllVersion;
@@ -233,8 +240,9 @@ T QTofDaqDll::resolveMethod(const QString& method_name)
 
     if(method_name.trimmed().isEmpty())
         return Q_NULLPTR;
-
+//
 #if defined( Q_OS_WIN )
+//#if defined( _MSC_VER )
     QString decorated_method_name = "_"+method_name;
 #else
     QString decorated_method_name = method_name;

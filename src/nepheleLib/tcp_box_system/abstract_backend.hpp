@@ -14,6 +14,8 @@
 
 #include <tcp_box_system/JsonRpc/jsonrpcrequest.hpp>
 
+#include <SerialBoxSystem/PfeifferVacuumProtocol/PVPRequest.hpp>
+
 namespace talorion {
 
     class abstract_backend : public QObject
@@ -34,6 +36,7 @@ namespace talorion {
     signals:
         void fcSetChangeCommand(QByteArray command);
         void sendCommand(QSharedPointer<JsonRpcRequest> request);
+        void sendCommand(QSharedPointer<PVPRequest> request);
         void change_act_value(int, double);
         void change_set_value(int, double);
 

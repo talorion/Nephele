@@ -1,6 +1,7 @@
 #include "data_aquisition_dll_wrapper.hpp"
 
 #if defined( Q_OS_WIN )
+//#if defined( _MSC_VER )
 #include <Windows.h>
 #endif
 
@@ -69,6 +70,7 @@ int data_aquisition_dll_wrapper::init(QString dll_name)
 
 
 #if defined( Q_OS_WIN )
+//#if defined( _MSC_VER )
     //LPCSTR lstr = absolutePath.toStdString().c_str();
     //LPCWSTR lstr = absolutePath.toUtf8();
     LPCWSTR str = (const wchar_t*)absolutePath.utf16();

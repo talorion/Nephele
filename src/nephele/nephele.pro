@@ -6,8 +6,9 @@
 
 include(../common_cxxflags.pri)
 include(../common_flags.pri)
+include(../build_number.pri)
 
-win32: {
+win32:!win32-g++:: {
 #RC_FILE = nephele.rc
 RC_ICONS = nephele.ico
 }
@@ -68,19 +69,6 @@ unix {
 }
 
 ## ================
-win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../../ext/qcustomplot/qcustomplot-sharedlib/sharedlib-compilation/release/ -lqcustomplot2
-else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../../ext/qcustomplot/qcustomplot-sharedlib/sharedlib-compilation/debug/ -lqcustomplotd2
-else:unix:!macx:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../../ext/qcustomplot/qcustomplot-sharedlib/sharedlib-compilation/ -lqcustomplot
-else:unix:!macx:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../../ext/qcustomplot/qcustomplot-sharedlib/sharedlib-compilation/ -lqcustomplotd
-
-INCLUDEPATH += $$PWD/../../ext/qcustomplot
-DEPENDPATH += $$PWD/../../ext/qcustomplot
-unix | win32-g++:{
-    QMAKE_CXXFLAGS += -isystem $$PWD/../../ext/qcustomplot
-}
-## ================
-
-## ================
 win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../nepheleLib/release/ -lnepheleLib
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../nepheleLib/debug/ -lnepheleLibd
 else:unix:!macx:CONFIG(release, debug|release): unix:!macx: LIBS += -L$$OUT_PWD/../nepheleLib/ -lnepheleLib
@@ -109,8 +97,52 @@ else:unix:!macx: PRE_TARGETDEPS += $$OUT_PWD/../libs/qtofdaqdll/libqtofdaqdll.a
 
 
 ## ================
-#win32:!win32-g++:CONFIG(debug, debug|release): LIBS += -L$$PWD/'../../../../../Program Files (x86)/Visual Leak Detector/lib/Win64/' -lvld
+win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/'../../../../../Program Files (x86)/Visual Leak Detector/lib/Win64/' -lvld
 
-win32:!win32-g++:INCLUDEPATH += $$PWD/'../../../../../Program Files (x86)/Visual Leak Detector/include'
-win32:!win32-g++:DEPENDPATH += $$PWD/'../../../../../Program Files (x86)/Visual Leak Detector/include'
-## ================S
+win32:INCLUDEPATH += $$PWD/'../../../../../Program Files (x86)/Visual Leak Detector/include'
+win32:DEPENDPATH += $$PWD/'../../../../../Program Files (x86)/Visual Leak Detector/include'
+## ================
+
+### ================
+#win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../../ext/qcustomplot/qcustomplot-sharedlib/sharedlib-compilation/release/ -lqcustomplot2
+#else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../../ext/qcustomplot/qcustomplot-sharedlib/sharedlib-compilation/debug/ -lqcustomplotd2
+#else:unix:!macx:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../../ext/qcustomplot/qcustomplot-sharedlib/sharedlib-compilation/ -lqcustomplot
+#else:unix:!macx:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../../ext/qcustomplot/qcustomplot-sharedlib/sharedlib-compilation/ -lqcustomplotd
+
+#INCLUDEPATH += $$PWD/../../ext/qcustomplot
+#DEPENDPATH += $$PWD/../../ext/qcustomplot
+#unix | win32-g++:{
+#    QMAKE_CXXFLAGS += -isystem $$PWD/../../ext/qcustomplot
+#}
+
+##win32-g++: PRE_TARGETDEPS += $$OUT_PWD/../../ext/qcustomplot/qcustomplot-sharedlib/sharedlib-compilation/debug/libqcustomplotd2.a
+### ================
+
+
+#### ================
+#DEFINES += OLD_QCUSTOMPLOT
+#win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../../ext/qcustomplot_old/release/ -lqcustomplot_old
+#else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../../ext/qcustomplot_old/debug/ -lqcustomplot_old
+
+#INCLUDEPATH += $$PWD/../../ext/qcustomplot_old
+#DEPENDPATH += $$PWD/../../ext/qcustomplot_old
+
+#win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../../ext/qcustomplot_old/release/libqcustomplot_old.a
+#else:win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../../ext/qcustomplot_old/debug/libqcustomplot_old.a
+#else:win32:!win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../../ext/qcustomplot_old/release/qcustomplot_old.lib
+#else:win32:!win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../../ext/qcustomplot_old/debug/qcustomplot_old.lib
+#### ================
+
+#### ================
+win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../../ext/qcustomplot/qcustomplot-staticlib/release/ -lqcustomplot-staticlib
+else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../../ext/qcustomplot/qcustomplot-staticlib/debug/ -lqcustomplot-staticlib
+
+INCLUDEPATH += $$PWD/../../ext/qcustomplot/qcustomplot-staticlib
+DEPENDPATH += $$PWD/../../ext/qcustomplot/qcustomplot-staticlib
+
+win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../../ext/qcustomplot/qcustomplot-staticlib/release/libqcustomplot-staticlib.a
+else:win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../../ext/qcustomplot/qcustomplot-staticlib/debug/libqcustomplot-staticlib.a
+else:win32:!win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../../ext/qcustomplot/qcustomplot-staticlib/release/qcustomplot-staticlib.lib
+else:win32:!win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../../ext/qcustomplot/qcustomplot-staticlib/debug/qcustomplot-staticlib.lib
+#### ================
+

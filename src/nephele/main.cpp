@@ -64,6 +64,7 @@ int main(int argc, char *argv[])
         //SystemManager::get_instance()->register_new_system<power_supply_dll_system>();
         //ManagerLocator::systemManager().register_new_system<power_supply_dll_system>();
         //SystemManager::get_instance()->startAllSystems();
+        //QThread::currentThread()->msleep(2000);
         ManagerLocator::systemManager().register_new_system<DataAquisitionSystem>();
         ManagerLocator::systemManager().startAllSystems();
 

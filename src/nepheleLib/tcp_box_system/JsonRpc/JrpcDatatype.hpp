@@ -6,6 +6,7 @@
 
 
 #if defined( Q_OS_WIN )
+//#if defined( _MSC_VER )
 #include <wtypes.h>
 #else
 enum VARENUM {

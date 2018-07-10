@@ -10,6 +10,7 @@
 #include <QTime>
 
 #if defined( Q_OS_WIN )
+//#if defined( _MSC_VER )
 #include <WTypes.h>
 #else
 #define __int64 long long
@@ -89,7 +90,8 @@ int QTofDaqDll::init(QString dll_name, int timeout)
     m_absolutePath = f.absoluteDir().absolutePath();
     QString name = f.fileName();
 
-#if defined( Q_OS_WIN )
+//#if defined( Q_OS_WIN )
+#if defined( _MSC_VER )
     LPCWSTR str = (const wchar_t*)m_absolutePath.utf16();
     //SetDllDirectory( str );
     m_cookie =AddDllDirectory( str );
@@ -101,12 +103,15 @@ int QTofDaqDll::init(QString dll_name, int timeout)
     m_data_aquisition_dll = new QLibrary(name);
     if (!m_data_aquisition_dll->load()){
         QString err(m_data_aquisition_dll->errorString());
-        qWarning()<<err;
+        qWarning()<< Q_FUNC_INFO << err;
         return -1;
     }
     m_dll_name = dll_name;
 
-    QString meth = "TwCleanupDll";
+    QString meth = "TwInitializeDll";
+    m_TwInitializeDll = resolveMethod<TwInitializeDllPtr>(meth);
+
+    meth = "TwCleanupDll";
     m_TwCleanupDll = resolveMethod<TwCleanupDllPtr>(meth);
 
     meth = "TwGetDllVersion";
@@ -218,7 +223,7 @@ int QTofDaqDll::init(QString dll_name, int timeout)
 
     if(isInitialized()){
         emit initialized();
-        return 0;
+        return initializeDll();
     }
 
     return 5;//TwError
@@ -244,7 +249,8 @@ void QTofDaqDll::dispose()
     delete m_data_aquisition_dll;
     m_data_aquisition_dll = Q_NULLPTR;
 
-#if defined( Q_OS_WIN )
+//#if defined( Q_OS_WIN )
+#if defined( _MSC_VER )
     if(RemoveDllDirectory( m_cookie ) ==false){
         qDebug()<<"RemoveDllDirectory";
     }
@@ -313,6 +319,14 @@ QString QTofDaqDll::tofDaqRecName() const
 
     QFileInfo exe(m_absolutePath, "TofDaqRec.exe");
     return QString(exe.absoluteFilePath());
+}
+
+int QTofDaqDll::initializeDll()
+{
+    if(m_TwInitializeDll){
+        return m_TwInitializeDll();
+    }
+    return -1;
 }
 
 void QTofDaqDll::cleanupDll()

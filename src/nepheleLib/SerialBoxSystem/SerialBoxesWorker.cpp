@@ -1,5 +1,6 @@
 #include "SerialBoxesWorker.hpp"
 #include "SerialJsonRpcDriver.hpp"
+#include "SerialPCUDriver.hpp"
 
 #include "core/EntityManager.hpp"
 
@@ -13,7 +14,8 @@ SerialBoxesWorker::SerialBoxesWorker(QObject *parent) : QObject(parent)
 
     connect(this,SIGNAL(serialBoxDisconnected(int)),EventManager::get_instance(),SIGNAL(disconnect_tcp_box(int)), Qt::QueuedConnection);
 
-    foreach (int box, EntityManager::get_instance()->get_all_tcpBoxes()) {
+    auto boxes = EntityManager::get_instance()->get_all_tcpBoxes();
+    foreach (int box, boxes) {
         EntityManager::get_instance()->setComponentDataForEntity(AUTO_RECONNECT_COMPONENT, box, QVariant::fromValue(true));
         slotConnectSerialBox(box);
     }
@@ -50,7 +52,7 @@ void SerialBoxesWorker::slotConnectSerialBox(int entity)
         switch(mode){
         case 0:{break;}
         case 1:{break;}
-        case 2:{break;}
+        case 2:{connectToPCUBox(entity);break;}
         case 3:{connectToBreitiBox(entity);break;}
         }
     }
@@ -98,6 +100,19 @@ void SerialBoxesWorker::connectToBreitiBox(int box_id)
     auto it = boxes.find(box_id);
     if(it == boxes.end())
         dev1 = new SerialJsonRpcDriver(box_id);
+    else
+        dev1 = it.value();
+
+    dev1->connectDevice();
+    boxes.insert(box_id,dev1);
+}
+
+void SerialBoxesWorker::connectToPCUBox(int box_id)
+{
+    AbstractTcpDriver* dev1;
+    auto it = boxes.find(box_id);
+    if(it == boxes.end())
+        dev1 = new SerialPCUDriver(box_id);
     else
         dev1 = it.value();
 

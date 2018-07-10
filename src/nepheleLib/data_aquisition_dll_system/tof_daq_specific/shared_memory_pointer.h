@@ -6,6 +6,7 @@
 #include <QtGlobal>
 
 #if defined( Q_OS_WIN )
+//#if defined( _MSC_VER )
 #include <WTypes.h>
 #else
 #define __int64 long long

@@ -68,6 +68,9 @@ namespace talorion {
     connect(EventManager::get_instance(),SIGNAL(analogSet_component_changed(int)),this,SLOT(changeSetValue(int)));
     connect(EventManager::get_instance(),SIGNAL(analogAct_component_changed(int)),this,SLOT(changeActValue(int)));
 
+    connect(EventManager::get_instance(),SIGNAL(digitalSet_component_changed(int)),this,SLOT(changeSetValue(int)));
+    connect(EventManager::get_instance(),SIGNAL(digitalAct_component_changed(int)),this,SLOT(changeActValue(int)));
+
     connect(m_setValueSignalMapper, SIGNAL(mapped(int)), this, SLOT(setValueChangedByGui(EntityManager::EntityID)));
     connect(m_enteredSignalMapper, SIGNAL(mapped(int)), this, SLOT(elementEntered(EntityManager::EntityID)));
     connect(m_leftSignalMapper, SIGNAL(mapped(int)), this, SLOT(elementLeft(EntityManager::EntityID)));
@@ -91,6 +94,9 @@ namespace talorion {
 
     if(isValid() == false)
       return false;
+
+    if(en == entity())
+        return true;
 
     auto parent = ManagerLocator::entityManager().getParent(en);
     if(entity() != parent)
@@ -318,6 +324,9 @@ namespace talorion {
   QString TcpBoxView::buildToolTipFromMetatata(EntityManager::EntityID en)
   {
     auto metadata = ManagerLocator::entityManager().get_metadata_component(en);
+    //if(metadata.isNull()){
+        //metadata = ManagerLocator::entityManager().get_metadata_component(en);
+    //}
 
     if(metadata.canConvert<QVariantMap>() ){
         QString ret;
@@ -379,7 +388,7 @@ namespace talorion {
     auto ctrl= it.value();
     ctrl->setValue(dov.setVal());
 
-    connect(ctrl, SIGNAL(valueChanged(double)), m_setValueSignalMapper, SLOT(map()));
+    connect(ctrl, SIGNAL(valueChanged(bool)), m_setValueSignalMapper, SLOT(map()));
     m_setValueSignalMapper->setMapping(ctrl, en);
 
     connect(ctrl, SIGNAL(entered()), m_enteredSignalMapper, SLOT(map()));
@@ -552,6 +561,8 @@ namespace talorion {
     auto it4 = m_digitalIndicators.find(en);
     if(it4 != m_digitalIndicators.end())
       it4.value()->setToolTip(ttip);
+
+    this->setToolTip(ttip);
 
   }
 

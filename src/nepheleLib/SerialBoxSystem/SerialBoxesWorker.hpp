@@ -36,7 +36,7 @@ private slots:
 private:
     //int newBoxId();
     void connectToBreitiBox(int box_id);
-    //void connectToPCUBox(int box_id);
+    void connectToPCUBox(int box_id);
 
 private:
     int curr_box_id;

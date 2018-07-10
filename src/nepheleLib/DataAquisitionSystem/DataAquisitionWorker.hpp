@@ -3,6 +3,7 @@
 
 #include <QObject>
 #include <QStateMachine>
+#include <QTime>
 #include <QTimer>
 
 #include "core/EntityManager.hpp"
@@ -87,6 +88,8 @@ private slots:
     void readValuesStateEntered();
     void processQueueStateEntered();
 
+    void checkIsAlive();
+
 private:
 //    void checkAquisitionServerReady();
 //    void readSharedMemoryDescriotor();
@@ -103,6 +106,7 @@ private:
     //EntityManager::EntityID m_daqDllEntityId;
 
     QTimer* m_daqDllPollTimer;
+    QTimer* m_isAliveTimer;
 
     QStateMachine* m_machine;
 
@@ -118,6 +122,8 @@ private:
 
     State m_state;
     State m_previos_state;
+
+    QTime lastUpdate;
 
     //bool m_daqActive;
 

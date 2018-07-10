@@ -4,6 +4,7 @@
 #include <QTofDaqRec.hpp>
 
 #if defined( Q_OS_WIN )
+//#if defined( _MSC_VER )
 #define tofdaqdll "C:\\Tofwerk\\TofDaq\\TofDaqDll.dll"
 #define tofdaqrec "C:\\Tofwerk\\TofDaq\\TofDaqRec.exe"
 #endif
@@ -19,6 +20,7 @@ public:
 
 private Q_SLOTS:
     #if defined( Q_OS_WIN )
+    //#if defined( _MSC_VER )
     void isNotRunningAfterCreation();
     void isNotOkAfterCreation();
     void needsTofDaqDllForInitialization();
@@ -27,7 +29,9 @@ private Q_SLOTS:
     #endif
 };
 
+
 #if defined( Q_OS_WIN )
+//#if defined( _MSC_VER )
 void tst_QTofDaqRecTest::isNotRunningAfterCreation()
 {
     QTofDaqRec rec;

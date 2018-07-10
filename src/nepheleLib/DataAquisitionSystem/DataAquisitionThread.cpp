@@ -36,6 +36,7 @@ namespace talorion {
     DataAquisitionWorker wrk;
     auto dllid = DaqDllEntityFactory::createNewDaqDllEntity(QString("TofDaqDll.dll"), QString(tofdaqdll), 500, QString("/NEPHELE"), MIN_POLL_INTERVAL);
     wrk.connectToDaqDllEntity(dllid);
+    //wrk.ini
     //wrk.initAllDllEnities();
 
     m_mutex.unlock();

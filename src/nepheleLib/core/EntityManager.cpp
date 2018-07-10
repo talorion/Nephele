@@ -676,16 +676,16 @@ int EntityManager::createNewAnalogValue(QString nameVal, QString unitsVal, doubl
     //QUuid uid("{6ddc030e-2001-4a38-a8ce-57b309f902ff}");
     int new_id = createNewEntity();
     //USER_DATA_COMPONENT
-    createComponentAndAddTo( NAME_COMPONENT, new_id );
-    createComponentAndAddTo( UNITS_COMPONENT, new_id );
-    createComponentAndAddTo( SET_MIN_COMPONENT, new_id );
-    createComponentAndAddTo( SET_MAX_COMPONENT, new_id );
-    createComponentAndAddTo( ACT_MIN_COMPONENT, new_id );
-    createComponentAndAddTo( ACT_MAX_COMPONENT, new_id );
-    createComponentAndAddTo( ANALOG_SET_VALUE_COMPONENT, new_id );
-    createComponentAndAddTo( ANALOG_ACT_VALUE_COMPONENT, new_id );
-    createComponentAndAddTo( ID_COMPONENT, new_id );
-    createComponentAndAddTo( BOX_ID_COMPONENT, new_id );
+    createComponentAndAddTo(NAME_COMPONENT, new_id );
+    createComponentAndAddTo(UNITS_COMPONENT, new_id );
+    createComponentAndAddTo(SET_MIN_COMPONENT, new_id );
+    createComponentAndAddTo(SET_MAX_COMPONENT, new_id );
+    createComponentAndAddTo(ACT_MIN_COMPONENT, new_id );
+    createComponentAndAddTo(ACT_MAX_COMPONENT, new_id );
+    createComponentAndAddTo(ANALOG_SET_VALUE_COMPONENT, new_id );
+    createComponentAndAddTo(ANALOG_ACT_VALUE_COMPONENT, new_id );
+    createComponentAndAddTo(ID_COMPONENT, new_id );
+    createComponentAndAddTo(BOX_ID_COMPONENT, new_id );
     createComponentAndAddTo(SERIAL_VERSION_UID_COMPONENT, new_id);
     createComponentAndAddTo(USER_DATA_COMPONENT, new_id);
     createComponentAndAddTo(METADATA_COMPONENT, new_id);
@@ -923,7 +923,7 @@ int EntityManager::createNewTcpBox(QString nameVal, QString ip, quint16 port)
 
 int EntityManager::createNewSerialBox(QString nameVal, QString ip)
 {
-    return createNewBox(nameVal, ip, 0,1);
+    return createNewBox(nameVal, ip, 0, 1);
 }
 
 int EntityManager::createQtScriptEngine(QString nameVal, QScriptEngine *engine)

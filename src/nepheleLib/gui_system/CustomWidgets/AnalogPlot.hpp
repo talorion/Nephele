@@ -5,7 +5,12 @@
 #include "TitleLabel.hpp"
 
 #include <QObject>
+
+#ifdef OLD_QCUSTOMPLOT
+#include <qcustomplot.hpp>
+#else
 #include <qcustomplot.h>
+#endif
 
 namespace talorion {
 

@@ -30,7 +30,8 @@ namespace talorion {
       m_processQueueState(Q_NULLPTR),
       m_states(),
       m_state(State::notInitialized),
-      m_previos_state(State::notInitialized)
+      m_previos_state(State::notInitialized),
+      m_isAliveTimer(Q_NULLPTR)
   {
 
     qRegisterMetaType<DataAquisitionWorker::State>("DataAquisitionWorker::State");
@@ -153,6 +154,7 @@ namespace talorion {
     connect(m_daqDll, SIGNAL(disposed()), m_machine,SLOT(stop()));
 
     //auto daqdll = DaqDllEntityFactory::createNewDaqDllEntity();
+    //connectToDaqDllEntity(daqdll);
 
   }
 
@@ -235,9 +237,13 @@ namespace talorion {
 
     auto dllPath = m_daqDllEntity->dllPath();
     auto timeout = m_daqDllEntity->timeout();
+    m_daqDll->dispose();
+    //m_daqDll->init(newval, timeout);
     m_daqDll->init(dllPath, timeout);
     dataAquisitionDllChanged(m_daqDllEntity->daqDllId(), dllPath);
     timoutChanged(m_daqDllEntity->daqDllId(), timeout);
+
+    //QThread::currentThread()->msleep(2000);
 
     setPollInterval(m_daqDllEntity->updaterate());
 
@@ -245,10 +251,27 @@ namespace talorion {
     //    QTimer::singleShot(timeout, &tmp_evt_loop, SLOT(quit()));
     //    connect(this,SIGNAL(dllInitialized()),&tmp_evt_loop,SLOT(quit()));
     //    tmp_evt_loop.exec();
+
+    lastUpdate = QTime::currentTime();
+    lastUpdate.start();
+
+    m_isAliveTimer = new QTimer();
+    m_isAliveTimer->setInterval(2000);
+    m_isAliveTimer->setSingleShot(false);
+    connect(m_isAliveTimer,SIGNAL(timeout()), this, SLOT(checkIsAlive()));
+    m_isAliveTimer->start();
   }
 
   int DataAquisitionWorker::disconnectToDaqDllEntity()
   {
+      if(m_isAliveTimer != Q_NULLPTR){
+          m_isAliveTimer->stop();
+          delete m_isAliveTimer;
+          m_isAliveTimer = Q_NULLPTR;
+      }
+
+
+
     if(m_daqDllEntity == Q_NULLPTR)
       return 0;
     auto dllid = m_daqDllEntity->daqDllId();
@@ -399,11 +422,25 @@ namespace talorion {
     QTimer::singleShot(EMIT_DELAY, this, SIGNAL(queueEmpty()));
   }
 
+  void DataAquisitionWorker::checkIsAlive()
+  {
+    //if(m_machine != Q_NULLPTR){
+    //    if(m_machine->active() == false)
+
+      if(lastUpdate.elapsed() > 5000 )
+        {
+            dataAquisitionDllChanged(m_daqDllEntity->daqDllId(), m_daqDllEntity->dllPath());
+        }
+    //}
+  }
+
   void DataAquisitionWorker::updateUserData()
   {
     auto sourcesToRegister = DaqDllEntityFactory::getUserDataComponents(m_daqDllEntity->daqDllId());
     UserDataSourceList registeredSources;
     m_daqDll->readRegUserData(registeredSources);
+    lastUpdate = QTime::currentTime();
+    lastUpdate.start();
 //    foreach (auto src, registeredSources) {
 //        if(src.location().contains(m_daqDllEntity->userDataPath()))
 //          continue;
@@ -441,6 +478,8 @@ namespace talorion {
     auto sourcesToRegister = DaqDllEntityFactory::getUserDataComponents(m_daqDllEntity->daqDllId());
     UserDataSourceList registeredSources;
     m_daqDll->readRegUserData(registeredSources);
+    lastUpdate = QTime::currentTime();
+    lastUpdate.start();
 //    foreach (auto src, registeredSources) {
 //        if(src.location().contains(m_daqDllEntity->userDataPath()))
 //          continue;

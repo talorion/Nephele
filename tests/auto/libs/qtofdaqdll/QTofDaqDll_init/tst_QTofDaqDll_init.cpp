@@ -5,7 +5,9 @@
 
 #include<QTofDaqDll.hpp>
 
+
 #if defined( Q_OS_WIN )
+//#if defined( _MSC_VER )
 #include <WTypes.h>
 #else
 #define __int64 long long
@@ -16,6 +18,7 @@
 
 //#ifdef Q_PROCESSOR_X86_64
 #if defined( Q_OS_WIN )
+//#if defined( _MSC_VER )
 #define tofdaqdll "C:\\Tofwerk\\TofDaq\\TofDaqDll.dll"
 #define tofdaqrec "C:\\Tofwerk\\TofDaq\\TofDaqRec.exe"
 #define tofdaqrec_arg "-PB:C:\\Tofwerk\\Data\\templates\\Data_2016.10.14_15h03m49s.h5"
@@ -39,6 +42,7 @@ public:
 private Q_SLOTS:
 
 #if defined( Q_OS_WIN )
+//#if defined( _MSC_VER )
     void initTestCase(); //will be called before the first test function is executed.
     void cleanupTestCase(); //will be called after the last test function was executed.
 
@@ -73,6 +77,7 @@ tst_QTofDaqDll_init::~tst_QTofDaqDll_init()
 }
 
 #if defined( Q_OS_WIN )
+//#if defined( _MSC_VER )
 void tst_QTofDaqDll_init::initTestCase()
 {
     QTofDaqDll daqdll;

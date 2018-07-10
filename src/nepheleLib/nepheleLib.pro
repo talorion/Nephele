@@ -5,16 +5,19 @@
 #-------------------------------------------------
 
 include(../common_cxxflags.pri)
+include(../build_number.pri)
 include(../common_flags.pri)
+#QT      += core
+#QT      += scripttools
 
-#BUILD_NUMBER = 650
+BUILD_NUMBER = 650
 
 TARGET = nepheleLib
 TEMPLATE = lib
 VERSION = 0.0.$$BUILD_NUMBER
 
 #DEFINES += BUILD_DATE='"$(shell date)"'
-DEFINES += BUILD='"$$BUILD_NUMBER"'
+#DEFINES += BUILD='"$$BUILD_NUMBER"'
 
 CONFIG(debug, debug|release) {
   TARGET = $$join(TARGET,,,d) # if compiling in debug mode, append a "d" to the library name
@@ -169,7 +172,14 @@ SOURCES += \
     SerialBoxSystem/SerialBoxesThread.cpp \
     SerialBoxSystem/SerialBoxesWorker.cpp \
     SerialBoxSystem/sbs_config_widget/sbs_config_widget.cpp \
-    SerialBoxSystem/SerialJsonRpcDriver.cpp
+    SerialBoxSystem/SerialJsonRpcDriver.cpp \
+    SerialBoxSystem/SerialPCUDriver.cpp \
+    SerialBoxSystem/PfeifferVacuumProtocol/PVPRequest.cpp \
+    SerialBoxSystem/PfeifferVacuumProtocol/PVPResponse.cpp \
+    SerialBoxSystem/PfeifferVacuumProtocol/PVPFactory.cpp \
+    SerialBoxSystem/PfeifferVacuumProtocol/PVPBackend.cpp \
+    SerialBoxSystem/PfeifferVacuumProtocol/PVPTelegramm.cpp \
+    SerialBoxSystem/PfeifferVacuumProtocol/PVPParameter.cpp
 
 HEADERS  += \
     core/abstract_configuration_widget.hpp \
@@ -303,7 +313,14 @@ HEADERS  += \
     SerialBoxSystem/SerialBoxesThread.hpp \
     SerialBoxSystem/SerialBoxesWorker.hpp \
     SerialBoxSystem/sbs_config_widget/sbs_config_widget.hpp \
-    SerialBoxSystem/SerialJsonRpcDriver.hpp
+    SerialBoxSystem/SerialJsonRpcDriver.hpp \
+    SerialBoxSystem/SerialPCUDriver.hpp \
+    SerialBoxSystem/PfeifferVacuumProtocol/PVPRequest.hpp \
+    SerialBoxSystem/PfeifferVacuumProtocol/PVPResponse.hpp \
+    SerialBoxSystem/PfeifferVacuumProtocol/PVPFactory.hpp \
+    SerialBoxSystem/PfeifferVacuumProtocol/PVPBackend.hpp \
+    SerialBoxSystem/PfeifferVacuumProtocol/PVPTelegramm.hpp \
+    SerialBoxSystem/PfeifferVacuumProtocol/PVPParameter.hpp
 
 
 unix {
@@ -311,18 +328,7 @@ unix {
     INSTALLS += target
 }
 
-## ================
-win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../../ext/qcustomplot/qcustomplot-sharedlib/sharedlib-compilation/ -lqcustomplot2
-else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../../ext/qcustomplot/qcustomplot-sharedlib/sharedlib-compilation/debug -lqcustomplotd2
-else:unix:!macx:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../../ext/qcustomplot/qcustomplot-sharedlib/sharedlib-compilation/ -lqcustomplot
-else:unix:!macx:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../../ext/qcustomplot/qcustomplot-sharedlib/sharedlib-compilation/ -lqcustomplotd
 
-INCLUDEPATH += $$PWD/../../ext/qcustomplot
-DEPENDPATH += $$PWD/../../ext/qcustomplot
-unix | win32-g++:{
-    QMAKE_CXXFLAGS += -isystem $$PWD/../../ext/qcustomplot
-}
-## ================
 
 ## ================
 INCLUDEPATH += $$PWD/../../ext/TofDaq/include
@@ -341,3 +347,47 @@ win32:!win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../
 else:win32:!win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../libs/qtofdaqdll/debug/qtofdaqdll.lib
 else:unix:!macx: PRE_TARGETDEPS += $$OUT_PWD/../libs/qtofdaqdll/libqtofdaqdll.a
 ## ================
+
+### ================
+#win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../../ext/qcustomplot/qcustomplot-sharedlib/sharedlib-compilation/ -lqcustomplot2
+#else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../../ext/qcustomplot/qcustomplot-sharedlib/sharedlib-compilation/debug -lqcustomplotd2
+#else:unix:!macx:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../../ext/qcustomplot/qcustomplot-sharedlib/sharedlib-compilation/ -lqcustomplot
+#else:unix:!macx:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../../ext/qcustomplot/qcustomplot-sharedlib/sharedlib-compilation/ -lqcustomplotd
+
+#INCLUDEPATH += $$PWD/../../ext/qcustomplot
+#DEPENDPATH += $$PWD/../../ext/qcustomplot
+#unix | win32-g++:{
+#    QMAKE_CXXFLAGS += -isystem $$PWD/../../ext/qcustomplot
+#}
+
+##win32-g++: PRE_TARGETDEPS += $$OUT_PWD/../../ext/qcustomplot/qcustomplot-sharedlib/sharedlib-compilation/qcustomplotd2.a
+### ================
+
+
+#### ================
+#DEFINES += OLD_QCUSTOMPLOT
+#win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../../ext/qcustomplot_old/release/ -lqcustomplot_old
+#else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../../ext/qcustomplot_old/debug/ -lqcustomplot_old
+
+#INCLUDEPATH += $$PWD/../../ext/qcustomplot_old
+#DEPENDPATH += $$PWD/../../ext/qcustomplot_old
+
+#win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../../ext/qcustomplot_old/release/libqcustomplot_old.a
+#else:win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../../ext/qcustomplot_old/debug/libqcustomplot_old.a
+#else:win32:!win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../../ext/qcustomplot_old/release/qcustomplot_old.lib
+#else:win32:!win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../../ext/qcustomplot_old/debug/qcustomplot_old.lib
+#### ================
+
+
+#### ================
+win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../../ext/qcustomplot/qcustomplot-staticlib/release/ -lqcustomplot-staticlib
+else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../../ext/qcustomplot/qcustomplot-staticlib/debug/ -lqcustomplot-staticlib
+
+INCLUDEPATH += $$PWD/../../ext/qcustomplot/qcustomplot-staticlib
+DEPENDPATH += $$PWD/../../ext/qcustomplot/qcustomplot-staticlib
+
+win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../../ext/qcustomplot/qcustomplot-staticlib/release/libqcustomplot-staticlib.a
+else:win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../../ext/qcustomplot/qcustomplot-staticlib/debug/libqcustomplot-staticlib.a
+else:win32:!win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../../ext/qcustomplot/qcustomplot-staticlib/release/qcustomplot-staticlib.lib
+else:win32:!win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../../ext/qcustomplot/qcustomplot-staticlib/debug/qcustomplot-staticlib.lib
+#### ================

@@ -5,7 +5,8 @@
 #include <QObject>
 
 #ifndef Q_OS_WIN
-typedef qint64 __int64;
+//#ifndef _MSC_VER
+//typedef qint64 __int64;
 //typedef quint64 __int64;
 #ifdef TOFDAQDLL_EXPORTS
 #define TOFWERK_DAQ_API Q_DECL_EXPORT
