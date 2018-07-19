@@ -83,6 +83,27 @@ int TofDaqScriptable::read_reg_user_data(const QString &path, QVector<double> &D
     return s_daqDll->readRegUserData(path, Data);
 }
 
+double TofDaqScriptable::read_reg_user_data(const QString path, const QString varname)
+{
+    QStringList descriptions;
+    QVector<double> data;
+    int ret = get_reg_user_data_desc(path,descriptions);
+    qDebug() << "reg_user_data_descriptions: " << descriptions;
+    int dataindex;
+    if (descriptions.contains(varname))
+    {
+        qDebug() << "Found Variable!";
+        dataindex = descriptions.indexOf(varname);
+        ret = read_reg_user_data(path, data);
+    }
+    if (data.length()>0 && data.length()>dataindex)
+    {
+        qDebug() << "Matching Index available!";
+        return data.at(dataindex);
+    }
+    return 0;
+}
+
 int TofDaqScriptable::read_spectrum(QVector<float> &buffer_Spectrum, int BufIndex, int SegmentIndex, int SegmentEndIndex, bool Normalize) const
 {
     return s_daqDll->getTofSpectrumFromShMem(buffer_Spectrum, SegmentIndex, SegmentEndIndex, BufIndex, Normalize);
@@ -162,5 +183,4 @@ int TofDaqScriptable::write_double_parameter(const QString &para, double value) 
 {
     return s_daqDll->setDaqParameterDouble(para, value);
 }
-
 } // namespace talorion

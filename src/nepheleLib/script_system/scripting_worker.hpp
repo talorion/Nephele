@@ -3,6 +3,9 @@
 
 #include <QFile>
 #include <QObject>
+#include <QVector>
+#include <QStringList>
+
 #include <QScriptEngine>
 
 #include <QScriptEngineDebugger>
@@ -16,8 +19,11 @@
 #include "script_handler/scriptable_usr_data_handler.hpp"
 #include "script_handler/script_load_handler.hpp"
 
-namespace talorion {
+Q_DECLARE_METATYPE(QVector<int>)
+Q_DECLARE_METATYPE(QVector<float>)
+Q_DECLARE_METATYPE(QStringList)
 
+namespace talorion {
     class scripting_worker : public QObject
     {
         Q_OBJECT

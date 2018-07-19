@@ -16,7 +16,7 @@ public:
     explicit TofDaqScriptable(QObject *par = nullptr);
     virtual ~TofDaqScriptable()=default;
 
-    int init(QString dll_name = "C:\\Tofwerk\\TofDaq_1.97_noHW\\TofDaqDll.dll");
+    int init(QString dll_name = "C:\\Tofwerk\\TofDaq\\TofDaqDll.dll");
     void dispose();
 
 private:
@@ -36,6 +36,7 @@ public slots:
     int get_reg_user_data_sources(QStringList& locations, QVector<int>& nbrElements, QVector<int>& type);
     int get_reg_user_data_desc(const QString& path, QStringList& descriptions);
     int read_reg_user_data(const QString& path, QVector<double>& Data);
+    double read_reg_user_data(const QString path, const QString varname);
 
     int read_spectrum(QVector<float>& buffer_Spectrum, int BufIndex, int SegmentIndex = -1, int SegmentEndIndex = -1,bool Normalize = false) const;
     int read_average_spectrum(QVector<double>& buffer_avg_spectrum, bool Normalize = false) const;

@@ -12,10 +12,10 @@ DISTFILES += \
 
 SUBDIRS +=    ext
 SUBDIRS +=    src
-SUBDIRS +=    tests
+#SUBDIRS +=    tests
 
 src.depends           += ext
-tests.depends           += src
+#tests.depends           += src
 
 # build must be last:
 #CONFIG += ordered

@@ -9,8 +9,8 @@
 #include "core/EntityManager.hpp"
 #include "core/abstract_scriptable_object.hpp"
 
-namespace talorion {
 
+namespace talorion {
     scripting_worker::scripting_worker(QObject *par) :
         QObject(par),
         m_script_engine(),
@@ -31,6 +31,9 @@ namespace talorion {
         //m_daqhdl(),
         script_values()
     {
+        qScriptRegisterSequenceMetaType<QVector<int> >(&m_script_engine);
+        qScriptRegisterSequenceMetaType<QVector<float> >(&m_script_engine);
+        qScriptRegisterSequenceMetaType<QStringList>(&m_script_engine);
 
     }
 
@@ -94,7 +97,6 @@ namespace talorion {
         m_util_hdl = new script_util_handler();
         //connect(this, SIGNAL(abort_all_dialoges()),m_util_hdl,SIGNAL(dialog_finished()));
         EntityManager::get_instance()->createScriptableObject(m_util_hdl->script_name(), m_util_hdl);
-
         m_log_hdl = new script_log_handler();
         EntityManager::get_instance()->createScriptableObject(m_log_hdl->script_name(), m_log_hdl);
 

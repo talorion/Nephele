@@ -100,7 +100,8 @@ int QTofDaqDll::init(QString dll_name, int timeout)
     name = dll_name;
 #endif
 
-    m_data_aquisition_dll = new QLibrary(name);
+    //m_data_aquisition_dll = new QLibrary(name);
+    m_data_aquisition_dll = new QLibrary("TofDaqDll.dll");
     if (!m_data_aquisition_dll->load()){
         QString err(m_data_aquisition_dll->errorString());
         qWarning()<< Q_FUNC_INFO << err;

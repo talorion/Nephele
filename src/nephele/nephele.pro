@@ -97,10 +97,10 @@ else:unix:!macx: PRE_TARGETDEPS += $$OUT_PWD/../libs/qtofdaqdll/libqtofdaqdll.a
 
 
 ## ================
-win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/'../../../../../Program Files (x86)/Visual Leak Detector/lib/Win64/' -lvld
+#win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/'../../../../../Program Files (x86)/Visual Leak Detector/lib/Win64/' -lvld
 
-win32:INCLUDEPATH += $$PWD/'../../../../../Program Files (x86)/Visual Leak Detector/include'
-win32:DEPENDPATH += $$PWD/'../../../../../Program Files (x86)/Visual Leak Detector/include'
+#win32:INCLUDEPATH += $$PWD/'../../../../../Program Files (x86)/Visual Leak Detector/include'
+#win32:DEPENDPATH += $$PWD/'../../../../../Program Files (x86)/Visual Leak Detector/include'
 ## ================
 
 ### ================
