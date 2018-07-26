@@ -359,7 +359,8 @@ void nephele_main_window::about()
     QMessageBox::about(this, tr("About Nephele"),
                        tr("<b>Nephele</b> provides a script functionality "
                           "\nBuild: "
-                          )+QString::number(BUILD));
+                          //)+QString::number(BUILD));
+    )+QString::number(1111));
 }
 
 

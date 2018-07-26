@@ -182,7 +182,7 @@ public:
     int createNewTcpBox(QString nameVal="New Box", QString ip="localhost", quint16 port=2701);
     int createNewSerialBox(QString nameVal="New Box", QString ip="COM1");
     int createQtScriptEngine(QString nameVal="Qt Script Engine", QScriptEngine* engine=NULL);
-    int createTofDaqDll(QString nameVal="TofDaqDll", QString pathVal="C:\\Tofwerk\\TofDaq_1.97_noHW\\TofDaqDll.dll", int timeout = 5000, int updaterate=1000, QString user_data_path="/NEPHELE");
+    int createTofDaqDll(QString nameVal="TofDaqDll", QString pathVal="C:\\Tofwerk\\TofDaq\\TofDaqDll.dll", int timeout = 5000, int updaterate=1000, QString user_data_path="/NEPHELE");
     int create_scriptable_usr_data(QString nameVal, double setval=0.0);
 
 

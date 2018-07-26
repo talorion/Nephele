@@ -50,7 +50,7 @@ namespace talorion {
         ~data_aquisition_dll_wrapper();
         Q_DISABLE_COPY(data_aquisition_dll_wrapper)
 
-        int init(QString dll_name = "C:\\Tofwerk\\TofDaq_1.97_noHW\\TofDaqDll.dll");
+        int init(QString dll_name = "C:\\Tofwerk\\TofDaq\\TofDaqDll.dll");
         void dispose();
 
     public slots:

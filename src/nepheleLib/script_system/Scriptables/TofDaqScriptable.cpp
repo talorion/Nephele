@@ -9,7 +9,7 @@ QTofDaqDll* TofDaqScriptable::s_daqDll = new QTofDaqDll();
 TofDaqScriptable::TofDaqScriptable(QObject *par) :
     abstract_scriptable_object("direct_daq", par)
 {
-
+    this->init();
 }
 
 int TofDaqScriptable::init(QString dll_name)
@@ -86,10 +86,10 @@ int TofDaqScriptable::read_reg_user_data(const QString &path, QVector<double> &D
 double TofDaqScriptable::read_reg_user_data(const QString path, const QString varname)
 {
     QStringList descriptions;
-    QVector<double> data;
     int ret = get_reg_user_data_desc(path,descriptions);
     qDebug() << "reg_user_data_descriptions: " << descriptions;
     int dataindex;
+    QVector<double> data(descriptions.length());
     if (descriptions.contains(varname))
     {
         qDebug() << "Found Variable!";

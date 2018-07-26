@@ -1,6 +1,7 @@
 #ifndef VERSION_H
 #define VERSION_H
 
+//#define BUILD 1111
 //#include "build_number.h"
 
 #define VER_FILEVERSION             0,1,0,BUILD

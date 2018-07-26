@@ -35,7 +35,8 @@ int main(int argc, char *argv[])
     qDebug()<<QUuid::createUuid();
 
     try{
-        QString v = "0.1.0."+QString::number(BUILD);
+        //QString v = "0.1.0."+QString::number(BUILD);
+        QString v = "0.1.0."+QString::number(1111);
         qDebug()<<v;
 
         QApplication a(argc, argv);
