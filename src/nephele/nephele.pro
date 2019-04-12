@@ -73,12 +73,14 @@ win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../nepheleLib/release/
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../nepheleLib/debug/ -lnepheleLibd
 else:unix:!macx:CONFIG(release, debug|release): unix:!macx: LIBS += -L$$OUT_PWD/../nepheleLib/ -lnepheleLib
 else:unix:!macx:CONFIG(debug, debug|release): unix:!macx: LIBS += -L$$OUT_PWD/../nepheleLib/ -lnepheleLibd
+else:macx:CONFIG(debug, debug|release): macx: LIBS += -L$$OUT_PWD/../nepheleLib/ -lnepheleLibd
 
 INCLUDEPATH += $$PWD/../nepheleLib
 DEPENDPATH += $$PWD/../nepheleLib
 
 win32:!win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../nepheleLib/release/nepheleLib.lib
 else:win32:!win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../nepheleLib/debug/nepheleLibd.lib
+else:macx:CONFIG(debug, debug|release): macx: PRE_TARGETDEPS += $$OUT_PWD/../nepheleLib/libnepheleLibd.a
 ## ================
 
 
@@ -86,6 +88,7 @@ else:win32:!win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$OUT_PWD/
 win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../libs/qtofdaqdll/release/ -lqtofdaqdll
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../libs/qtofdaqdll/debug/ -lqtofdaqdll
 else:unix:!macx: LIBS += -L$$OUT_PWD/../libs/qtofdaqdll/ -lqtofdaqdll
+else:macx: LIBS += -L$$OUT_PWD/../libs/qtofdaqdll/ -lqtofdaqdll
 
 INCLUDEPATH += $$PWD/../libs/qtofdaqdll
 DEPENDPATH += $$PWD/../libs/qtofdaqdll
@@ -93,6 +96,7 @@ DEPENDPATH += $$PWD/../libs/qtofdaqdll
 win32:!win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../libs/qtofdaqdll/release/qtofdaqdll.lib
 else:win32:!win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../libs/qtofdaqdll/debug/qtofdaqdll.lib
 else:unix:!macx: PRE_TARGETDEPS += $$OUT_PWD/../libs/qtofdaqdll/libqtofdaqdll.a
+else:macx: PRE_TARGETDEPS += $$OUT_PWD/../libs/qtofdaqdll/libqtofdaqdll.a
 ## ================
 
 
@@ -136,6 +140,7 @@ else:unix:!macx: PRE_TARGETDEPS += $$OUT_PWD/../libs/qtofdaqdll/libqtofdaqdll.a
 #### ================
 win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../../ext/qcustomplot/qcustomplot-staticlib/release/ -lqcustomplot-staticlib
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../../ext/qcustomplot/qcustomplot-staticlib/debug/ -lqcustomplot-staticlib
+else:macx:CONFIG(debug, debug|release): macx: LIBS += -L$$OUT_PWD/../../ext/qcustomplot/qcustomplot-staticlib/ -lqcustomplot-staticlib
 
 INCLUDEPATH += $$PWD/../../ext/qcustomplot/qcustomplot-staticlib
 DEPENDPATH += $$PWD/../../ext/qcustomplot/qcustomplot-staticlib
@@ -144,5 +149,8 @@ win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../../ext/
 else:win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../../ext/qcustomplot/qcustomplot-staticlib/debug/libqcustomplot-staticlib.a
 else:win32:!win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../../ext/qcustomplot/qcustomplot-staticlib/release/qcustomplot-staticlib.lib
 else:win32:!win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../../ext/qcustomplot/qcustomplot-staticlib/debug/qcustomplot-staticlib.lib
+else:macx:CONFIG(debug, debug|release): macx: PRE_TARGETDEPS += $$OUT_PWD/../../ext/qcustomplot/qcustomplot-staticlib/libqcustomplot-staticlib.a
 #### ================
+
+
 

@@ -1,4 +1,4 @@
-unix | win32-g++:{
+unix | win32-g++ | macx:{
     QMAKE_CXXFLAGS += -isystem $$[QT_INSTALL_HEADERS]
     QMAKE_CXXFLAGS += -isystem $$[QT_INSTALL_HEADERS]/QtCore
     QMAKE_CXXFLAGS += -isystem $$[QT_INSTALL_HEADERS]/QtGui
@@ -14,4 +14,12 @@ unix | win32-g++:{
     QMAKE_CXXFLAGS += -Weffc++
     QMAKE_CXXFLAGS += -Wstrict-aliasing
     QMAKE_CXXFLAGS += -v
+
+
+}
+
+macx:{
+    message("enabling c++17 support in clang")
+    QMAKE_CXXFLAGS += -std=c++17
+    QMAKE_CXXFLAGS += -fms-extensions
 }

@@ -8,7 +8,11 @@ win32:{
     #BUILDDATE = $$system( date "+%d.%m.%Y_%H:%M:%S" )
     BUILD_DATE = $$system( date "+%d.%m.%Y_%H:%M:%S" )
     BUILDDATE = $$system( date $$shell_quote("+%d %m %Y %H %M %S") )
-}else:{
+}else:macx: {
+    #BUILDDATE = $$system( date "+%d.%m.%Y_%H:%M:%S" )
+    BUILD_DATE = $$system( date "+%d.%m.%Y_%H:%M:%S" )
+    BUILDDATE = $$system( date $$shell_quote("+%d %m %Y %H %M %S") )
+}else: {
     message(no build date defined)
 }
 

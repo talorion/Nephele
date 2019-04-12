@@ -31,7 +31,7 @@ unix {
 INCLUDEPATH += $$PWD/../../../ext/TofDaq/include
 DEPENDPATH += $$PWD/../../../ext/TofDaq/include
 
-unix | win32-g++:{
+unix | win32-g++ | macx:{
     QMAKE_CXXFLAGS += -isystem $$PWD/../../../ext/TofDaq/include
 }
 #===================
